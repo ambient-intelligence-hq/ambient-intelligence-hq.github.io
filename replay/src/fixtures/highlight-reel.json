@@ -1,0 +1,4213 @@
+{
+ "slug": "highlight-reel",
+ "title": "30-second social highlight reel",
+ "summary": "Builds a story-driven highlight reel with HyperFrames from a long video.",
+ "question": "Can you use hyperframes to https://github.com/heygen-com/hyperframes , create a 30 sec highlight reel of this video for social media ?",
+ "model": "openai/gpt-6.1-sol",
+ "durationSec": 981.95,
+ "usage": {
+  "cost": 0.79062,
+  "runs": 1,
+  "turns": 16,
+  "by_model": {
+   "openai/gpt-6.1-sol": {
+    "cost": 0.79062,
+    "requests": 16,
+    "input_tokens": 2526052,
+    "total_tokens": 2532647,
+    "output_tokens": 6595,
+    "cache_read_input_tokens": 2329349,
+    "cache_creation_input_tokens": 196655
+   }
+  },
+  "requests": 16,
+  "by_source": {
+   "agent": {
+    "cost": 0.79062,
+    "requests": 16,
+    "input_tokens": 2526052,
+    "total_tokens": 2532647,
+    "output_tokens": 6595,
+    "cache_read_input_tokens": 2329349,
+    "cache_creation_input_tokens": 196655
+   }
+  },
+  "input_tokens": 2526052,
+  "total_tokens": 2532647,
+  "output_tokens": 6595,
+  "cache_read_input_tokens": 2329349,
+  "cache_creation_input_tokens": 196655
+ },
+ "media": {
+  "source": "replay/highlight-reel/source.mp4",
+  "poster": "replay/highlight-reel/poster.jpg"
+ },
+ "artifacts": [
+  {
+   "key": "replay/highlight-reel/artifacts/canva-30s-social_1791541292.mp4",
+   "name": "canva-30s-social_1791541292.mp4",
+   "mime": "video/mp4"
+  },
+  {
+   "key": "replay/highlight-reel/artifacts/canva-hyperframes-project_1791541292.zip",
+   "name": "canva-hyperframes-project_1791541292.zip",
+   "mime": "application/zip"
+  }
+ ],
+ "events": [
+  {
+   "event": "user.message",
+   "data": {
+    "type": "user.message",
+    "id": "evt_eadc73b0b6544158",
+    "content": [
+     {
+      "type": "text",
+      "text": "Can you use hyperframes to https://github.com/heygen-com/hyperframes , create a 30 sec highlight reel of this video for social media ?"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:40.346Z",
+    "seq": 1946986
+   }
+  },
+  {
+   "event": "session.status_running",
+   "data": {
+    "type": "session.status_running",
+    "id": "evt_2512024a8f8043a3",
+    "processed_at": "2026-10-09T10:13:40.401Z",
+    "seq": 1946987
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_b6476986604f4e3d",
+    "reasoning": "**Creating deliverables in Bash**\n\nI",
+    "processed_at": "2026-10-09T10:13:55.129Z",
+    "seq": 1946991
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_75cd3a328adc48c2",
+    "reasoning": " need",
+    "processed_at": "2026-10-09T10:13:55.143Z",
+    "seq": 1946992
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_651a0bc98da24d00",
+    "reasoning": " to",
+    "processed_at": "2026-10-09T10:13:55.147Z",
+    "seq": 1946993
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_7e01490355cb4202",
+    "reasoning": " use",
+    "processed_at": "2026-10-09T10:13:55.151Z",
+    "seq": 1946994
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_8ccda8b3c5a54efb",
+    "reasoning": " Bash",
+    "processed_at": "2026-10-09T10:13:55.166Z",
+    "seq": 1946995
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_029a306e86254552",
+    "reasoning": " to",
+    "processed_at": "2026-10-09T10:13:55.183Z",
+    "seq": 1946996
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_8ae9e68aca344c89",
+    "reasoning": " inspect",
+    "processed_at": "2026-10-09T10:13:55.193Z",
+    "seq": 1946997
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_c229b01495524c8d",
+    "reasoning": " the",
+    "processed_at": "2026-10-09T10:13:55.197Z",
+    "seq": 1946998
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_2985dcaee2c64ab3",
+    "reasoning": " repository",
+    "processed_at": "2026-10-09T10:13:55.213Z",
+    "seq": 1946999
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_72a56856e3eb4d6d",
+    "reasoning": " network",
+    "processed_at": "2026-10-09T10:13:55.217Z",
+    "seq": 1947000
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_1ed66c23ccbd4bd8",
+    "reasoning": " and",
+    "processed_at": "2026-10-09T10:13:55.222Z",
+    "seq": 1947001
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_e28c8d550bf6425b",
+    "reasoning": " create",
+    "processed_at": "2026-10-09T10:13:55.228Z",
+    "seq": 1947002
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_b622d5729c8f4977",
+    "reasoning": " a",
+    "processed_at": "2026-10-09T10:13:55.243Z",
+    "seq": 1947003
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_a1703e3b86c9495f",
+    "reasoning": " video",
+    "processed_at": "2026-10-09T10:13:55.255Z",
+    "seq": 1947004
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_37b8ba1c7ecc4332",
+    "reasoning": " deliver",
+    "processed_at": "2026-10-09T10:13:55.275Z",
+    "seq": 1947005
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_f9a4449c71104c22",
+    "reasoning": "able",
+    "processed_at": "2026-10-09T10:13:55.284Z",
+    "seq": 1947006
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_3b2749f1dead4d49",
+    "reasoning": ".",
+    "processed_at": "2026-10-09T10:13:55.293Z",
+    "seq": 1947007
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_89e19a7d4ffb43b8",
+    "reasoning": " It",
+    "processed_at": "2026-10-09T10:13:55.297Z",
+    "seq": 1947008
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_bc2d577f81c44517",
+    "reasoning": "\u2019s",
+    "processed_at": "2026-10-09T10:13:55.300Z",
+    "seq": 1947009
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_8ffe6dd9ab0b4001",
+    "reasoning": " a",
+    "processed_at": "2026-10-09T10:13:55.302Z",
+    "seq": 1947010
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_a3824cd3507b4b3e",
+    "reasoning": " bit",
+    "processed_at": "2026-10-09T10:13:55.334Z",
+    "seq": 1947011
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_386188481898454c",
+    "reasoning": " frustrating",
+    "processed_at": "2026-10-09T10:13:55.340Z",
+    "seq": 1947012
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_520421a8e89e41fc",
+    "reasoning": " because",
+    "processed_at": "2026-10-09T10:13:55.344Z",
+    "seq": 1947013
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_088dc147418c4ad1",
+    "reasoning": " no",
+    "processed_at": "2026-10-09T10:13:55.350Z",
+    "seq": 1947014
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_62d3a70c2ff74353",
+    "reasoning": " schema",
+    "processed_at": "2026-10-09T10:13:55.365Z",
+    "seq": 1947015
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_5ff6199224984c3c",
+    "reasoning": " has",
+    "processed_at": "2026-10-09T10:13:55.369Z",
+    "seq": 1947016
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_1b2390adc98442bf",
+    "reasoning": " been",
+    "processed_at": "2026-10-09T10:13:55.373Z",
+    "seq": 1947017
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_965d2659f14a4827",
+    "reasoning": " supplied",
+    "processed_at": "2026-10-09T10:13:55.379Z",
+    "seq": 1947018
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_eab698d3f692485e",
+    "reasoning": ",",
+    "processed_at": "2026-10-09T10:13:55.398Z",
+    "seq": 1947019
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_a01164e3dd304a82",
+    "reasoning": " so",
+    "processed_at": "2026-10-09T10:13:55.402Z",
+    "seq": 1947020
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_9d2d6eb701b948e5",
+    "reasoning": " I",
+    "processed_at": "2026-10-09T10:13:55.405Z",
+    "seq": 1947021
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_403f0bde30884a9d",
+    "reasoning": "\u2019m",
+    "processed_at": "2026-10-09T10:13:55.407Z",
+    "seq": 1947022
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_c9585f23252b4d11",
+    "reasoning": " uncertain",
+    "processed_at": "2026-10-09T10:13:55.431Z",
+    "seq": 1947023
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_846237caa9974c4e",
+    "reasoning": " about",
+    "processed_at": "2026-10-09T10:13:55.440Z",
+    "seq": 1947024
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_e39c164bec1e44ff",
+    "reasoning": " the",
+    "processed_at": "2026-10-09T10:13:55.445Z",
+    "seq": 1947025
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_03c40996e28946e0",
+    "reasoning": " structure",
+    "processed_at": "2026-10-09T10:13:55.458Z",
+    "seq": 1947026
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_3bd08cf3270c403b",
+    "reasoning": " I",
+    "processed_at": "2026-10-09T10:13:55.503Z",
+    "seq": 1947027
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_8337e882bcca422d",
+    "reasoning": " should",
+    "processed_at": "2026-10-09T10:13:55.518Z",
+    "seq": 1947028
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_74610ad9cc1f401a",
+    "reasoning": " follow",
+    "processed_at": "2026-10-09T10:13:55.527Z",
+    "seq": 1947029
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_f216a34b54aa47b2",
+    "reasoning": ".",
+    "processed_at": "2026-10-09T10:13:55.536Z",
+    "seq": 1947030
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_a9857ab0d0b34cc5",
+    "reasoning": " I",
+    "processed_at": "2026-10-09T10:13:55.544Z",
+    "seq": 1947031
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_206b627cc19a477d",
+    "reasoning": " also",
+    "processed_at": "2026-10-09T10:13:55.547Z",
+    "seq": 1947032
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_d6a0221cf17844aa",
+    "reasoning": " want",
+    "processed_at": "2026-10-09T10:13:55.555Z",
+    "seq": 1947033
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_c10aa35d68534b7c",
+    "reasoning": " to",
+    "processed_at": "2026-10-09T10:13:55.559Z",
+    "seq": 1947034
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_3550fc4fb7b44b72",
+    "reasoning": " ensure",
+    "processed_at": "2026-10-09T10:13:55.583Z",
+    "seq": 1947035
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_4dd49f6d56f44f8d",
+    "reasoning": " that",
+    "processed_at": "2026-10-09T10:13:55.588Z",
+    "seq": 1947036
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_2508239d2adb4de7",
+    "reasoning": " I",
+    "processed_at": "2026-10-09T10:13:55.591Z",
+    "seq": 1947037
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_2b89e8c239e44427",
+    "reasoning": " understand",
+    "processed_at": "2026-10-09T10:13:55.595Z",
+    "seq": 1947038
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_cefaeb082cba4cef",
+    "reasoning": " how",
+    "processed_at": "2026-10-09T10:13:55.629Z",
+    "seq": 1947039
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_58c064d359834e02",
+    "reasoning": " to",
+    "processed_at": "2026-10-09T10:13:55.641Z",
+    "seq": 1947040
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_fc79a2edf82043cd",
+    "reasoning": " utilize",
+    "processed_at": "2026-10-09T10:13:55.646Z",
+    "seq": 1947041
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_1863a6169b384b40",
+    "reasoning": " hyper",
+    "processed_at": "2026-10-09T10:13:55.651Z",
+    "seq": 1947042
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_3f84595c71134efb",
+    "reasoning": "frames",
+    "processed_at": "2026-10-09T10:13:55.798Z",
+    "seq": 1947043
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_b6fab1335247440f",
+    "reasoning": " effectively",
+    "processed_at": "2026-10-09T10:13:55.805Z",
+    "seq": 1947044
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_3157dae0616b427d",
+    "reasoning": ".",
+    "processed_at": "2026-10-09T10:13:55.814Z",
+    "seq": 1947045
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_8aec4509d6a84e44",
+    "reasoning": " I",
+    "processed_at": "2026-10-09T10:13:55.819Z",
+    "seq": 1947046
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_e82073fe1d0d4741",
+    "reasoning": " guess",
+    "processed_at": "2026-10-09T10:13:55.850Z",
+    "seq": 1947047
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_45f1f4d295914655",
+    "reasoning": " I",
+    "processed_at": "2026-10-09T10:13:55.872Z",
+    "seq": 1947048
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_d353c20d54814c42",
+    "reasoning": "\u2019ll",
+    "processed_at": "2026-10-09T10:13:55.884Z",
+    "seq": 1947049
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_de8e5a4073384268",
+    "reasoning": " have",
+    "processed_at": "2026-10-09T10:13:55.894Z",
+    "seq": 1947050
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_c1019fbdb7ef40f4",
+    "reasoning": " to",
+    "processed_at": "2026-10-09T10:13:55.913Z",
+    "seq": 1947051
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_5e5c97f8e1bb49d4",
+    "reasoning": " figure",
+    "processed_at": "2026-10-09T10:13:55.922Z",
+    "seq": 1947052
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_5fbc03d196634f1a",
+    "reasoning": " this",
+    "processed_at": "2026-10-09T10:13:55.934Z",
+    "seq": 1947053
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_e13bab1748d447bf",
+    "reasoning": " out",
+    "processed_at": "2026-10-09T10:13:55.938Z",
+    "seq": 1947054
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_8287e31843264fa6",
+    "reasoning": " as",
+    "processed_at": "2026-10-09T10:13:55.949Z",
+    "seq": 1947055
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_6e33f6beff47485f",
+    "reasoning": " I",
+    "processed_at": "2026-10-09T10:13:55.967Z",
+    "seq": 1947056
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_e00105425ade43e9",
+    "reasoning": " go",
+    "processed_at": "2026-10-09T10:13:55.972Z",
+    "seq": 1947057
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_9a5a7caa29f046dd",
+    "reasoning": "!",
+    "processed_at": "2026-10-09T10:13:56.029Z",
+    "seq": 1947058
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_b97cd78347754f9c",
+    "reasoning": " I",
+    "processed_at": "2026-10-09T10:13:56.037Z",
+    "seq": 1947059
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_8509a65dca154f4a",
+    "reasoning": "\u2019m",
+    "processed_at": "2026-10-09T10:13:56.072Z",
+    "seq": 1947060
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_330504913a1a4987",
+    "reasoning": " feeling",
+    "processed_at": "2026-10-09T10:13:56.084Z",
+    "seq": 1947061
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_e2649ac9073b4646",
+    "reasoning": " the",
+    "processed_at": "2026-10-09T10:13:56.089Z",
+    "seq": 1947062
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_d72b8cc19fd54cc0",
+    "reasoning": " pressure",
+    "processed_at": "2026-10-09T10:13:56.093Z",
+    "seq": 1947063
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_5f0c5450037441bd",
+    "reasoning": " to",
+    "processed_at": "2026-10-09T10:13:56.098Z",
+    "seq": 1947064
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_444c6f18a1094db9",
+    "reasoning": " get",
+    "processed_at": "2026-10-09T10:13:56.103Z",
+    "seq": 1947065
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_b1078fab93ed4f87",
+    "reasoning": " it",
+    "processed_at": "2026-10-09T10:13:56.108Z",
+    "seq": 1947066
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_3ea777a30b454405",
+    "reasoning": " right",
+    "processed_at": "2026-10-09T10:13:56.113Z",
+    "seq": 1947067
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_32dfc41e97d64dc8",
+    "reasoning": ".",
+    "processed_at": "2026-10-09T10:13:56.117Z",
+    "seq": 1947068
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_14d54b5dc0764e28",
+    "content": [
+     {
+      "type": "text",
+      "text": "I"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.138Z",
+    "seq": 1947070
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_bc40c35c831d4cb3",
+    "content": [
+     {
+      "type": "text",
+      "text": "\u2019ll"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.144Z",
+    "seq": 1947071
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_9efb42cf7a894ddb",
+    "content": [
+     {
+      "type": "text",
+      "text": " create"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.157Z",
+    "seq": 1947072
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_c0c5d7e559b14ab5",
+    "content": [
+     {
+      "type": "text",
+      "text": " a"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.168Z",
+    "seq": 1947073
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_af3be878066c44b7",
+    "content": [
+     {
+      "type": "text",
+      "text": " vertical"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.176Z",
+    "seq": 1947074
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_b61277689ca34edb",
+    "content": [
+     {
+      "type": "text",
+      "text": " "
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.184Z",
+    "seq": 1947075
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_cfc9e141394b485e",
+    "content": [
+     {
+      "type": "text",
+      "text": "30"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.194Z",
+    "seq": 1947076
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_1241cd44504046ff",
+    "content": [
+     {
+      "type": "text",
+      "text": "-second"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.204Z",
+    "seq": 1947077
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_90f918558e524c0d",
+    "content": [
+     {
+      "type": "text",
+      "text": " reel"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.218Z",
+    "seq": 1947078
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_cef22e27bdac4719",
+    "content": [
+     {
+      "type": "text",
+      "text": " with"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.234Z",
+    "seq": 1947079
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_1c45f7f43d05425c",
+    "content": [
+     {
+      "type": "text",
+      "text": " quick"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.242Z",
+    "seq": 1947080
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_6a5f4392a8ff47c5",
+    "content": [
+     {
+      "type": "text",
+      "text": " tutorial"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.260Z",
+    "seq": 1947081
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_249b10677f2142f8",
+    "content": [
+     {
+      "type": "text",
+      "text": " highlights"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.270Z",
+    "seq": 1947082
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_37320c400313480c",
+    "content": [
+     {
+      "type": "text",
+      "text": " and"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.277Z",
+    "seq": 1947083
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_a49eb41748d847d1",
+    "content": [
+     {
+      "type": "text",
+      "text": " captions"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.283Z",
+    "seq": 1947084
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_7f2f0566e0b7421d",
+    "content": [
+     {
+      "type": "text",
+      "text": ","
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.290Z",
+    "seq": 1947085
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_bb2403cf85094b11",
+    "content": [
+     {
+      "type": "text",
+      "text": " using"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.305Z",
+    "seq": 1947086
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_42bf4bcc5c964e51",
+    "content": [
+     {
+      "type": "text",
+      "text": " Hyper"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.311Z",
+    "seq": 1947087
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_9cc5b542ced94d21",
+    "content": [
+     {
+      "type": "text",
+      "text": "frames"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.317Z",
+    "seq": 1947088
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_74dcd323b54b4812",
+    "content": [
+     {
+      "type": "text",
+      "text": " to"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.321Z",
+    "seq": 1947089
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_b3dabb738bd04d03",
+    "content": [
+     {
+      "type": "text",
+      "text": " compose"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.327Z",
+    "seq": 1947090
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_ab9702c92b6846d8",
+    "content": [
+     {
+      "type": "text",
+      "text": " it"
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.333Z",
+    "seq": 1947091
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_8b3da8bd9ee6403f",
+    "content": [
+     {
+      "type": "text",
+      "text": "."
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:56.412Z",
+    "seq": 1947092
+   }
+  },
+  {
+   "event": "span.model_request_end",
+   "data": {
+    "type": "span.model_request_end",
+    "id": "evt_d4704bfbd8bb46d3",
+    "model_request_start_id": "run_6753b9e0c894",
+    "is_error": false,
+    "model_usage": {
+     "input_tokens": 43442,
+     "output_tokens": 331,
+     "cache_read_input_tokens": 43439,
+     "cache_creation_input_tokens": 0
+    },
+    "source": "agent",
+    "model": "openai/gpt-6.1-sol",
+    "cost": 0.0076599,
+    "processed_at": "2026-10-09T10:13:59.580Z",
+    "seq": 1947110
+   }
+  },
+  {
+   "event": "agent.thinking",
+   "data": {
+    "type": "agent.thinking",
+    "id": "evt_0df2b78f9b8643fe",
+    "content": [
+     {
+      "type": "text",
+      "text": "**Creating deliverables in Bash**\n\nI need to use Bash to inspect the repository network and create a video deliverable. It\u2019s a bit frustrating because no schema has been supplied, so I\u2019m uncertain about the structure I should follow. I also want to ensure that I understand how to utilize hyperframes effectively. I guess I\u2019ll have to figure this out as I go! I\u2019m feeling the pressure to get it right."
+     }
+    ],
+    "processed_at": "2026-10-09T10:13:59.586Z",
+    "seq": 1947111
+   }
+  },
+  {
+   "event": "agent.tool_use",
+   "data": {
+    "type": "agent.tool_use",
+    "id": "call_zUPT67KHeoj9WSknnehXZXQM",
+    "name": "bash",
+    "input": {
+     "command": "curl -L --max-time 30 -s https://raw.githubusercontent.com/heygen-com/hyperframes/main/README.md | head -200",
+     "timeout": 40
+    },
+    "processed_at": "2026-10-09T10:13:59.606Z",
+    "seq": 1947113
+   }
+  },
+  {
+   "event": "agent.tool_use",
+   "data": {
+    "type": "agent.tool_use",
+    "id": "call_eHtfsT55KTDuLlSgCRcosThb",
+    "name": "bash",
+    "input": {
+     "command": "ffprobe -v error -show_entries format=duration:stream=width,height,codec_type -of json /Users/logesh/self/video-llm-tests/videos/vid_f2c1386d8b046f54.mp4; command -v node; command -v npm; command -v ffmpeg; pwd",
+     "timeout": 20
+    },
+    "processed_at": "2026-10-09T10:13:59.606Z",
+    "seq": 1947114
+   }
+  },
+  {
+   "event": "agent.tool_use",
+   "data": {
+    "type": "agent.tool_use",
+    "id": "call_CTO0rJHOZiSg1em1hOinP1fE",
+    "name": "focus_clip",
+    "input": {
+     "end_time": 195,
+     "video_id": "vid_f2c1386d8b046f54",
+     "start_time": 170,
+     "video_path": null
+    },
+    "processed_at": "2026-10-09T10:13:59.606Z",
+    "seq": 1947117
+   }
+  },
+  {
+   "event": "agent.tool_use",
+   "data": {
+    "type": "agent.tool_use",
+    "id": "call_NnbfXcgpCCYBM9higKlYXYcm",
+    "name": "focus_clip",
+    "input": {
+     "end_time": 691,
+     "video_id": "vid_f2c1386d8b046f54",
+     "start_time": 654,
+     "video_path": null
+    },
+    "processed_at": "2026-10-09T10:13:59.606Z",
+    "seq": 1947118
+   }
+  },
+  {
+   "event": "agent.tool_use",
+   "data": {
+    "type": "agent.tool_use",
+    "id": "call_O4qsCf4amadcOsJGyspmvVzy",
+    "name": "focus_clip",
+    "input": {
+     "end_time": 637,
+     "video_id": "vid_f2c1386d8b046f54",
+     "start_time": 605,
+     "video_path": null
+    },
+    "processed_at": "2026-10-09T10:13:59.606Z",
+    "seq": 1947121
+   }
+  },
+  {
+   "event": "agent.tool_result",
+   "data": {
+    "type": "agent.tool_result",
+    "id": "evt_a53b3532c73a48d1",
+    "tool_use_id": "call_zUPT67KHeoj9WSknnehXZXQM",
+    "content": [
+     {
+      "type": "text",
+      "text": "exit_code: 0\n\nstdout:\n<p align=\"center\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"docs/logo/dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"docs/logo/light.svg\">\n    <img alt=\"HyperFrames\" src=\"docs/logo/light.svg\" width=\"300\">\n  </picture>\n</p>\n\n<p align=\"center\">\n  <a href=\"https://www.npmjs.com/package/hyperframes\"><img src=\"https://img.shields.io/npm/v/hyperframes.svg?style=flat\" alt=\"npm version\"></a>\n  <a href=\"https://www.npmjs.com/package/hyperframes\"><img src=\"https://img.shields.io/npm/dm/hyperframes.svg?style=flat\" alt=\"npm downloads\"></a>\n  <a href=\"LICENSE\"><img src=\"https://img.shields.io/badge/license-Apache%202.0-blue.svg\" alt=\"License\"></a>\n  <a href=\"https://nodejs.org\"><img src=\"https://img.shields.io/badge/node-%3E%3D22-brightgreen\" alt=\"Node.js\"></a>\n  <a href=\"https://discord.gg/EbK98HBPdk\"><img src=\"https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white\" alt=\"Discord\"></a>\n</p>\n\n<p align=\"center\"><b>Write HTML. Render video. Built for agents.</b></p>\n\n<p align=\"center\">\n  <a href=\"https://www.hyperframes.dev/studio\">Studio</a> |\n  <a href=\"https://hyperframes.heygen.com/quickstart\">Quickstart</a> |\n  <a href=\"https://hyperframes.heygen.com/showcase\">Showcase</a> |\n  <a href=\"https://www.hyperframes.dev/\">Playground</a> |\n  <a href=\"https://hyperframes.heygen.com/catalog/blocks/data-chart\">Catalog</a> |\n  <a href=\"https://hyperframes.heygen.com/introduction\">Docs</a> |\n  <a href=\"https://discord.gg/EbK98HBPdk\">Discord</a>\n</p>\n\n<p align=\"center\">\n  <img src=\"https://github.com/user-attachments/assets/f6ff9fae-f33d-4f68-bd54-f3ed4ba6473b\" alt=\"HyperFrames app opening from the Dock: native Mac and Linux app now available\" width=\"800\">\n</p>\n\nHyperFrames is an open-source framework for turning HTML, CSS, media, and seekable animations into deterministic MP4 videos. Use it locally with the CLI, from AI coding agents with skills, or as the rendering core behind hosted authoring workflows.\n\n## Quick Start\n\n### With an AI coding agent\n\nFor Claude Code, install the versioned plugin:\n\n```bash\nclaude plugin marketplace add heygen-com/hyperframes\nclaude plugin install hyperframes@hyperframes\n```\n\nEnable auto-update for the **hyperframes** marketplace in `/plugin` \u2192 **Marketplaces**,\nthen use `/hyperframes:hyperframes`. See the [plugin guide](docs/guides/plugins.mdx)\nfor Copilot, VS Code, Cursor, Gemini CLI, updates, and migration.\n\nFor standalone skills (including OpenCode), use:\n\n```bash\nnpx skills add heygen-com/hyperframes\n```\n\n> The picker opens with nothing pre-selected \u2014 the **Core Skills** group is all you need: the `/hyperframes` router installs each creation workflow on demand. Agents and non-interactive runs should use `npx hyperframes skills update` instead \u2014 it installs exactly the core set, whereas `skills add --all` installs all 21 published skills. The six repo-internal skills under `.claude/skills` / `.agents/skills` are excluded by default. For the full published set use `npx hyperframes skills`.\n>\n> `skills add` resolves the skills.sh registry blob, which can lag `main` by hours. `npx hyperframes skills update` installs from the current `main`, so reach for it when you need the newest copy of a skill.\n\nTry a prompt like:\n\n> Using `/hyperframes`, create a 10-second product intro with a fade-in title, a background video, and subtle background music.\n\nThe skills teach agents the HyperFrames production loop: plan the video, write valid HTML, wire seekable animations, add media, lint, preview, and render. They work with Claude Code, Codex, Cursor, Gemini CLI, IBM Bob, and other coding agents that support skills.\n\n## Skills\n\nHyperFrames ships 21 skills agents load on demand. Read `/hyperframes` first \u2014 it's the router and capability map; it picks a workflow for any \"make me a\u2026\" request \u2014 video, deck, or composition port \u2014 and points to the domain skills below.\n\nFor standalone installation, default to the **core set** \u2014 the router installs each creation workflow on demand. `npx hyperframes skills update` installs exactly that from anywhere; the interactive picker (`npx skills add heygen-com/hyperframes`) lists it as the \"Core Skills\" group, nothing pre-selected. The picker is interactive-only \u2014 a non-interactive or agent run without `--skill` installs all 21. Use `npx skills add heygen-com/hyperframes --all` to install the complete published set deliberately (skips the picker), or `npx skills add heygen-com/hyperframes --skill <name>` for just one (bare name, no leading `/`).\n\nStandalone installs stay lean after that: `npx hyperframes init` keeps the **core set** fresh (the router, the `hyperframes-*` domain skills, and `media-use` \u2014 plus whatever is already installed; `/figma` stays on demand) and never expands a partial install; the creation workflows install **on demand** \u2014 the router runs `npx hyperframes skills update <workflow>` before entering one. Nothing re-pulls the full set behind your back.\n\n### Plugin packages\n\nPlugins bundle the full skill catalog and use their agent's update manager.\n`bun run package:agent-plugin` builds the committed portable ZIP, source metadata,\nand SHA-256 checksum. See the [maintainer checklist](docs/contributing/agent-plugins.mdx).\n\n### Upload to Codex\n\nBuild the upload-ready Codex plugin archive from the committed `HEAD` version of the manifest, brand assets, and skills:\n\n```bash\nbun run package:codex-plugin\n```\n\nThis writes `dist/hyperframes-plugin.zip` with a `hyperframes/` root folder and fails if the archive exceeds Codex's 100 MB upload limit.\n\n### Router\n\n| Skill          | Use when                                                                                                                                                                                                                                                                 |\n| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |\n| `/hyperframes` | **Read first** for any request to make / create / edit / animate / render a video, animation, or motion graphic. Capability map for the domain skills, the intent layer that confirms every creation brief up front, and intent router for the creation workflows below. |\n\n### Creation workflows\n\n| Skill                      | Use when                                                                                                                                                                                                                     |\n| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |\n| `/product-launch-video`    | Any **website** \u2014 marketing / launching / promoting a product (from its URL, a brief, or a script), or a site tour / showcase / social clip featuring the site's own visuals. Up to ~3 min (sweet spot 30-90s).              |\n| `/faceless-explainer`      | **Explaining a topic / concept** from arbitrary text \u2014 no product, no URL, no website capture; every visual is LLM-invented (typography / abstract / diagram / data-viz).                                                    |\n| `/pr-to-video`             | A **GitHub pull request** (PR URL, `owner/repo#N` ref, or \"this PR\") \u2192 changelog / feature-reveal / fix / refactor explainer, read via the `gh` CLI.                                                                         |\n| `/embedded-captions`       | Adding **captions / subtitles** to an existing talking-head video (footage untouched) \u2014 verbatim rail, embedded climax behind the subject, or pure-cinematic embed.                                                          |\n| `/talking-head-recut`      | Packaging an existing talking-head / interview / podcast video with **designed graphic overlays** \u2014 lower-thirds, data callouts, kinetic titles, pull-quotes, side panels, PiP.                                              |\n| `/motion-graphics`         | A short, **unnarrated, design-led motion graphic** (~under 10s) \u2014 kinetic type, stat / chart hit, logo sting, lower-third, animated tweet / headline. MP4 or transparent overlay.                                            |\n| `/music-to-video`          | A **music track** (audio file, video to pull audio from, or one generated from a mood brief) \u2192 a **beat-synced** video \u2014 lyric, slideshow, or kinetic promo; music drives pacing.                                            |\n| `/slideshow`               | A **presentation / pitch deck / interactive deck** \u2014 discrete slides, fragment reveals, branching, hotspot navigation, presenter mode. Output is a navigable deck, not a rendered video.                                     |\n| `/general-video`           | **Anything else** \u2014 longer or multi-scene pieces, brand / sizzle reel, title card, static loop, freeform composition. Input- and length-agnostic fallback, and the home of companion mode (co-create with the full toolbox). |\n| `/remotion-to-hyperframes` | **Porting an existing Remotion** (React) composition's source to HyperFrames HTML. One-way migration, not creation.                                                                                                          |\n\n### Domain skills (loaded on demand)\n\nAtomic capabilities the creation workflows compose against \u2014 pull one when you need that specific layer.\n\n| Skill                    | Covers                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |\n| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |\n| `/hyperframes-core`      | The composition contract \u2014 `data-*` timing attributes, `class=\"clip\"`, tracks, sub-compositions, variables, framework-owned media playback, determinism rules.                                                                                                                                                                                                                                                                                                                       |\n| `/hyperframes-animation` | All animation knowledge \u2014 atomic motion rules, scene blueprints, transitions, runtime adapters (GSAP / Lottie / Three.js / Anime.js / CSS / WAAPI / TypeGPU).                                                                                                                                                                                                                                                                                                                        |\n| `/hyperframes-keyframes` | Seek-safe keyframe authoring across runtimes \u2014 GSAP timelines, CSS keyframes, Anime.js, WAAPI, FLIP, paths, masks, SVG morph/draw, 3D depth \u2014 plus `hyperframes keyframes` diagnostics for rendered motion.                                                                                                                                                                                                                                                                          |\n| `/hyperframes-creative`  | Non-animation creative direction \u2014 `frame.md` / `design.md`, palettes, typography, narration, beat planning, audio-reactive visuals, composition patterns.                                                                                                                                                                                                                                                                                                                           |\n| `/media-use`             | The media OS (a host app's own music and sound-effect tools come first for those) \u2014 resolve any media need (BGM, SFX, image, icon, logo, voice, color grade, LUT) into a frozen local file or paste-ready block + ledger record, generate via TTS/music/image models when the catalog misses, transcribe, caption, remove backgrounds, and reuse assets across projects. One shared audio engine + manifest tracking.                                                                |\n| `/hyperframes-cli`       | CLI dev loop \u2014 `init`, `lint`, `check`, `snapshot`, `preview`, `render`, `publish`, `doctor`, plus HeyGen-hosted cloud rendering (`cloud render`) and AWS Lambda rendering (`lambda deploy / render / progress`).                                                                                                                                                                                                                                                                    |\n| `/hyperframes-audio`     | Mix the audio already placed in a composition \u2014 voiceover carve (dip a music bed only in the bands the voice occupies, static or dynamic, level match included), the effect chain (EQ, compressor, limiter, gate, saturation, delay, reverb, chorus, phaser, bitcrush), automation envelopes on volume or any effect parameter, and submix buses (`<hf-audio-group>`) carrying one chain, fader and automation clock for several tracks at once. Sourcing the audio is `/media-use`. |\n| `/hyperframes-registry`  | Search, install and wire registry blocks and components into compositions via `hyperframes catalog` / `hyperframes add`. Load before hand-building any named look, effect, treatment or transition. Authoring a new block or component to contribute upstream.                                                                                                                                                                                                                       |\n| `/figma`                 | Import Figma assets, tokens, components, and storyboard sections \u2192 reconstructed motion (frames read as states, not slides) (REST/CLI) plus Motion animations (MCP) and shaders (MCP source / native export) into a composition.                                                                                                                                                                                                                                                     |\n\nFor visual design handoff workflows, see the [Claude Design guide](https://hyperframes.heygen.com/guides/claude-design) and [Open Design guide](https://hyperframes.heygen.com/guides/open-design).\n\n### Manually with the CLI\n\n```bash\nnpx hyperframes init my-video\ncd my-video\nnpx hyperframes preview      # preview in browser with live reload\nnpx hyperframes render       # render to MP4\n```\n\n**Requirements:** Node.js 22+, FFmpeg\n\n## What You Can Build\n\nNeed ideas? Browse the [Showcase](https://hyperframes.heygen.com/showcase) for finished videos you can watch, read, run, and remix.\n\n- Product launch videos and feature announcements\n- PR walkthroughs with animated code diffs, narration, and captions\n- Data visualizations, chart races, and map animations\n- Social videos with kinetic captions, overlays, and music\n- Docs-to-video, PDF-to-video, and site-tour explainers\n- Reusable motion graphics for automated content pipelines\n\n## Frame.md\n\n**frame.md \u2014 your design system, ready for video.**\n\nEvery brand has a `design.md`. None of them were written for a camera. `frame.md` is the missing translation layer: it takes your web-context design spec and inverts it for the frame \u2014 the same tokens, the same rules, but rewritten so an AI agent can compose a promo video without guessing at scale or reaching for web chrome.\n\nThe output is a `DESIGN.md` superset your whole toolchain can read. Atoms stay sacred. Composition stays free. Numbers come from the script.\n\n<table>\n  <tr>\n    <td width=\"50%\" align=\"center\">\n      <a href=\"https://www.hyperframes.dev/design/biennale-yellow\"><img src=\"https://static.heygen.ai/hyperframes-oss/docs/images/design-templates/biennale-yellow.png\" alt=\"Biennale Yellow\" width=\"100%\"></a>\n      <br><b><a href=\"https://www.hyperframes.dev/design/biennale-yellow\">Biennale Yellow</a></b>\n    </td>\n    <td width=\"50%\" align=\"center\">\n      <a href=\"https://www.hyperframes.dev/design/blockframe\"><img src=\"https://static.heygen.ai/hyperframes-oss/docs/images/design-templates/blockframe.png\" alt=\"BlockFrame\" width=\"100%\"></a>\n      <br><b><a href=\"https://www.hyperframes.dev/design/blockframe\">BlockFrame</a></b>\n    </td>\n  </tr>\n  <tr>\n    <td width=\"50%\" align=\"center\">\n      <a href=\"https://www.hyperframes.dev/design/blue-professional\"><img src=\"https://static.heygen.ai/hyperframes-oss/docs/images/design-templates/blue-professional.png\" alt=\"Blue Professional\" width=\"100%\"></a>\n      <br><b><a href=\"https://www.hyperframes.dev/design/blue-professional\">Blue Professional</a></b>\n    </td>\n    <td width=\"50%\" align=\"center\">\n      <a href=\"https://www.hyperframes.dev/design/bold-poster\"><img src=\"https://static.heygen.ai/hyperframes-oss/docs/images/design-templates/bold-poster.png\" alt=\"Bold Poster\" width=\"100%\"></a>\n      <br><b><a href=\"https://www.hyperframes.dev/design/bold-poster\">Bold Poster</a></b>\n    </td>\n  </tr>\n  <tr>\n    <td width=\"50%\" align=\"center\">\n      <a href=\"https://www.hyperframes.dev/design/broadside\"><img src=\"https://static.heygen.ai/hyperframes-oss/docs/images/design-templates/broadside.png\" alt=\"Broadside\" width=\"100%\"></a>\n      <br><b><a href=\"https://www.hyperframes.dev/design/broadside\">Broadside</a></b>\n    </td>\n    <td width=\"50%\" align=\"center\">\n      <a href=\"https://www.hyperframes.dev/design/capsule\"><img src=\"https://static.heygen.ai/hyperframes-oss/docs/images/design-templates/capsule.png\" alt=\"Capsule\" width=\"100%\"></a>\n      <br><b><a href=\"https://www.hyperframes.dev/design/capsule\">Capsule</a></b>\n    </td>\n  </tr>\n  <tr>\n    <td width=\"50%\" align=\"center\">\n      <a href=\"https://www.hyperframes.dev/design/cartesian\"><img src=\"https://static.heygen.ai/hyperframes-oss/docs/images/design-templates/cartesian.png\" alt=\"Cartesian\" width=\"100%\"></a>\n      <br><b><a href=\"https://www.hyperframes.dev/design/cartesian\">Cartesian</a></b>\n    </td>\n    <td width=\"50%\" align=\"center\">\n      <a href=\"https://www.hyperframes.dev/design/cobalt-grid\"><img src=\"https://static.heygen.ai/hyperframes-oss/docs/images/design-templates/cobalt-grid.png\" alt=\"Cobalt Grid\" width=\"100%\"></a>\n      <br><b><a href=\"https://www.hyperframes.dev/design/cobalt-grid\">Cobalt Grid</a></b>\n    </td>\n  </tr>\n  <tr>\n"
+     }
+    ],
+    "is_error": false,
+    "attachments": [],
+    "processed_at": "2026-10-09T10:14:01.220Z",
+    "seq": 1947123
+   }
+  },
+  {
+   "event": "agent.tool_result",
+   "data": {
+    "type": "agent.tool_result",
+    "id": "evt_22178d5f707c43c7",
+    "tool_use_id": "call_eHtfsT55KTDuLlSgCRcosThb",
+    "content": [
+     {
+      "type": "text",
+      "text": "exit_code: 0\n\nstdout:\n{\n    \"programs\": [\n\n    ],\n    \"stream_groups\": [\n\n    ],\n    \"streams\": [\n        {\n            \"codec_type\": \"video\",\n            \"width\": 1280,\n            \"height\": 720\n        },\n        {\n            \"codec_type\": \"audio\"\n        }\n    ],\n    \"format\": {\n        \"duration\": \"981.948662\"\n    }\n}\n/opt/homebrew/bin/node\n/opt/homebrew/bin/npm\n/opt/homebrew/bin/ffmpeg\n/Users/logesh/garage/self/video-llm-tests/videos\n"
+     }
+    ],
+    "is_error": false,
+    "attachments": [],
+    "processed_at": "2026-10-09T10:14:01.235Z",
+    "seq": 1947124
+   }
+  },
+  {
+   "event": "agent.tool_result",
+   "data": {
+    "type": "agent.tool_result",
+    "id": "evt_f92b6c625d5f488d",
+    "tool_use_id": "call_NnbfXcgpCCYBM9higKlYXYcm",
+    "content": [
+     {
+      "type": "text",
+      "text": "Here is the clip of the video between 654 seconds and 691 seconds, carefully review and decide next actions"
+     }
+    ],
+    "is_error": false,
+    "attachments": [
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     }
+    ],
+    "processed_at": "2026-10-09T10:14:01.238Z",
+    "seq": 1947125
+   }
+  },
+  {
+   "event": "agent.tool_result",
+   "data": {
+    "type": "agent.tool_result",
+    "id": "evt_ecd57378f1994ac1",
+    "tool_use_id": "call_CTO0rJHOZiSg1em1hOinP1fE",
+    "content": [
+     {
+      "type": "text",
+      "text": "Here is the clip of the video between 170 seconds and 195 seconds, carefully review and decide next actions"
+     }
+    ],
+    "is_error": false,
+    "attachments": [
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     }
+    ],
+    "processed_at": "2026-10-09T10:14:01.838Z",
+    "seq": 1947126
+   }
+  },
+  {
+   "event": "agent.tool_result",
+   "data": {
+    "type": "agent.tool_result",
+    "id": "evt_9ce17393f4bd41ad",
+    "tool_use_id": "call_O4qsCf4amadcOsJGyspmvVzy",
+    "content": [
+     {
+      "type": "text",
+      "text": "Here is the clip of the video between 605 seconds and 637 seconds, carefully review and decide next actions"
+     }
+    ],
+    "is_error": false,
+    "attachments": [
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     }
+    ],
+    "processed_at": "2026-10-09T10:14:02.215Z",
+    "seq": 1947127
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_e5394020912d40a6",
+    "reasoning": "**Evaluating project tools**\n\nI",
+    "processed_at": "2026-10-09T10:14:25.785Z",
+    "seq": 1947129
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_304b498a17fb4e0b",
+    "reasoning": " need",
+    "processed_at": "2026-10-09T10:14:25.803Z",
+    "seq": 1947130
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_c3cc96e0836f4cdd",
+    "reasoning": " some",
+    "processed_at": "2026-10-09T10:14:25.825Z",
+    "seq": 1947131
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_090ddba718314930",
+    "reasoning": " efficient",
+    "processed_at": "2026-10-09T10:14:25.828Z",
+    "seq": 1947132
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_a8765e15cb7748a4",
+    "reasoning": " outputs",
+    "processed_at": "2026-10-09T10:14:25.832Z",
+    "seq": 1947133
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_78e46ab875644517",
+    "reasoning": " from",
+    "processed_at": "2026-10-09T10:14:25.836Z",
+    "seq": 1947134
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_e621a34c2a6040b2",
+    "reasoning": " the",
+    "processed_at": "2026-10-09T10:14:25.842Z",
+    "seq": 1947135
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_061bb859f34442df",
+    "reasoning": " tools",
+    "processed_at": "2026-10-09T10:14:25.844Z",
+    "seq": 1947136
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_44bfc45b28e247b7",
+    "reasoning": ".",
+    "processed_at": "2026-10-09T10:14:26.053Z",
+    "seq": 1947137
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_f3543992b6ab4088",
+    "reasoning": " I",
+    "processed_at": "2026-10-09T10:14:26.057Z",
+    "seq": 1947138
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_9b6ae4e062554514",
+    "reasoning": "\u2019m",
+    "processed_at": "2026-10-09T10:14:26.060Z",
+    "seq": 1947139
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_ba658b3dc66946cc",
+    "reasoning": " considering",
+    "processed_at": "2026-10-09T10:14:26.061Z",
+    "seq": 1947140
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_9539714ead9d4242",
+    "reasoning": " cloning",
+    "processed_at": "2026-10-09T10:14:26.063Z",
+    "seq": 1947141
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_09420b5bff1a4762",
+    "reasoning": " the",
+    "processed_at": "2026-10-09T10:14:26.067Z",
+    "seq": 1947142
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_13d98b82257e4522",
+    "reasoning": " repo",
+    "processed_at": "2026-10-09T10:14:26.071Z",
+    "seq": 1947143
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_190689e3055e4821",
+    "reasoning": " shallow",
+    "processed_at": "2026-10-09T10:14:26.073Z",
+    "seq": 1947144
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_f56b87eec1364ade",
+    "reasoning": "ly",
+    "processed_at": "2026-10-09T10:14:26.076Z",
+    "seq": 1947145
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_da8f239831bf45e5",
+    "reasoning": " for",
+    "processed_at": "2026-10-09T10:14:26.077Z",
+    "seq": 1947146
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_7e076d0f3b4f49e9",
+    "reasoning": " my",
+    "processed_at": "2026-10-09T10:14:26.079Z",
+    "seq": 1947147
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_6868232e1fbe4b42",
+    "reasoning": " project",
+    "processed_at": "2026-10-09T10:14:26.082Z",
+    "seq": 1947148
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_b81a3b9920c248ce",
+    "reasoning": " and",
+    "processed_at": "2026-10-09T10:14:26.085Z",
+    "seq": 1947149
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_5c47f28f88e54cd2",
+    "reasoning": " running",
+    "processed_at": "2026-10-09T10:14:26.088Z",
+    "seq": 1947150
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_5ab02dc09409476d",
+    "reasoning": " npm",
+    "processed_at": "2026-10-09T10:14:26.090Z",
+    "seq": 1947151
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_760520b563f94630",
+    "reasoning": " install",
+    "processed_at": "2026-10-09T10:14:26.092Z",
+    "seq": 1947152
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_f0ca076080774aa4",
+    "reasoning": ".",
+    "processed_at": "2026-10-09T10:14:26.093Z",
+    "seq": 1947153
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_0f02f323114d44ed",
+    "reasoning": " I",
+    "processed_at": "2026-10-09T10:14:26.096Z",
+    "seq": 1947154
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_ffac21d61224405d",
+    "reasoning": " might",
+    "processed_at": "2026-10-09T10:14:26.099Z",
+    "seq": 1947155
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_e48d672c45054ad3",
+    "reasoning": " choose",
+    "processed_at": "2026-10-09T10:14:26.101Z",
+    "seq": 1947156
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_69da57db7b1c4c86",
+    "reasoning": " the",
+    "processed_at": "2026-10-09T10:14:26.104Z",
+    "seq": 1947157
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_ef1c633d553644e0",
+    "reasoning": " visual",
+    "processed_at": "2026-10-09T10:14:26.106Z",
+    "seq": 1947158
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_055437ae8efc457c",
+    "reasoning": " montage",
+    "processed_at": "2026-10-09T10:14:26.108Z",
+    "seq": 1947159
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_8ce89294e86d447f",
+    "reasoning": ",",
+    "processed_at": "2026-10-09T10:14:26.110Z",
+    "seq": 1947160
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_dd3ccc22b9fb4c0c",
+    "reasoning": " but",
+    "processed_at": "2026-10-09T10:14:26.112Z",
+    "seq": 1947161
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_83482fb38be44002",
+    "reasoning": " I",
+    "processed_at": "2026-10-09T10:14:26.115Z",
+    "seq": 1947162
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_279f99b25a2247db",
+    "reasoning": " have",
+    "processed_at": "2026-10-09T10:14:26.118Z",
+    "seq": 1947163
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_79a346de71164fd9",
+    "reasoning": " to",
+    "processed_at": "2026-10-09T10:14:26.121Z",
+    "seq": 1947164
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_88e6af7434e543e6",
+    "reasoning": " figure",
+    "processed_at": "2026-10-09T10:14:26.124Z",
+    "seq": 1947165
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_923c1aaf79394f32",
+    "reasoning": " out",
+    "processed_at": "2026-10-09T10:14:26.126Z",
+    "seq": 1947166
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_15b12fdf3a8345c9",
+    "reasoning": " the",
+    "processed_at": "2026-10-09T10:14:26.130Z",
+    "seq": 1947167
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_1291fbd59c094644",
+    "reasoning": " original",
+    "processed_at": "2026-10-09T10:14:26.134Z",
+    "seq": 1947168
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_6602b48b09e84382",
+    "reasoning": " speech",
+    "processed_at": "2026-10-09T10:14:26.138Z",
+    "seq": 1947169
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_f87341d320ac4968",
+    "reasoning": " since",
+    "processed_at": "2026-10-09T10:14:26.144Z",
+    "seq": 1947170
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_40624a979ddc4c93",
+    "reasoning": " it",
+    "processed_at": "2026-10-09T10:14:26.151Z",
+    "seq": 1947171
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_35670c5964564860",
+    "reasoning": " feels",
+    "processed_at": "2026-10-09T10:14:26.163Z",
+    "seq": 1947172
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_dacc16c8013a422e",
+    "reasoning": " dis",
+    "processed_at": "2026-10-09T10:14:26.170Z",
+    "seq": 1947173
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_6ec9b2a032a8406b",
+    "reasoning": "joint",
+    "processed_at": "2026-10-09T10:14:26.175Z",
+    "seq": 1947174
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_1d862abfab1d4080",
+    "reasoning": "ed",
+    "processed_at": "2026-10-09T10:14:26.177Z",
+    "seq": 1947175
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_3e2fc2be549245b9",
+    "reasoning": " without",
+    "processed_at": "2026-10-09T10:14:26.181Z",
+    "seq": 1947176
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_e641b281da49419f",
+    "reasoning": " a",
+    "processed_at": "2026-10-09T10:14:26.182Z",
+    "seq": 1947177
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_66abe99f047c47d0",
+    "reasoning": " transcript",
+    "processed_at": "2026-10-09T10:14:26.186Z",
+    "seq": 1947178
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_ba822483951e4687",
+    "reasoning": ".",
+    "processed_at": "2026-10-09T10:14:26.346Z",
+    "seq": 1947179
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_8a4869ddeb1b46d1",
+    "reasoning": " Maybe",
+    "processed_at": "2026-10-09T10:14:26.356Z",
+    "seq": 1947180
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_eaae7d31c5ab42d5",
+    "reasoning": " using",
+    "processed_at": "2026-10-09T10:14:26.359Z",
+    "seq": 1947181
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_1905079a8bc14fa3",
+    "reasoning": " music",
+    "processed_at": "2026-10-09T10:14:26.361Z",
+    "seq": 1947182
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_d61f409066014ebd",
+    "reasoning": "-only",
+    "processed_at": "2026-10-09T10:14:26.363Z",
+    "seq": 1947183
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_442d2e99ba434e0a",
+    "reasoning": " designed",
+    "processed_at": "2026-10-09T10:14:26.365Z",
+    "seq": 1947184
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_76c82308cd8f4109",
+    "reasoning": " captions",
+    "processed_at": "2026-10-09T10:14:26.367Z",
+    "seq": 1947185
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_e3e19b906706482f",
+    "reasoning": " with",
+    "processed_at": "2026-10-09T10:14:26.369Z",
+    "seq": 1947186
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_0c997b4bb7554dcf",
+    "reasoning": " highlights",
+    "processed_at": "2026-10-09T10:14:26.371Z",
+    "seq": 1947187
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_1ef29781570e4476",
+    "reasoning": " instead",
+    "processed_at": "2026-10-09T10:14:26.373Z",
+    "seq": 1947188
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_9afaeed7d82d4005",
+    "reasoning": " of",
+    "processed_at": "2026-10-09T10:14:26.374Z",
+    "seq": 1947189
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_d017bca4a21a49c5",
+    "reasoning": " speech",
+    "processed_at": "2026-10-09T10:14:26.377Z",
+    "seq": 1947190
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_c27e2094d8ec468a",
+    "reasoning": " could",
+    "processed_at": "2026-10-09T10:14:26.380Z",
+    "seq": 1947191
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_7df61b79357e42d2",
+    "reasoning": " work",
+    "processed_at": "2026-10-09T10:14:26.383Z",
+    "seq": 1947192
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_be23d7ab954745b2",
+    "reasoning": " better",
+    "processed_at": "2026-10-09T10:14:26.385Z",
+    "seq": 1947193
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_755ac70bd3de4513",
+    "reasoning": ".",
+    "processed_at": "2026-10-09T10:14:26.389Z",
+    "seq": 1947194
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_9aad245d917342e6",
+    "reasoning": " I",
+    "processed_at": "2026-10-09T10:14:26.393Z",
+    "seq": 1947195
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_0b8d073a09944bae",
+    "reasoning": " need",
+    "processed_at": "2026-10-09T10:14:26.400Z",
+    "seq": 1947196
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_81cfbccbcf8d4da6",
+    "reasoning": " to",
+    "processed_at": "2026-10-09T10:14:26.403Z",
+    "seq": 1947197
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_fae9200f7551431d",
+    "reasoning": " ensure",
+    "processed_at": "2026-10-09T10:14:26.405Z",
+    "seq": 1947198
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_5308bfe7078b4041",
+    "reasoning": " the",
+    "processed_at": "2026-10-09T10:14:26.407Z",
+    "seq": 1947199
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_7f83b403f79d4a44",
+    "reasoning": " final",
+    "processed_at": "2026-10-09T10:14:26.409Z",
+    "seq": 1947200
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_4ea689c6cc9a45ea",
+    "reasoning": " product",
+    "processed_at": "2026-10-09T10:14:26.411Z",
+    "seq": 1947201
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_8055752e71004d3f",
+    "reasoning": " is",
+    "processed_at": "2026-10-09T10:14:26.412Z",
+    "seq": 1947202
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_97f1ea7b30344c66",
+    "reasoning": " polished",
+    "processed_at": "2026-10-09T10:14:26.414Z",
+    "seq": 1947203
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_47bebf367b3e4525",
+    "reasoning": " and",
+    "processed_at": "2026-10-09T10:14:26.416Z",
+    "seq": 1947204
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_b267769eba71441c",
+    "reasoning": " let",
+    "processed_at": "2026-10-09T10:14:26.418Z",
+    "seq": 1947205
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_0a082bc918714502",
+    "reasoning": "\u2019s",
+    "processed_at": "2026-10-09T10:14:26.420Z",
+    "seq": 1947206
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_8ea265ee7d514b3d",
+    "reasoning": " not",
+    "processed_at": "2026-10-09T10:14:26.437Z",
+    "seq": 1947207
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_9652f797530a4bd3",
+    "reasoning": " forget",
+    "processed_at": "2026-10-09T10:14:26.441Z",
+    "seq": 1947208
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_6adc965acbb542b2",
+    "reasoning": " parallel",
+    "processed_at": "2026-10-09T10:14:26.443Z",
+    "seq": 1947209
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_2d5b4d7ad1894583",
+    "reasoning": " fetching",
+    "processed_at": "2026-10-09T10:14:26.444Z",
+    "seq": 1947210
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_72ff0e7928754a5d",
+    "reasoning": " the",
+    "processed_at": "2026-10-09T10:14:26.463Z",
+    "seq": 1947211
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_74fbc35ea71b471c",
+    "reasoning": " necessary",
+    "processed_at": "2026-10-09T10:14:26.466Z",
+    "seq": 1947212
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_5175445779474f19",
+    "reasoning": " documentation",
+    "processed_at": "2026-10-09T10:14:26.469Z",
+    "seq": 1947213
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_c489bbf07fde4eb4",
+    "reasoning": " and",
+    "processed_at": "2026-10-09T10:14:26.470Z",
+    "seq": 1947214
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_6183e42bf0e04c05",
+    "reasoning": " source",
+    "processed_at": "2026-10-09T10:14:26.796Z",
+    "seq": 1947215
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_bdf0a31040ae4ede",
+    "reasoning": " clips",
+    "processed_at": "2026-10-09T10:14:26.801Z",
+    "seq": 1947216
+   }
+  },
+  {
+   "event": "agent.reasoning.delta",
+   "data": {
+    "type": "agent.reasoning.delta",
+    "id": "evt_941eed068586489e",
+    "reasoning": "!",
+    "processed_at": "2026-10-09T10:14:26.807Z",
+    "seq": 1947217
+   }
+  },
+  {
+   "event": "span.model_request_end",
+   "data": {
+    "type": "span.model_request_end",
+    "id": "evt_16954da80631482f",
+    "model_request_start_id": "run_6753b9e0c894",
+    "is_error": false,
+    "model_usage": {
+     "input_tokens": 123895,
+     "output_tokens": 446,
+     "cache_read_input_tokens": 43439,
+     "cache_creation_input_tokens": 80453
+    },
+    "source": "agent",
+    "model": "openai/gpt-6.1-sol",
+    "cost": 0.2099424,
+    "processed_at": "2026-10-09T10:14:30.964Z",
+    "seq": 1947230
+   }
+  },
+  {
+   "event": "agent.thinking",
+   "data": {
+    "type": "agent.thinking",
+    "id": "evt_caa280d5e24d44ea",
+    "content": [
+     {
+      "type": "text",
+      "text": "**Evaluating project tools**\n\nI need some efficient outputs from the tools. I\u2019m considering cloning the repo shallowly for my project and running npm install. I might choose the visual montage, but I have to figure out the original speech since it feels disjointed without a transcript. Maybe using music-only designed captions with highlights instead of speech could work better. I need to ensure the final product is polished and let\u2019s not forget parallel fetching the necessary documentation and source clips!"
+     }
+    ],
+    "processed_at": "2026-10-09T10:14:30.968Z",
+    "seq": 1947231
+   }
+  },
+  {
+   "event": "agent.tool_use",
+   "data": {
+    "type": "agent.tool_use",
+    "id": "call_cdK1S4IQxA7HuCqtDPbcJpWR",
+    "name": "bash",
+    "input": {
+     "command": "mkdir -p /tmp/canva-hyperframes; cd /tmp/canva-hyperframes; npm init -y >/dev/null; npm install hyperframes gsap >install.log 2>&1; npx hyperframes --help; curl -Ls https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/hyperframes-core/SKILL.md >core.md; curl -Ls https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/hyperframes-cli/SKILL.md >cli.md; head -100 core.md",
+     "timeout": 200
+    },
+    "processed_at": "2026-10-09T10:14:30.974Z",
+    "seq": 1947233
+   }
+  },
+  {
+   "event": "agent.tool_use",
+   "data": {
+    "type": "agent.tool_use",
+    "id": "call_VnRa6zLgETNe5DRVzo2kx1kP",
+    "name": "focus_clip",
+    "input": {
+     "end_time": 158,
+     "video_id": "vid_f2c1386d8b046f54",
+     "start_time": 145,
+     "video_path": null
+    },
+    "processed_at": "2026-10-09T10:14:30.974Z",
+    "seq": 1947234
+   }
+  },
+  {
+   "event": "agent.tool_use",
+   "data": {
+    "type": "agent.tool_use",
+    "id": "call_56xZ5USelIii2vruzChhVnxC",
+    "name": "focus_clip",
+    "input": {
+     "end_time": 966,
+     "video_id": "vid_f2c1386d8b046f54",
+     "start_time": 957,
+     "video_path": null
+    },
+    "processed_at": "2026-10-09T10:14:30.974Z",
+    "seq": 1947236
+   }
+  },
+  {
+   "event": "agent.tool_result",
+   "data": {
+    "type": "agent.tool_result",
+    "id": "evt_7df4c69289cf40d0",
+    "tool_use_id": "call_cdK1S4IQxA7HuCqtDPbcJpWR",
+    "content": [
+     {
+      "type": "text",
+      "text": "exit_code: 0\n\nstdout:\nhyperframes v0.8.143 \u2014 Create and render HTML video compositions\n\nUsage:  hyperframes <command> [options]\n\nGetting Started:\n  init               Scaffold a new composition project\n  add                Install a block or component from the registry\n  capture            Capture a website for video production\n  catalog            Browse and install blocks and components\n  preview            Start the studio for previewing compositions\n  present            Open a slideshow deck in presenter mode (with audience sync)\n  publish            Upload a project to a stable URL (private by default)\n  render             Render a composition to MP4 or WebM\n  open               Open a project in the HyperFrames desktop app\n  catch-up           See what was done in the desktop app since you last looked\n\nProject:\n  lint               Validate a composition for common mistakes\n  check              Run lint, runtime validation, and layout inspection as one gate\n  validate           Runtime-validate a composition in headless Chrome (JS errors, missing assets, contrast)\n  beats              Detect beats in the music track and write beats/<audio>.json\n  inspect            Inspect rendered visual layout across the timeline\n  keyframes          Inspect keyframes and render onion-shot diagnostics\n  snapshot           Capture key frames as PNG screenshots for visual verification\n  media-treatment    Discover, apply, or clear deterministic media treatments on one media element\n  normalize-audio    Match one authored audio clip's loudness to another using integrated LUFS\n  grade-compare      Render candidate color grades onto a reference frame as one labeled comparison PNG\n  compare            Render composition variants into one labeled comparison sheet\n  info               Print project metadata\n  compositions       List all compositions in a project\n  timeline           Print the project's tracks and clips\n  history            List, undo and restore the project's recorded changes\n  docs               View inline documentation in the terminal\n\nTooling:\n  benchmark          Render with preset fps/quality/worker configs and compare speed and file size\n  browser            Manage the Chrome browser used for rendering\n  doctor             Check system dependencies and environment\n  clean              Find and remove what HyperFrames left on disk\n  upgrade            Check for updates and show upgrade instructions\n\nDeploy:\n  cloud              Render compositions on HeyGen's cloud (no local Chrome/ffmpeg)\n  lambda             Deploy and drive distributed renders on AWS Lambda\n  cloudrun           Deploy and drive distributed renders on Google Cloud Run\n\nAI & Integrations:\n  skills             Install HyperFrames and GSAP skills for AI coding tools\n  transcribe         Transcribe audio/video to word-level timestamps, or import an existing transcript\n  models             Download on-device models (models install parakeet)\n  tts                Generate speech audio from text using a local AI model (Kokoro-82M)\n  remove-background  Remove background from a video or image to produce transparent media\n\nAccount:\n  auth               Sign in to HeyGen and manage credentials\n\nSettings:\n  feedback           Submit anonymous feedback about your experience\n  telemetry          Manage anonymous usage telemetry\n\nExamples:\n  $ hyperframes init my-video                      Create a new project\n  $ hyperframes preview                            Start the live preview studio\n  $ hyperframes publish                            Publish to hyperframes.dev\n  $ hyperframes render -o out.mp4                  Render to MP4\n  $ hyperframes render --format webm -o out.webm   Transparent WebM overlay\n  $ hyperframes lint                               Validate your composition\n  $ hyperframes inspect                            Inspect visual layout\n  $ hyperframes doctor                             Check system dependencies\n\nRun hyperframes <command> --help for more information about a command.\n\n---\nname: hyperframes-core\ndescription: The HyperFrames composition contract \u2014 build one renderable project. Use for composition structure, the `data-*` timing attributes, `class=\"clip\"`, tracks, sub-compositions, variables, framework-owned media playback, deterministic-render rules, and validation. Read before writing composition HTML.\n---\n\n**Plugin installs:** Before setup or freshness commands, follow [plugin execution rules](../hyperframes/references/plugin-installation.md) when this skill is inside a HyperFrames plugin. Standalone installs keep the update instructions below.\n\n# HyperFrames Core\n\n**Agent pitfalls (read first):**\n\n- Center with flex/`inset`, not CSS `transform: translate(-50%,-50%)` on a node you then GSAP `x`/`y`. Lint: `gsap_css_transform_conflict`. Use `fromTo` or `xPercent`/`yPercent`.\n- Do not add a scene-exit `tl.set(..., {visibility:\"hidden\"})`. The runtime already hides timed clips. Opacity fades on inner nodes (or `opacity` on `.clip`) are enough. Caption hard-kills are a different rule.\n- `window.__timelines[\"id\"]` must match the root `data-composition-id`.\n- After `render`, read the summary's second line: `beginframe` vs `screenshot`, GPU mode, stage timings. `screenshot` + `software gpu` on Linux is the slow path.\n\nHyperFrames renders video from HTML. A composition is an HTML file whose DOM declares timing with `data-*` attributes, whose animation runtime is seekable, and whose media playback is owned by the framework.\n\nThis skill is the **technical contract** \u2014 how to build one hyperframes project. The body below is the build guide; per-topic detail lives in `references/` (index next), read on demand. Process docs (brief, storyboard, review, production, dispatch, frame-worker) live in `/hyperframes` \u2192 `references/`. Other concerns live in the sibling domain skills \u2014 `hyperframes-animation`, `hyperframes-creative`, `media-use`, `hyperframes-cli`, `hyperframes-registry`. The capability map in `/hyperframes` says what each one covers.\n\n## References\n\n| File                                    | Read it to\u2026                                                                                                                                                         |\n| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |\n| `references/minimal-composition.md`     | start from the smallest renderable composition skeleton                                                                                                             |\n| `references/composition-patterns.md`    | choose monolithic vs modular; structure a modular `index.html`; pick a sub-comp archetype                                                                           |\n| `references/data-attributes.md`         | look up any `data-*` (root / clip / sub-comp host / legacy aliases); use `class=\"clip\"`                                                                             |\n| `references/tracks-and-clips.md`        | understand what `data-track-index` does (and does not) control, z-index, time a clip relative to another; list every track and clip with `npx hyperframes timeline` |\n| `references/creator-editing-recipes.md` | copy truthful cut/trim/reorder/retime/freeze/camera/mask/crossfade/audio editing recipes and their limits                                                           |\n| `references/sub-compositions.md`        | wire a sub-composition (host attrs, `<template>`, per-instance vars) and animate inside it                                                                          |\n| `references/variables-and-media.md`     | declare variables; place `<video>`/`<audio>`, set volume, trim                                                                                                      |\n| `references/determinism-rules.md`       | build a seekable timeline; determinism bans; layout / text fit                                                                                                      |\n| `references/full-screen-motion.md`      | author full-frame motion with shared backgrounds                                                                                                                    |\n| `references/tailwind.md`                | work in a Tailwind v4 project (`init --tailwind`; runtime contract differs from Studio's v3)                                                                        |\n\nFor animation runtime specifics (GSAP API, Lottie, Three.js, etc.) go to `hyperframes-animation` \u2192 `adapters/<runtime>.md`.\n\n## Building a composition\n\n### Two root forms (not interchangeable)\n\n- **Standalone** (top-level `index.html`): root `<div data-composition-id=\"\u2026\">` sits directly in `<body>`, **no `<template>` wrapper**. Wrapping a standalone root hides all content and `lint` rejects it (`standalone_composition_wrapped_in_template`, error).\n- **Sub-composition** (loaded via `data-composition-src`): wrap the root in `<template>`. This is the shape to write: the loader also accepts a plain full document and falls back to its `<body>`, but the templated form is what the examples and tooling assume.\n\n> \u26a0 Transport rule: for a **templated** sub-composition the assembler drops the file's own `<head>` `<style>`/`<script>` (`packages/core/src/compiler/compositionAssembly.ts`, the `hasTemplate` gate), so put `<style>`/`<script>` **inside** the template. `<link>` is hoisted either way.\n> \u26a0 Host-id convention: give the host slot, the inner template, and the `window.__timelines[\"<id>\"]` key the **same** id. A different local id is supported (the assembler falls back to the first root in the file) but the mismatch is silent, so match them unless you have a reason not to.\n\nFile shape, host wiring, and the pre-render checklist \u2192 `references/sub-compositions.md`.\n\n### Root must be sized (silent layout bug)\n\nThe standalone root authors `width`/`height: 100%`. Canvas size is `data-width`/`data-height`. The runtime stamps those pixels onto the composition root. Do not hardcode `1920px`/`1080px` on `#root`. Skeleton \u2192 `references/minimal-composition.md`.\n\n### One paused timeline\n\nEach composition registers **exactly one** `gsap.timeline({ paused: true })` at `window.__timelines[\"<id>\"]` (key = root `data-composition-id`). Building it inside an async callback (`document.fonts.ready`) is supported; what matters is that you **register only after the build completes**. Render length is the root's `data-duration`, **not** the timeline's length: a timeline that runs past it is cut off, and one that ends early holds its last frame. Omit the root `data-duration` and the length is inferred instead (timeline, media window, or adapter). You do not need `window.__timelines = window.__timelines || {}`: the runtime creates the registry before your inline scripts run, and `lint` no longer asks for it. Don't manually nest sub-timelines into the host; the runtime auto-nests registered child timelines. Full contract (incl. non-GSAP runtimes) \u2192 `references/determinism-rules.md` + `hyperframes-animation/adapters/`.\n\n### First-pass lint gotchas (a guaranteed first build failure)\n\nRules that `lint` **does** catch, but only after the fact. Write them right the first time:\n\n- Never pair a CSS initial `transform` with a GSAP tween on the **same** property \u2014 the CSS value and the tween's start fight and `lint` rejects it with `gsap_css_transform_conflict`. Set the initial state inside the tween with `gsap.fromTo(el, { x: -40 }, { x: 0 })` instead of a CSS `transform: translateX(-40px)`.\n- Never put `crossorigin` on `<video>`/`<audio>`. `lint` rejects it unconditionally with `media_crossorigin_breaks_preview` (error), including for canvas/WebGL/WebAudio readback. There is no suppression.\n- Never give a `<video data-start>` an ancestor that also carries `data-start`. `lint` rejects it with `video_nested_in_timed_element` (error). Time the wrapper **or** the video, not both.\n- Every `<audio>` needs an `id`. `lint` rejects it with `media_missing_id`, and an id-less `<audio>` is never picked up by the mixer, so the render is **silent**.\n- Never tween a `.clip` with `autoAlpha` or `visibility` \u2014 `lint` rejects it with `gsap_animates_clip_element`. Animate a child instead.\n- A named CSS `font-family` needs an in-file `@font-face` to a shipped local file, or `lint` fires `font_family_without_font_face`.\n- Sub-composition `#root` uses `width`/`height: 100%` (or `inset: 0`), not hardcoded `1920px`/`1080px`. Canvas size is `data-width`/`data-height`.\n\nA lint **error** also switches off the layout and contrast audits: `check` then reports `0 sample(s)` and `0/0 text checks`, which reads like a clean file but means nothing ran. Clear lint errors before you trust those numbers.\n\n### Non-negotiable rules (silent bugs automated gates may miss)\n\nSurfaced here; full rationale in the linked reference. Do not violate:\n\n- No render-time clocks / unseeded `Math.random` / network / input-state; `repeat: -1` only under a finite root `data-duration` (export clips to it \u2014 otherwise use a finite count). \u2192 `determinism-rules.md`\n- Never tween `display`, `visibility`, or `autoAlpha` on a `.clip` element. The framework owns clip visibility, and `lint` rejects it (`gsap_animates_clip_element`). Animate a child instead. \u2192 `determinism-rules.md`\n- No `<br>` in body text; transformed elements must be block-level + sized; pulsing absolute decoratives need peak clearance. \u2192 `determinism-rules.md`\n- `<video>`/`<audio>` are found by a flat document query, so the framework seeks and decodes them at **any nesting depth** (including inside a sub-comp `<template>` or wrapper). One hard limit: `lint` errors if a `<video data-start>` sits inside another **plain** element that also has `data-start`, and the failure is real (wrong source frames, then the clip vanishes mid-slot), so put the timing on the wrapper or on the video, never both. Sub-composition hosts are exempt: media inside a sub-composition renders correctly. The other caveat is timelines, not placement: a sub-comp timeline can't animate host-root elements. \u2192 `variables-and-media.md`\n- Keep every `id` unique across the **assembled** page (prefix sub-comp ids with the composition id, `#<id>-hero`) so your own `#id` CSS and `getElementById` calls resolve. Frame injection no longer depends on it: the compiler stamps a document-unique `data-hf-render-id` on every `video[src]`/`audio[src]`/`img[src]`. Media that uses `<source>` children instead of a `src` attribute is **not** stamped, so unique ids still matter there. \u2192 `composition-patterns.md`\n- A full-screen fill on the composition **root** is fine on a normal render. It is dropped only on the layered-composite path (HDR content, or a composition using shader transitions), where the engine forces every composition root transparent so the layer beneath shows through. If your composition uses shader transitions or HDR media, put the fill on a full-bleed **child** (`position:absolute; inset:0`). \u2192 `composition-patterns.md`\n\n## Editing existing compositions\n\n- Read the files first. Preserve unrelated timing, tracks, IDs, variables, media paths.\n- To know what is on a project's timeline (tracks, clips, starts, ends, what plays), run `npx hyperframes timeline [--json]` instead of reading `index.html` and every sub-composition file.\n- Match existing composition IDs and timeline keys.\n- Adding a clip: set its `data-start`/`data-duration` intentionally against the clips around it. `data-track-index` is a Studio display lane, not a timing constraint, so it does not need to be free.\n- A clip that ends past the root `data-duration` is cut off: extend the root `data-duration` to the clip's end in the same edit (`lint` warns `clip_ends_past_root_duration`).\n- `data-hidden` on any composition element hides it in BOTH preview and render, overriding its time window; it is non-destructive/reversible and toggled by Studio's timeline eye icon.\n- Adding a sub-composition: verify its internal `data-composition-id` before wiring the host.\n\n## Validation\n\nUse `hyperframes-cli` for command details\n\n- [ ] `npx hyperframes check` passes (0 findings across lint, runtime, layout, motion, and contrast)\n- [ ] Projects with sub-compositions: `npx hyperframes snapshot --at <midpoints>` and eyeball each frame\n- [ ] `npx hyperframes preview --background` for review (the user can edit anything in Studio's timeline, and the server survives the invoking command)\n- [ ] `npx hyperframes render` only after the user approves\n"
+     }
+    ],
+    "is_error": false,
+    "attachments": [],
+    "processed_at": "2026-10-09T10:14:48.144Z",
+    "seq": 1947239
+   }
+  },
+  {
+   "event": "agent.tool_result",
+   "data": {
+    "type": "agent.tool_result",
+    "id": "evt_2d9e212683fe40eb",
+    "tool_use_id": "call_VnRa6zLgETNe5DRVzo2kx1kP",
+    "content": [
+     {
+      "type": "text",
+      "text": "Here is the clip of the video between 145 seconds and 158 seconds, carefully review and decide next actions"
+     }
+    ],
+    "is_error": false,
+    "attachments": [
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     }
+    ],
+    "processed_at": "2026-10-09T10:14:48.176Z",
+    "seq": 1947240
+   }
+  },
+  {
+   "event": "agent.tool_result",
+   "data": {
+    "type": "agent.tool_result",
+    "id": "evt_1c0cfa7e7ba14d61",
+    "tool_use_id": "call_56xZ5USelIii2vruzChhVnxC",
+    "content": [
+     {
+      "type": "text",
+      "text": "Here is the clip of the video between 957 seconds and 966 seconds, carefully review and decide next actions"
+     }
+    ],
+    "is_error": false,
+    "attachments": [
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     },
+     {
+      "url": null,
+      "type": "image_url"
+     }
+    ],
+    "processed_at": "2026-10-09T10:14:48.339Z",
+    "seq": 1947241
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_39524fedb5ce46c3",
+    "content": [
+     {
+      "type": "text",
+      "text": "I"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.125Z",
+    "seq": 1947244
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_d7d581d359594a09",
+    "content": [
+     {
+      "type": "text",
+      "text": "\u2019ve"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.129Z",
+    "seq": 1947245
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_34dc37d4ca9a4423",
+    "content": [
+     {
+      "type": "text",
+      "text": " selected"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.133Z",
+    "seq": 1947246
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_4fb12a12467d46fb",
+    "content": [
+     {
+      "type": "text",
+      "text": " highlights"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.137Z",
+    "seq": 1947247
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_8b705c70f3cf4a28",
+    "content": [
+     {
+      "type": "text",
+      "text": " for"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.140Z",
+    "seq": 1947248
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_f10596c6149946fc",
+    "content": [
+     {
+      "type": "text",
+      "text": " templates"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.142Z",
+    "seq": 1947249
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_346586313d744b4c",
+    "content": [
+     {
+      "type": "text",
+      "text": ","
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.145Z",
+    "seq": 1947250
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_3936901cebd74d7c",
+    "content": [
+     {
+      "type": "text",
+      "text": " text"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.149Z",
+    "seq": 1947251
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_524b7ed3347d4e51",
+    "content": [
+     {
+      "type": "text",
+      "text": " editing"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.152Z",
+    "seq": 1947252
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_ab802ae1535f4752",
+    "content": [
+     {
+      "type": "text",
+      "text": ","
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.155Z",
+    "seq": 1947253
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_297e0388f9064930",
+    "content": [
+     {
+      "type": "text",
+      "text": " keyboard"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.157Z",
+    "seq": 1947254
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_92fdccd812044981",
+    "content": [
+     {
+      "type": "text",
+      "text": " shortcuts"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.160Z",
+    "seq": 1947255
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_2d6eca9a4a474067",
+    "content": [
+     {
+      "type": "text",
+      "text": ","
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.163Z",
+    "seq": 1947256
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_cd0435a443514ae1",
+    "content": [
+     {
+      "type": "text",
+      "text": " and"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.167Z",
+    "seq": 1947257
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_3dcc3b3194fd4822",
+    "content": [
+     {
+      "type": "text",
+      "text": " photo"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.169Z",
+    "seq": 1947258
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_6912bdb571c94831",
+    "content": [
+     {
+      "type": "text",
+      "text": " frames"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.171Z",
+    "seq": 1947259
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_be4ceea9a36249d6",
+    "content": [
+     {
+      "type": "text",
+      "text": "."
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.175Z",
+    "seq": 1947260
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_76c7b3ae467c44ee",
+    "content": [
+     {
+      "type": "text",
+      "text": " I"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.177Z",
+    "seq": 1947261
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_7c96967ada08486c",
+    "content": [
+     {
+      "type": "text",
+      "text": "\u2019m"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.180Z",
+    "seq": 1947262
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_ee202e3af10c4440",
+    "content": [
+     {
+      "type": "text",
+      "text": " arranging"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.184Z",
+    "seq": 1947263
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_232fa79f18394359",
+    "content": [
+     {
+      "type": "text",
+      "text": " them"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.188Z",
+    "seq": 1947264
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_cf0fe029e8944ffb",
+    "content": [
+     {
+      "type": "text",
+      "text": " in"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.192Z",
+    "seq": 1947265
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_d5b898c7db544734",
+    "content": [
+     {
+      "type": "text",
+      "text": " a"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.196Z",
+    "seq": 1947266
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_9c750e383da84ef1",
+    "content": [
+     {
+      "type": "text",
+      "text": " "
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.199Z",
+    "seq": 1947267
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_afd9adedcc9543c9",
+    "content": [
+     {
+      "type": "text",
+      "text": "9"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.204Z",
+    "seq": 1947268
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_cb0cf2888f274f2a",
+    "content": [
+     {
+      "type": "text",
+      "text": ":"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.209Z",
+    "seq": 1947269
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_94546fb0818a4118",
+    "content": [
+     {
+      "type": "text",
+      "text": "16"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.217Z",
+    "seq": 1947270
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_7ec192f732a8423e",
+    "content": [
+     {
+      "type": "text",
+      "text": " layout"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.227Z",
+    "seq": 1947271
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_19f37d520d9349b2",
+    "content": [
+     {
+      "type": "text",
+      "text": " with"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.230Z",
+    "seq": 1947272
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_a249c023bccf4ca8",
+    "content": [
+     {
+      "type": "text",
+      "text": " animated"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.284Z",
+    "seq": 1947273
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_6b85ca844c714c9e",
+    "content": [
+     {
+      "type": "text",
+      "text": " tip"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.290Z",
+    "seq": 1947274
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_ea0e04d8669541d3",
+    "content": [
+     {
+      "type": "text",
+      "text": " captions"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.293Z",
+    "seq": 1947275
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_1cf87ff65ff34a7e",
+    "content": [
+     {
+      "type": "text",
+      "text": " and"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.295Z",
+    "seq": 1947276
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_0e5de03007c94d35",
+    "content": [
+     {
+      "type": "text",
+      "text": " a"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.459Z",
+    "seq": 1947277
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_741f09342039408a",
+    "content": [
+     {
+      "type": "text",
+      "text": " music"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.464Z",
+    "seq": 1947278
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_da5f820a85c84830",
+    "content": [
+     {
+      "type": "text",
+      "text": " bed"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.466Z",
+    "seq": 1947279
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_d64b0d0a6e3941e2",
+    "content": [
+     {
+      "type": "text",
+      "text": ","
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.471Z",
+    "seq": 1947280
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_f308e50f8d414c4b",
+    "content": [
+     {
+      "type": "text",
+      "text": " so"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.473Z",
+    "seq": 1947281
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_e51884875a5c4835",
+    "content": [
+     {
+      "type": "text",
+      "text": " the"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.475Z",
+    "seq": 1947282
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_565e1c24fd3a411d",
+    "content": [
+     {
+      "type": "text",
+      "text": " reel"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.477Z",
+    "seq": 1947283
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_b21c34e8384f4872",
+    "content": [
+     {
+      "type": "text",
+      "text": " works"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.479Z",
+    "seq": 1947284
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_c051256da5664e7c",
+    "content": [
+     {
+      "type": "text",
+      "text": " with"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.751Z",
+    "seq": 1947285
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_afd561a0dfc74be6",
+    "content": [
+     {
+      "type": "text",
+      "text": " or"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.761Z",
+    "seq": 1947286
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_c23649b739f1425a",
+    "content": [
+     {
+      "type": "text",
+      "text": " without"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.769Z",
+    "seq": 1947287
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_b10bebe2cfdd4792",
+    "content": [
+     {
+      "type": "text",
+      "text": " sound"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.773Z",
+    "seq": 1947288
+   }
+  },
+  {
+   "event": "agent.message.delta",
+   "data": {
+    "type": "agent.message.delta",
+    "id": "evt_9c27cfe42032467e",
+    "content": [
+     {
+      "type": "text",
+      "text": ".\n"
+     }
+    ],
+    "processed_at": "2026-10-09T10:15:14.779Z",
+    "seq": 1947289
+   }
+  },
+  {
+   "event": "span.model_request_end",
+   "data": {
+    "type": "span.model_request_end",
+    "id": "evt_52e72b9773e44877",
+    "model_request_start_id": "run_6753b9e0c894",
+    "is_error": false,
+    "model_usage": {
+     "input_tokens": 145618,
+     "output_tokens": 312,
+     "cache_read_input_tokens": 123892,
+     "cache_creation_input_tokens": 21723
+    },
+    "source": "agent",
+    "model": "openai/gpt-6.1-sol",
+    "cost": 0.0698227,
+    "processed_at": "2026-10-09T10:15:18.189Z",
+    "seq": 1947391
+   }
+  },
+  {
+   "event": "agent.tool_use",
+   "data": {
+    "type": "agent.tool_use",
+    "id": "call_glKYaKSjUfjH5VCLZ351QtlB",
+    "name": "bash",
+    "input": {
+     "command": "cd /tmp/canva-hyperframes; npx hyperframes render --help; npx hyperframes snapshot --help; curl -Ls https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/hyperframes-core/references/minimal-composition.md; curl -Ls https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/hyperframes-core/references/variables-and-media.md | head -150",
+     "timeout": 40
+    },
+    "processed_at": "2026-10-09T10:15:18.197Z",
+    "seq": 1947393
+   }
+  },
+  {
+   "event": "agent.tool_result",
+   "data": {
+    "type": "agent.tool_result",
+    "id": "evt_54f08f4198b64bd3",
+    "tool_use_id": "call_glKYaKSjUfjH5VCLZ351QtlB",
+    "content": [
+     {
+      "type": "text",
+      "text": "exit_code: 0\n\nstdout:\n\u001b[90mRender a composition to MP4, WebM, MOV, GIF, HLS, or a PNG sequence (hyperframes render v0.8.143)\u001b[39m\n\n\u001b[4m\u001b[1mUSAGE\u001b[22m\u001b[24m \u001b[36mhyperframes render [OPTIONS] [DIR]\u001b[39m\n\n\u001b[4m\u001b[1mARGUMENTS\u001b[22m\u001b[24m\n\n  \u001b[36mDIR\u001b[39m    Project directory\n\n\u001b[4m\u001b[1mOPTIONS\u001b[22m\u001b[24m\n\n                    \u001b[36m-c, --composition=<composition>\u001b[39m    Render a specific composition file instead of index.html (e.g. compositions/intro.html). Sub-compositions using <template> wrappers must be referenced from index.html via data-composition-src. Pass `.` (or omit the flag) to render the project's index.html.                                                                                                                                                                                                                                                                                \n                              \u001b[36m-o, --output=<output>\u001b[39m    Output path (default: renders/<name>.mp4)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       \n                                    \u001b[36m-f, --fps=<fps>\u001b[39m    Frame rate. Accepts integer (24, 25, 30, 50, 60, 120, 240) or ffmpeg-style rational (30000/1001 for NTSC 29.97, 24000/1001 for 23.976, 60000/1001 for 59.94). Range 1-240. Defaults to the composition's root data-fps, else 30.                                                                                                                                                                                                                                                                                                                \n                            \u001b[36m-q, --quality=<quality>\u001b[39m    Quality: draft, looks, delivery, or standard/high. looks is the default (CRF 16). delivery is high. MOV always uses the fixed alpha-preserving ProRes 4444 profile. \u001b[90m(Default: looks)\u001b[39m                                                                                                                                                                                                                                                                                                                                                  \n                                    \u001b[36m--skill=<skill>\u001b[39m    Authoring workflow skill that initiated this render (e.g. product-launch-video). Recorded on anonymous render telemetry for per-skill usage breakdowns; ignored unless it is a slug.                                                                                                                                                                                                                                                                                                                                                            \n                                  \u001b[36m--format=<format>\u001b[39m    Output format: mp4, webm, mov, gif, png-sequence, hls (MOV/WebM render with transparency; png-sequence writes RGBA frames to a directory for AE/Nuke/Fusion ingest; gif is best at 15fps for PRs/docs; hls writes a VOD playlist directory \u2014 H.264/AAC, SDR only, no GPU encoding) \u001b[90m(Default: mp4)\u001b[39m                                                                                                                                                                                                                                     \n                              \u001b[36m--gif-loop=<gif_loop>\u001b[39m    GIF loop count, 0 = infinite. Range: 0-65535. Only used with --format gif.                                                                                                                                                                                                                                                                                                                                                                                                                                                                      \n        \u001b[36m--hls-segment-seconds=<hls_segment_seconds>\u001b[39m    HLS target segment length in whole seconds (default: 4). Range: 1-60. Also fixes the encoder GOP at segment x fps frames so every segment starts on a keyframe. Only used with --format hls.                                                                                                                                                                                                                                                                                                                                                    \n          \u001b[36m--video-frame-format=<video_frame_format>\u001b[39m    Source video frame extraction format: auto, jpg, png (default: auto). Use png for UI recordings, screen captures, and color-sensitive source videos; alpha-capable sources always extract as PNG. \u001b[90m(Default: auto)\u001b[39m                                                                                                                                                                                                                                                                                                                     \n                            \u001b[36m-w, --workers=<workers>\u001b[39m    Parallel render workers (number or 'auto'). Default: auto. Each worker launches a separate Chrome process (~256 MB RAM).                                                                                                                                                                                                                                                                                                                                                                                                                        \n                                           \u001b[36m--docker\u001b[39m    Use Docker for deterministic render \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  \n                                              \u001b[36m--hdr\u001b[39m    Force HDR output even if no HDR sources are detected \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                                 \n                                              \u001b[36m--sdr\u001b[39m    Force SDR output even if HDR sources are detected \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                                    \n                                        \u001b[36m--crf=<crf>\u001b[39m    Override MP4/WebM encoder CRF. Mutually exclusive with --video-bitrate; unsupported for MOV.                                                                                                                                                                                                                                                                                                                                                                                                                                                    \n                    \u001b[36m--video-bitrate=<video_bitrate>\u001b[39m    Target MP4/WebM video bitrate such as 10M. Mutually exclusive with --crf; unsupported for MOV.                                                                                                                                                                                                                                                                                                                                                                                                                                                  \n                      \u001b[36m--vp9-cpu-used=<vp9_cpu_used>\u001b[39m    libvpx-vp9 -cpu-used value for WebM encodes (-8 to 8). Higher is faster with a larger quality/size tradeoff. Env: PRODUCER_VP9_CPU_USED.                                                                                                                                                                                                                                                                                                                                                                                                        \n                                              \u001b[36m--gpu\u001b[39m    Use GPU encoding \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     \n                                      \u001b[36m--browser-gpu\u001b[39m    Force host GPU acceleration for Chrome/WebGL capture. Default: auto (probe on first launch; fall back to software if no GPU). Use --no-browser-gpu to force software (SwiftShader).                                                                                                                                                                                                                                                                                                                                                             \n                                            \u001b[36m--quiet\u001b[39m    Suppress verbose output \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              \n                                     \u001b[36m--lint-verbose\u001b[39m    Show full lint findings instead of the summary line \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                                  \n                                            \u001b[36m--debug\u001b[39m    Write full render diagnostics and keep intermediate artifacts under the producer .debug directory. \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                   \n                                      \u001b[36m--best-effort\u001b[39m    Allow output with structured capture-readiness warnings (default). Use --no-best-effort to fail on missing or unready media. \u001b[90m(Default: true)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                          \n                                   \u001b[36m--no-best-effort\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    \n                                           \u001b[36m--strict\u001b[39m    Fail render on lint errors \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           \n                                       \u001b[36m--strict-all\u001b[39m    Fail render on lint errors AND warnings \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                                              \n  \u001b[36m--max-concurrent-renders=<max_concurrent_renders>\u001b[39m    Max concurrent renders when using the producer server (1-10). Default: 2.                                                                                                                                                                                                                                                                                                                                                                                                                                                                       \n                            \u001b[36m--variables=<variables>\u001b[39m    JSON object of variable values, merged over the composition's data-composition-variables defaults. Example: --variables '{\"title\":\"Hello\"}'. Read inside the composition via window.__hyperframes.getVariables().                                                                                                                                                                                                                                                                                                                               \n                  \u001b[36m--variables-file=<variables_file>\u001b[39m    Path to a JSON file with variable values (alternative to --variables). The file must contain a single JSON object.                                                                                                                                                                                                                                                                                                                                                                                                                              \n                                 \u001b[36m--strict-variables\u001b[39m    Fail render if any --variables key is undeclared or has a wrong type vs the composition's data-composition-variables. Without this flag, mismatches are warnings. \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                    \n                                    \u001b[36m--batch=<batch>\u001b[39m    Path to a JSON array of variable rows (or {\"rows\":[...]}). Renders one output per row.                                                                                                                                                                                                                                                                                                                                                                                                                                                          \n            \u001b[36m--batch-concurrency=<batch_concurrency>\u001b[39m    Maximum number of batch rows to render at once. Default: 1, because each render already parallelizes across workers.                                                                                                                                                                                                                                                                                                                                                                                                                            \n                                  \u001b[36m--batch-fail-fast\u001b[39m    Stop launching new batch rows after the first row failure. \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                           \n                                             \u001b[36m--json\u001b[39m    With --batch, emit exactly one final JSON result document. \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                           \n                          \u001b[36m--resolution=<resolution>\u001b[39m    Output resolution preset: landscape (1920x1080), portrait (1\n\u2026 [truncated, 21829 more bytes]"
+     }
+    ],
+    "is_error": false,
+    "attachments": [],
+    "processed_at": "2026-10-09T10:15:22.527Z",
+    "seq": 1947395
+   }
+  },
+  {
+   "event": "span.model_request_end",
+   "data": {
+    "type": "span.model_request_end",
+    "id": "evt_bed91d025a544be0",
+    "model_request_start_id": "run_6753b9e0c894",
+    "is_error": false,
+    "model_usage": {
+     "input_tokens": 147743,
+     "output_tokens": 326,
+     "cache_read_input_tokens": 145615,
+     "cache_creation_input_tokens": 2125
+    },
+    "source": "agent",
+    "model": "openai/gpt-6.1-sol",
+    "cost": 0.02314,
+    "processed_at": "2026-10-09T10:15:49.170Z",
+    "seq": 1947513
+   }
+  },
+  {
+   "event": "agent.tool_use",
+   "data": {
+    "type": "agent.tool_use",
+    "id": "call_EBqNDh6N97ZRa3xdFPvhRwpr",
+    "name": "bash",
+    "input": {
+     "command": "cd /tmp/canva-hyperframes; mkdir -p assets; cp node_modules/gsap/dist/gsap.min.js assets/gsap.min.js; curl -Ls https://raw.githubusercontent.com/heygen-com/hyperframes/main/skills/hyperframes-core/references/minimal-composition.md >minimal.md; cat minimal.md | head -90; npx hyperframes snapshot --help | sed -n '1,55p'; npx hyperframes render --help | tail -25",
+     "timeout": 30
+    },
+    "processed_at": "2026-10-09T10:15:49.201Z",
+    "seq": 1947515
+   }
+  },
+  {
+   "event": "agent.tool_result",
+   "data": {
+    "type": "agent.tool_result",
+    "id": "evt_1b81f3f1c54e496c",
+    "tool_use_id": "call_EBqNDh6N97ZRa3xdFPvhRwpr",
+    "content": [
+     {
+      "type": "text",
+      "text": "exit_code: 0\n\nstdout:\n# Minimal Composition\n\nThe smallest renderable HyperFrames composition \u2014 a standalone (top-level) root with one clip and one tween:\n\n```html\n<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=1920, height=1080\" />\n    <title>Minimal HyperFrames Composition</title>\n    <script src=\"https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js\"></script>\n    <style>\n      body {\n        margin: 0;\n        background: #0b0f14;\n        color: white;\n        font-family: Inter, system-ui, sans-serif;\n      }\n      #root {\n        position: relative;\n        width: 100%;\n        height: 100%;\n        overflow: hidden;\n      }\n      .clip {\n        position: absolute;\n        inset: 0;\n        display: grid;\n        place-items: center;\n      }\n      h1 {\n        margin: 0;\n        font-size: 96px;\n      }\n    </style>\n  </head>\n  <body>\n    <div\n      id=\"root\"\n      data-composition-id=\"main\"\n      data-start=\"0\"\n      data-width=\"1920\"\n      data-height=\"1080\"\n      data-duration=\"5\"\n    >\n      <section id=\"title-card\" class=\"clip\" data-start=\"0\" data-duration=\"5\">\n        <h1 id=\"title\">Hello HyperFrames</h1>\n      </section>\n    </div>\n    <script>\n      const tl = gsap.timeline({ paused: true });\n      tl.from(\"#title\", { y: 48, opacity: 0, duration: 0.6, ease: \"power3.out\" }, 0.2);\n      window.__timelines[\"main\"] = tl;\n    </script>\n  </body>\n</html>\n```\n\nWhat the runtime actually requires:\n\n- Root `<div>` with `data-composition-id`, `data-width`, `data-height`. Root `data-start=\"0\"` is written above by convention and every shipped block has it, but the runtime stamps it when absent, so it is not required.\n- A duration source: root `data-duration` (as above), or a GSAP timeline, or media, or an adapter that can infer one.\n- Timed elements carry `data-start` plus a duration. That attribute alone is what makes an element a clip: `class=\"clip\"` is a layout and tooling convention, and `data-track-index` is a Studio display lane. Neither is required, and a composition with no clips at all renders fine.\n- A GSAP timeline created paused and registered on `window.__timelines[\"<composition-id>\"]`.\n\nEverything else in the skeleton is ordinary HTML and CSS: the `#root` box, `.clip` positioning, and fonts are yours to choose.\n\nThis pattern is **standalone** (top-level `index.html`) \u2014 no `<template>` wrapper around the root. For sub-compositions (files loaded by `data-composition-src`), see `sub-compositions.md`.\n\u001b[90mCapture key frames from a composition as PNG screenshots for visual verification (hyperframes snapshot v0.8.143)\u001b[39m\n\n\u001b[4m\u001b[1mUSAGE\u001b[22m\u001b[24m \u001b[36mhyperframes snapshot [OPTIONS] [DIR]\u001b[39m\n\n\u001b[4m\u001b[1mARGUMENTS\u001b[22m\u001b[24m\n\n  \u001b[36mDIR\u001b[39m    Project directory\n\n\u001b[4m\u001b[1mOPTIONS\u001b[22m\u001b[24m\n\n      \u001b[36m-o, --output=<output>\u001b[39m    Directory to write snapshots into (default: <project>/snapshots)                                                                                                                                                                                                                           \n          \u001b[36m--frames=<frames>\u001b[39m    Number of evenly-spaced frames to capture (default: 5) \u001b[90m(Default: 5)\u001b[39m                                                                                                                                                                                                              \n                  \u001b[36m--at=<at>\u001b[39m    Comma-separated timestamps in seconds (e.g., --at 3.0,10.5,18.0). Each is captured at that exact instant, not snapped to a frame.                                                                                                                                                          \n        \u001b[36m--timeout=<timeout>\u001b[39m    Ms to wait for runtime to initialize (default: 5000) \u001b[90m(Default: 5000)\u001b[39m                                                                                                                                                                                                             \n            \u001b[36m--angle=<angle>\u001b[39m    Orthogonal 3D camera for depth/occlusion checks: a preset (front|iso|top|side) or 'yaw,pitch' degrees. Tilts the whole stage before screenshotting (real pixels, not bbox markers).                                                                                                        \n                      \u001b[36m--end\u001b[39m    Always include a readable end-of-timeline frame (default: true). Pass --no-end to capture only your exact --at times. \u001b[90m(Default: true)\u001b[39m                                                                                                                                            \n                   \u001b[36m--no-end\u001b[39m                                                                                                                                                                                                                                                                                               \n              \u001b[36m--zoom=<zoom>\u001b[39m    Zoom into a CSS selector or an exact pixel region 'x,y,w,h'. Crops a high-density screenshot instead of the full frame \u2014 a raised deviceScaleFactor, never CSS zoom or viewport resizing, so layout stays identical. A selector matching nothing is an error, not a silent full-frame shot.\n  \u001b[36m--zoom-scale=<zoom_scale>\u001b[39m    Device-scale-factor density for --zoom crops (default: 3) \u001b[90m(Default: 3)\u001b[39m                                                                                                                                                                                                           \n        \u001b[36m--against=<against>\u001b[39m    Reference video (e.g. footage being rebuilt): also save its frame at each captured time and a render|reference pair sheet                                                                                                                                                                  \n      \u001b[36m--describe=<describe>\u001b[39m    Gemini vision frame analysis. Runs by default when GEMINI_API_KEY is set. Pass a custom question (e.g. --describe 'Is the logo visible in every beat?') to override the default prompt, or --describe false to opt out.                                                                    \n                    \u001b[36m--proxy\u001b[39m    Auto-transcode browser-hostile video codecs for snapshots (default: on; overrides hyperframes.json media.autoProxy)                                                                                                                                                                        \n              \u001b[36m--browser-gpu\u001b[39m    Use hardware browser GPU capture; pass --no-browser-gpu for deterministic SwiftShader (default: auto-detect, PRODUCER_BROWSER_GPU_MODE overrides)                                                                                                                                          \n\n\n                                      \u001b[36m--best-effort\u001b[39m    Allow output with structured capture-readiness warnings (default). Use --no-best-effort to fail on missing or unready media. \u001b[90m(Default: true)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                          \n                                   \u001b[36m--no-best-effort\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    \n                                           \u001b[36m--strict\u001b[39m    Fail render on lint errors \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           \n                                       \u001b[36m--strict-all\u001b[39m    Fail render on lint errors AND warnings \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                                              \n  \u001b[36m--max-concurrent-renders=<max_concurrent_renders>\u001b[39m    Max concurrent renders when using the producer server (1-10). Default: 2.                                                                                                                                                                                                                                                                                                                                                                                                                                                                       \n                            \u001b[36m--variables=<variables>\u001b[39m    JSON object of variable values, merged over the composition's data-composition-variables defaults. Example: --variables '{\"title\":\"Hello\"}'. Read inside the composition via window.__hyperframes.getVariables().                                                                                                                                                                                                                                                                                                                               \n                  \u001b[36m--variables-file=<variables_file>\u001b[39m    Path to a JSON file with variable values (alternative to --variables). The file must contain a single JSON object.                                                                                                                                                                                                                                                                                                                                                                                                                              \n                                 \u001b[36m--strict-variables\u001b[39m    Fail render if any --variables key is undeclared or has a wrong type vs the composition's data-composition-variables. Without this flag, mismatches are warnings. \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                    \n                                    \u001b[36m--batch=<batch>\u001b[39m    Path to a JSON array of variable rows (or {\"rows\":[...]}). Renders one output per row.                                                                                                                                                                                                                                                                                                                                                                                                                                                          \n            \u001b[36m--batch-concurrency=<batch_concurrency>\u001b[39m    Maximum number of batch rows to render at once. Default: 1, because each render already parallelizes across workers.                                                                                                                                                                                                                                                                                                                                                                                                                            \n                                  \u001b[36m--batch-fail-fast\u001b[39m    Stop launching new batch rows after the first row failure. \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                           \n                                             \u001b[36m--json\u001b[39m    With --batch, emit exactly one final JSON result document. \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                           \n                          \u001b[36m--resolution=<resolution>\u001b[39m    Output resolution preset: landscape (1920x1080), portrait (1080x1920), landscape-4k (3840x2160), portrait-4k (2160x3840), square (1080x1080), square-4k (2160x2160). Aliases: 1080p, 4k, uhd, 1080p-square, square-1080p, 4k-square. The composition is unchanged \u2014 Chrome renders at higher DPR (deviceScaleFactor) so the captured screenshot lands at the requested dimensions. Aspect ratio must match the composition; the scale must be an integer multiple. Not yet supported with --hdr.                                                \n                            \u001b[36m--page-side-compositing\u001b[39m    Run shader transitions on a page-side WebGL canvas inside Chrome instead of the Node-side layered blend. ~6\u00d7 faster for SDR shader-transition renders. Used for mp4, hls and gif output without HDR content; for mp4 and hls it usually turns off under --experimental-fast-capture. webm and mov output take the layered path. --no-page-side-compositing forces the layered path for mp4 and hls; gif always uses the page-side canvas. \u001b[90m(Default: true)\u001b[39m                                                                             \n                         \u001b[36m--no-page-side-compositing\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    \n                \u001b[36m--browser-timeout=<browser_timeout>\u001b[39m    Puppeteer page-navigation timeout in SECONDS for the entry HTML. Increase when heavy compositions (many videos / fonts / asset requests) cannot reach domcontentloaded within the 60s default (see issue #1199). Accepts 0.001-86400 (24h cap). Note: this controls page.goto only \u2014 very heavy compositions may also need PRODUCER_PUPPETEER_PROTOCOL_TIMEOUT_MS / PRODUCER_PLAYER_READY_TIMEOUT_MS bumped (the post-goto window.__hf readiness poll has its own 45s budget). Env fallback: PRODUCER_PAGE_NAVIGATION_TIMEOUT_MS (MILLISECONDS).\n              \u001b[36m--protocol-timeout=<protocol_timeout>\u001b[39m    CDP protocol timeout in ms. Increase on slow/low-memory machines where Chrome operations time out. Default: 300000 (5 min). Env: PRODUCER_PUPPETEER_PROTOCOL_TIMEOUT_MS.                                                                                                                                                                                                                                                                                                                                                                        \n      \u001b[36m--player-ready-timeout=<player_ready_timeout>\u001b[39m    Timeout in ms for the composition player to become ready. Increase for complex compositions on slow hardware. Default: 45000 (45 s). Env: PRODUCER_PLAYER_READY_TIMEOUT_MS.                                                                                                                                                                                                                                                                                                                                                                     \n                                           \u001b[36m--resume\u001b[39m    Segmented capture only (HF_SEGMENTED_CAPTURE=true): reuse segments a previous run of the same composition and settings already finished, recorded in renders/.hf-segments/<hash>/segments.json. Each reused segment is re-validated before it is skipped. \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                            \n                                    \u001b[36m--keep-segments\u001b[39m    Segmented capture only: keep renders/.hf-segments/<hash> after a successful render instead of deleting it. \u001b[90m(Default: false)\u001b[39m                                                                                                                                                                                                                                                                                                                                                                                                           \n                                  \u001b[36m--low-memory-mode\u001b[39m    Force the low-memory safe render profile on (--low-memory-mode) or off (--no-low-memory-mode). Safe mode pins to 1 worker, uses screenshot capture, and skips auto-worker calibration to avoid memory thrash on constrained machines. Default: auto-detected from total RAM (<= 8 GB). Env: PRODUCER_LOW_MEMORY_MODE.                                                                                                                                                                                                                           \n                        \u001b[36m--experimental-fast-capture\u001b[39m    Capture frames via Chrome's drawElementImage API instead of Page.captureScreenshot \u2014 reads DOM paint records directly, ~2x faster. Default: on where it can engage (macOS + hardware-GPU browser); incompatible compositions and self-verification failures fall back to screenshot capture automatically. Pass =false to disable. Env: PRODUCER_EXPERIMENTAL_FAST_CAPTURE.                                                                              \n\u2026 [truncated, 684 more bytes]\n\nstderr:\ncp: node_modules/gsap/dist/gsap.min.js: No such file or directory\n"
+     }
+    ],
+    "is_error": false,
+    "attachments": [],
+    "processed_at": "2026-10-09T10:15:52.759Z",
+    "seq": 1947517
+   }
+  },
+  {
+   "event": "span.model_request_end",
+   "data": {
+    "type": "span.model_request_end",
+    "id": "evt_50fa0f03e6224c4e",
+    "model_request_start_id": "run_6753b9e0c894",
+    "is_error": false,
+    "model_usage": {
+     "input_tokens": 150795,
+     "output_tokens": 358,
+     "cache_read_input_tokens": 147740,
+     "cache_creation_input_tokens": 3052
+    },
+    "source": "agent",
+    "model": "openai/gpt-6.1-sol",
+    "cost": 0.02599,
+    "processed_at": "2026-10-09T10:16:18.008Z",
+    "seq": 1947859
+   }
+  },
+  {
+   "event": "agent.tool_use",
+   "data": {
+    "type": "agent.tool_use",
+    "id": "call_xFLclxY5n0dJV0bGwn64pVW7",
+    "name": "bash",
+    "input": {
+     "command": "cd /tmp/canva-hyperframes; tail -30 install.log; ls node_modules 2>/dev/null | head; node --version; curl -Ls https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js -o assets/gsap.min.js; curl -L --max-time 30 -s https://raw.githubusercontent.com/google/fonts/main/ofl/inter/Inter%5Bopsz,wght%5D.ttf -o assets/Inter.ttf; cat > extract.py <<'PY'\nimport subprocess,concurrent.futures\nsource='/Users/logesh/self/video-llm-tests/videos/vid_f2c1386d8b046f54.mp4'\nclips=[('hook',964,3),('templates',147,3),('customize',151,3),('text',170,5),('shortcuts',617,5),('frames',682,7),('close',959,4)]\ndef run(c):\n n,s,d=c\n subprocess.run(['ffmpeg','-y','-v','error','-ss',str(s),'-i',source,'-t',str(d),'-an','-vf','fps=30','-c:v','libx264','-preset','fast','-crf','18','-pix_fmt','yuv420p',f'assets/{n}.mp4'],check=True)\nwith concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:list(ex.map(run,clips))\nPY\npython3 extract.py",
+     "timeout": 150
+    },
+    "processed_at": "2026-10-09T10:16:18.014Z",
+    "seq": 1947861
+   }
+  },
+  {
+   "event": "agent.tool_result",
+   "data": {
+    "type": "agent.tool_result",
+    "id": "evt_032cf03ee64b4031",
+    "tool_use_id": "call_xFLclxY5n0dJV0bGwn64pVW7",
+    "content": [
+     {
+      "type": "text",
+      "text": "exit_code: 0\n\nstdout:\nnpm error code EUNSUPPORTEDPROTOCOL\nnpm error Unsupported URL Type \"workspace:\": workspace:^\nnpm error A complete log of this run can be found in: /Users/logesh/.npm/_logs/2026-10-09T10_14_31_936Z-debug-0.log\nv26.0.0\n"
+     }
+    ],
+    "is_error": false,
+    "attachments": [],
+    "processed_at": "2026-10-09T10:16:21.147Z",
+    "seq": 1947863
+   }
+  }
+ ]
+}

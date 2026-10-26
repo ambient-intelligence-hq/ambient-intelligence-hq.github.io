@@ -1,0 +1,121 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  active?: "home" | "docs" | "blog" | null;
+  extraCss?: string[];
+}
+const {
+  title,
+  description = "Ambient is a video-to-action agent: it watches long-form video, gathers evidence over time, answers questions with citations, and invokes tools to take action.",
+  active = null,
+  extraCss = [],
+} = Astro.props;
+
+// BASE_URL always ends with "/" — prefix asset + internal links so the site
+// works from a project subpath (/ambient/), a user page, or a custom domain.
+const base = import.meta.env.BASE_URL;
+const github = "https://github.com/ambient-intelligence-hq/ambient";
+const brandMark = `${base}assets/img/ambient-mark.svg`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#fdf6f1" />
+    <link rel="icon" href={brandMark} type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title="Ambient Blog" href={`${base}rss.xml`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,600;0,700;0,800;1,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href={`${base}assets/css/styles.css`} />
+    {extraCss.map((href) => <link rel="stylesheet" href={`${base}${href}`} />)}
+  </head>
+  <body>
+    <!-- ============================ NAV ============================ -->
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href={base} aria-label="Ambient home">
+          <img class="logo" src={brandMark} alt="" />
+          Ambient
+        </a>
+        <nav class="nav-links">
+          <a href={base} class={active === "home" ? "active" : undefined}>Overview</a>
+          <a href={`${base}#use-cases`}>Use cases</a>
+          <a href={`${base}replay/`}>Demos</a>
+          <a href={`${base}docs/`} class={active === "docs" ? "active" : undefined}>Docs</a>
+          <a href={`${base}blog/`} class={active === "blog" ? "active" : undefined}>Blog</a>
+          <a href={github} target="_blank" rel="noopener">GitHub</a>
+        </nav>
+        <button class="nav-toggle" id="navToggle" aria-label="Menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            ><path d="M3 6h18M3 12h18M3 18h18"></path></svg
+          >
+        </button>
+      </div>
+    </header>
+
+    <slot />
+
+    <!-- ============================ FOOTER ============================ -->
+    <footer class="footer">
+      <div class="wrap">
+        <div class="footer-grid">
+          <div>
+            <a class="brand" href={base}>
+              <img class="logo" src={brandMark} alt="" />
+              Ambient
+            </a>
+            <p style="max-width:24rem;font-size:0.95rem">
+              The open-source video-to-action agent. Any video in, any action out — self-hostable, SDK-native,
+              model-agnostic.
+            </p>
+          </div>
+          <div>
+            <h4>Product</h4>
+            <ul>
+              <li><a href={`${base}#how`}>How it works</a></li>
+              <li><a href={`${base}#use-cases`}>Use cases</a></li>
+              <li><a href={`${base}#out`}>Action out</a></li>
+              <li><a href={`${base}#scale`}>Self-hosting</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Developers</h4>
+            <ul>
+              <li><a href={`${base}docs/`}>Documentation</a></li>
+              <li><a href={`${base}docs/#quickstart`}>Quickstart</a></li>
+              <li><a href={`${base}docs/#sdk`}>SDK reference</a></li>
+              <li><a href={`${base}docs/#mcp`}>MCP integration</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>More</h4>
+            <ul>
+              <li><a href={`${base}blog/`}>Blog</a></li>
+              <li><a href={`${base}rss.xml`}>RSS</a></li>
+              <li><a href={github} target="_blank" rel="noopener">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span>© 2026 Ambient</span>
+          <span>video in → understanding → action out</span>
+        </div>
+      </div>
+    </footer>
+
+    <script is:inline src={`${base}assets/js/main.js`}></script>
+    <slot name="scripts" />
+  </body>
+</html>

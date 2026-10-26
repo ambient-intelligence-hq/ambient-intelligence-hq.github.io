@@ -1,0 +1,435 @@
+---
+import Base from "../layouts/Base.astro";
+const base = import.meta.env.BASE_URL;
+const github = "https://github.com/ambient-intelligence-hq/ambient";
+const installUrl = "https://raw.githubusercontent.com/ambient-intelligence-hq/ambient/main/install/install.sh";
+---
+
+<Base
+  title="Ambient — turn video into understanding + action"
+  description="Ambient is an open-source video-to-action agent. It watches videos, gathers evidence over time, answers questions with citations, and invokes tools to take action."
+  active="home"
+  extraCss={["assets/css/home.css?v=5"]}
+>
+  <!-- ============================ HERO ============================ -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">Video to action agent</span>
+          <h1>Turn video into<br /><span class="l2"><span class="mark">action.</span></span></h1>
+          <p class="lede">
+            Ambient can watch videos, gather evidence over time, answer questions, and invoke tools to take action in
+            the real world.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#quickstart">
+              <span class="play-dot"><svg viewBox="0 0 12 12"><path d="M2 1l9 5-9 5z"></path></svg></span>
+              Try a video
+            </a>
+            <a class="btn btn-ghost" href={`${base}replay/`}>
+              <span class="play-dot"><svg viewBox="0 0 12 12"><path d="M2 1l9 5-9 5z"></path></svg></span>
+              Watch it work
+            </a>
+            <a class="btn btn-ghost" href={github} target="_blank" rel="noopener">
+              <svg class="gh-ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+              View on GitHub
+            </a>
+          </div>
+
+          <div class="ask">
+            <div class="ask-label">Just ask Ambient:</div>
+            <div class="ask-box" aria-live="off">
+              <span class="gt">&gt;</span>
+              <span><span data-type>score this robot run and explain the failures</span><span class="cursor" aria-hidden="true"></span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product card: the "video" Ambient is watching -->
+        <div class="product">
+          <div class="pc" id="pc" role="img" aria-label="Ambient watches a video, gathers evidence, reasons, and acts: video in, understanding, action out.">
+            <div class="pc-head">
+              <img src={`${base}assets/img/ambient-mark.svg`} alt="" />
+              Ambient
+            </div>
+            <div class="pc-pill">Open source</div>
+
+            <div class="pc-floor"></div>
+            <picture class="pc-mascot">
+              <source srcset={`${base}assets/img/mascot.webp`} type="image/webp" />
+              <img src={`${base}assets/img/mascot.png`} alt="" width="880" height="880" />
+            </picture>
+
+            <svg class="pc-links" viewBox="0 0 1000 700" aria-hidden="true">
+              <path class="pc-link" data-link="0" d="M310 218 C352 218 362 252 392 258"></path>
+              <path class="pc-link" data-link="1" d="M310 358 C350 358 372 348 402 344"></path>
+              <path class="pc-link" data-link="2" d="M690 198 C646 198 634 236 606 246"></path>
+              <path class="pc-link" data-link="3" d="M690 348 C652 348 630 342 600 338"></path>
+              <circle class="pc-node" data-link="0" cx="310" cy="218" r="5"></circle><circle class="pc-node" data-link="0" cx="392" cy="258" r="4"></circle>
+              <circle class="pc-node" data-link="1" cx="310" cy="358" r="5"></circle><circle class="pc-node" data-link="1" cx="402" cy="344" r="4"></circle>
+              <circle class="pc-node" data-link="2" cx="690" cy="198" r="5"></circle><circle class="pc-node" data-link="2" cx="606" cy="246" r="4"></circle>
+              <circle class="pc-node" data-link="3" cx="690" cy="348" r="5"></circle><circle class="pc-node" data-link="3" cx="600" cy="338" r="4"></circle>
+            </svg>
+
+            <div class="pc-step s-watch active" data-step="0">
+              <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M10 9l5 3-5 3z"></path></svg></div>
+              <div><b>Watch</b><span>Understand video content.</span></div>
+            </div>
+            <div class="pc-step s-gather" data-step="1">
+              <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5M9 13h6M9 17h4"></path></svg></div>
+              <div><b>Gather</b><span>Collect evidence over time.</span></div>
+            </div>
+            <div class="pc-step s-reason" data-step="2">
+              <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M9.5 3.5A2.5 2.5 0 0 0 7 6a2.8 2.8 0 0 0-2.5 3.8A3 3 0 0 0 5 15a2.8 2.8 0 0 0 2.2 4.1A2.6 2.6 0 0 0 12 19V5.9a2.4 2.4 0 0 0-2.5-2.4z"></path><path d="M14.5 3.5A2.5 2.5 0 0 1 17 6a2.8 2.8 0 0 1 2.5 3.8A3 3 0 0 1 19 15a2.8 2.8 0 0 1-2.2 4.1A2.6 2.6 0 0 1 12 19"></path><path d="M12 9h-2M12 13h2"></path></svg></div>
+              <div><b>Reason</b><span>Find answers and insights.</span></div>
+            </div>
+            <div class="pc-step s-act" data-step="3">
+              <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"></path></svg></div>
+              <div><b>Act</b><span>Use tools to take action.</span></div>
+            </div>
+
+            <div class="pc-caption">video in<span class="arr">→</span><span class="o">understanding</span><span class="arr">→</span><span class="o">action out</span></div>
+
+            <div class="pc-controls">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"></path></svg>
+              <span data-time>0:00 / 0:28</span>
+              <div class="right">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4.5v-15L7 9z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle></svg>
+              </div>
+            </div>
+            <div class="pc-bar"><i data-bar></i></div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="award-band reveal" aria-labelledby="eccv-award-title">
+        <div class="award-medal" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"></path>
+            <path d="M7 6H4v1a4 4 0 0 0 4 4M17 6h3v1a4 4 0 0 1-4 4"></path>
+          </svg>
+        </div>
+        <div class="award-copy">
+          <span class="eyebrow">Recognized at ECCV 2026</span>
+          <h2 id="eccv-award-title">Award-winning video agent</h2>
+          <p>
+            At the Meta Wearable AI Challenge, Ambient won the <strong>EgoProactive Large Model</strong> and
+            <strong>EgoLongQA Small Model</strong> tracks, and placed second in
+            <strong>EgoProactive Small Model</strong>.
+          </p>
+        </div>
+        <a class="award-link" href="https://huggingface.co/spaces/facebook/wearable-ai-leaderboard" target="_blank" rel="noopener">
+          Official leaderboard <span aria-hidden="true">↗</span>
+        </a>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============================ HOW IT WORKS ============================ -->
+  <section class="section-pad hair-top" id="how">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">How it works</span>
+        <h2>It watches the way we do</h2>
+        <p>
+          Ambient follows a video through time—pausing, searching, and looking closer when something matters.
+        </p>
+      </div>
+
+      <div class="pipe reveal">
+        <div class="pipe-node">
+          <div class="n-label"><span class="mono">Input</span><span class="num">01</span></div>
+          <h3>Any video in</h3>
+          <ul class="pipe-list">
+            <li>File upload</li>
+            <li>YouTube URL</li>
+            <li>S3 / R2 object</li>
+            <li>Any local path</li>
+          </ul>
+        </div>
+
+        <div class="pipe-conn"><svg viewBox="0 0 60 12"><line class="flow" x1="0" y1="6" x2="52" y2="6" stroke="currentColor" stroke-width="2"></line><path d="M50 2 L58 6 L50 10" fill="none" stroke="currentColor" stroke-width="2"></path></svg></div>
+
+        <div class="pipe-node">
+          <div class="n-label"><span class="mono">Agent loop</span><span class="num">02</span></div>
+          <h3>Watches with intent</h3>
+          <p style="color:var(--text-muted);font-size:0.95rem;margin-top:10px">Moves through time, follows what matters, and looks closer before acting.</p>
+          <div class="tool-chips">
+            <span class="chip accent dot">Follows the story</span>
+            <span class="chip accent dot">Notices what changes</span>
+            <span class="chip accent dot">Pauses</span>
+            <span class="chip accent dot">Looks closer</span>
+            <span class="chip accent dot">Checks the evidence</span>
+          </div>
+        </div>
+
+        <div class="pipe-conn"><svg viewBox="0 0 60 12"><line class="flow" x1="0" y1="6" x2="52" y2="6" stroke="currentColor" stroke-width="2"></line><path d="M50 2 L58 6 L50 10" fill="none" stroke="currentColor" stroke-width="2"></path></svg></div>
+
+        <div class="pipe-node">
+          <div class="n-label"><span class="mono">Output</span><span class="num">03</span></div>
+          <h3>Any action out</h3>
+          <ul class="pipe-list">
+            <li>Processed or annotated video</li>
+            <li>Structured outputs</li>
+            <li>Documents and artifacts</li>
+            <li>Training datasets</li>
+            <li>Reward signals</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ USE CASES ============================ -->
+  <section class="section-pad hair-top dotgrid" id="use-cases">
+    <img class="m m-peek reveal" src={`${base}assets/img/mascot-peeking.webp`} alt="" width="440" height="485" loading="lazy" decoding="async" />
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Use cases</span>
+        <h2>One engine, any video, any outcome</h2>
+        <p>Point Ambient at the footage you already have and ask for the output you actually need.</p>
+      </div>
+      <div class="uc-grid">
+        <div class="card uc reveal">
+          <div class="flowline">site-footage.mp4 <span class="arrow">→</span> <span class="out">inspection-report.json</span></div>
+          <h3>Safety and compliance review</h3>
+          <p>Find unsafe actions, missing PPE, and procedure violations with timestamped evidence.</p>
+        </div>
+        <div class="card uc reveal">
+          <div class="flowline">dashcam.mp4 <span class="arrow">→</span> <span class="out">incident-report.pdf</span></div>
+          <h3>Incident reconstruction</h3>
+          <p>Reconstruct what happened, in what order, and where—with cited moments and annotated frames.</p>
+        </div>
+        <div class="card uc reveal">
+          <div class="flowline">screen-recordings/ <span class="arrow">→</span> <span class="out">trajectories.jsonl</span></div>
+          <h3>UI agent training data</h3>
+          <p>Turn demonstrations into actions, bounding boxes, click-points, and step-by-step trajectories.</p>
+        </div>
+        <div class="card uc reveal">
+          <div class="flowline">robot-runs/ <span class="arrow">→</span> <span class="out">rewards.jsonl</span></div>
+          <h3>Robotics evaluation and reward signals</h3>
+          <p>Identify successes and failures, score trajectories, and extract the moments that explain each result.</p>
+        </div>
+        <div class="card uc reveal">
+          <div class="flowline">production-runs/ <span class="arrow">→</span> <span class="out">qa-report.csv</span></div>
+          <h3>Visual QA and defect detection</h3>
+          <p>Review product or process footage against a checklist and surface anomalies with evidence.</p>
+        </div>
+        <div class="card uc reveal">
+          <div class="flowline">raw-video/ <span class="arrow">→</span> <span class="out">annotated-dataset/</span></div>
+          <h3>Video dataset curation</h3>
+          <p>Search, segment, label, and annotate large video collections for training and evaluation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ ANY VIDEO IN ============================ -->
+  <section class="section-pad hair-top" id="in">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Any video in</span>
+        <h2>Bring the footage. Ask what matters.</h2>
+        <p>
+          Whether it’s a ten-second clip or hours of footage, Ambient moves through it selectively—finding and
+          examining the moments that matter.
+        </p>
+      </div>
+
+      <div class="frow reveal">
+        <div>
+          <span class="kicker">01 · Built for long video</span>
+          <h3>It knows when to look closer</h3>
+          <p>
+            Ambient searches across the full timeline, pauses around relevant moments, and examines them in
+            detail—without flattening the video into a transcript.
+          </p>
+        </div>
+        <div class="m-host m-host-watch">
+        <img class="m m-watch" src={`${base}assets/img/mascot-watching.webp`} alt="" width="440" height="480" loading="lazy" decoding="async" />
+        <div class="visual">
+          <div style="width:100%;display:grid;gap:12px">
+            <div class="chip accent" style="justify-self:start">source · 00:00 → 42:17</div>
+            <div class="tl-track">
+              <span style="left:30%;width:14%"></span>
+              <span style="left:62%;width:6%;opacity:0.55"></span>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <span class="chip">search_clip · 12:00–17:00</span>
+              <span class="chip accent">focus_clip · 14:20–14:55</span>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <div class="frow rev reveal">
+        <div class="visual">
+          <div class="iso">
+            <div class="layer"><span>UPLOAD</span></div>
+            <div class="layer"><span>YOUTUBE</span></div>
+            <div class="layer"><span>S3 / R2 RANGE-READ</span></div>
+            <div class="layer"><span>LOCAL PATH</span></div>
+          </div>
+        </div>
+        <div>
+          <span class="kicker">02 · Efficient by design</span>
+          <h3>Reads only what it needs</h3>
+          <p>
+            Ambient doesn’t pull in hours of footage to examine a few seconds. It fetches only the moments it
+            needs—often just <strong class="accent">1–2% of the source</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ ANY ACTION OUT ============================ -->
+  <section class="section-pad hair-top dotgrid" id="out">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Any action out</span>
+        <h2>Answers you can build on</h2>
+        <p>Not a paragraph you have to re-parse — a structured, verifiable output your code can consume directly.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card reveal">
+          <div class="ic-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg></div>
+          <h3>Citation-backed answers</h3>
+          <p>Every claim links to a timestamp or range in the source. Clip-local times are rewritten to the global timeline, so citations land on the right moment.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ic-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"></path></svg></div>
+          <h3>JSON-Schema output</h3>
+          <p>Pass a schema; get typed data back. The final answer is steered to your shape, with validation and retry when it must be exact.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ic-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 9h6v6H9z"></path></svg></div>
+          <h3>Boxes &amp; click-points</h3>
+          <p>Bounding boxes and click coordinates on a normalized 0–1000 grid — drawn and visually verified before they reach your answer.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ic-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg></div>
+          <h3>Downloadable artifacts</h3>
+          <p>The agent can run <span class="inline-code">bash</span> + ffmpeg to render clips, extract data, or build a report — then hand back a download link.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ic-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"></path></svg></div>
+          <h3>Streaming events</h3>
+          <p>Reasoning, tool calls and results, per-request tokens and cost — streamed live over SSE. Full observability, not a black box.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ic-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"></path></svg></div>
+          <h3>An MCP tool</h3>
+          <p><span class="inline-code">analyze_video</span> plugs into Claude Code or any MCP client — streaming progress, a final answer, and a session id for follow-ups.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ BUILT TO SCALE ============================ -->
+  <section class="section-pad hair-top" id="scale">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Built to scale</span>
+        <h2>One engine, however you run it</h2>
+        <p>
+          Run Ambient locally or distribute it across a cluster. Use Studio interactively, run headless batch
+          workloads, or integrate through the SDK and API. Isolate media execution in per-session sandboxes for safer,
+          independently scalable workloads.
+        </p>
+      </div>
+      <div class="m-host m-host-fast">
+      <img class="m m-fast" src={`${base}assets/img/mascot-fast.webp`} alt="" width="440" height="481" loading="lazy" decoding="async" />
+      <div class="nums reveal">
+        <div class="num-cell">
+          <div class="big"><span class="accent">Laptop</span></div>
+          <div class="lbl">Run locally</div>
+          <div class="sub">engine + Studio</div>
+        </div>
+        <div class="num-cell">
+          <div class="big">Cluster</div>
+          <div class="lbl">Distribute workers</div>
+          <div class="sub">shared durable state</div>
+        </div>
+        <div class="num-cell">
+          <div class="big">Studio</div>
+          <div class="lbl">Work interactively</div>
+          <div class="sub">explore, ask, inspect</div>
+        </div>
+        <div class="num-cell">
+          <div class="big">Headless</div>
+          <div class="lbl">SDK + API</div>
+          <div class="sub">batch or embed</div>
+        </div>
+      </div>
+      </div>
+
+      <div class="grid-3" style="margin-top:28px">
+        <div class="card reveal">
+          <h3>Scale without session pinning</h3>
+          <p>Postgres and Redis keep state outside the process, so any worker can continue any session.</p>
+        </div>
+        <div class="card reveal">
+          <h3>Sandboxed media execution</h3>
+          <p>Isolate each session’s media workload in its own sandbox while orchestration and model calls remain under your control.</p>
+        </div>
+        <div class="card reveal">
+          <h3>Integrate it anywhere</h3>
+          <p>Use Studio, run batch jobs through the SDK, or embed the API directly into your application.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================ QUICKSTART ============================ -->
+  <section class="section-pad hair-top dotgrid" id="quickstart">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Try it</span>
+        <h2>From one command to your first answer</h2>
+        <p>
+          The installer starts Ambient, Studio, Postgres, and Redis in Docker. You’ll need Docker Compose and an API
+          key for an OpenAI-compatible model.
+        </p>
+      </div>
+      <div class="quickstart-single reveal m-row-sit">
+        <div class="m-host">
+        <img class="m m-sit" src={`${base}assets/img/mascot-sitting.webp`} alt="" width="440" height="552" loading="lazy" decoding="async" />
+        <div class="code">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span><span class="file">install</span></div>
+          <pre><span class="cc"># install Ambient + Studio — safe to re-run</span>
+curl -fsSL {installUrl} | bash
+
+<span class="cc"># when ready, the installer prints and opens Studio</span>
+<span class="cc"># add a video or paste a YouTube link, then ask:</span>
+<span class="cp">&gt;</span> when do they reach the summit?</pre>
+        </div>
+        <p class="quickstart-note">Deploying for a team or cluster? Detailed self-hosting guidance is coming soon.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ FINAL CTA ============================ -->
+  <section class="section-pad">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <span class="eyebrow">Video to action</span>
+        <h2>Turn any video into<br /><em>something you can act on.</em></h2>
+        <div class="row">
+          <a class="btn btn-accent" href="#quickstart">Try a video <span class="chev">›</span></a>
+          <a class="btn btn-ghost" href={`${base}docs/`}>Read the docs <span class="chev">›</span></a>
+          <a class="btn btn-ghost" href={github} target="_blank" rel="noopener">Star on GitHub <span class="chev">›</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script slot="scripts" is:inline src={`${base}assets/js/hero.js`}></script>
+</Base>

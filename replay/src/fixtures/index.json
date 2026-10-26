@@ -1,0 +1,37 @@
+[
+ {
+  "slug": "swing-pose-estimation",
+  "title": "Golf-swing body-pose overlay",
+  "summary": "Adds body-pose skeleton points to a swing and renders a new video."
+ },
+ {
+  "slug": "highlight-reel",
+  "title": "30-second social highlight reel",
+  "summary": "Builds a story-driven highlight reel with HyperFrames from a long video."
+ },
+ {
+  "slug": "video-qa-walkthrough",
+  "title": "Tracking a person across frames in a video",
+  "summary": "Tracks a person over the full video with YOLOv8 + ByteTrack, exporting an annotated video and per-frame tracks."
+ },
+ {
+  "slug": "video-to-documentation",
+  "title": "Walkthrough \u2192 product documentation",
+  "summary": "Converts a product demo video into step-by-step docs with screenshots."
+ },
+ {
+  "slug": "recipe-blog-post",
+  "title": "Cooking video \u2192 recipe blog post",
+  "summary": "Writes a recipe blog post with step frames pulled from the video."
+ },
+ {
+  "slug": "flow-diagram-gif",
+  "title": "Flow-diagram explainer GIF",
+  "summary": "Finds the flow-diagram moment and cuts it into a looping GIF."
+ },
+ {
+  "slug": "safety-inspection-report",
+  "title": "Industrial safety inspection report",
+  "summary": "Turns a factory-floor walkthrough into a hazard report with evidence frames."
+ }
+]

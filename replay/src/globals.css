@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+/* Pull Studio's streamdown styles + prose typography so replayed markdown
+   (answers + reasoning) renders richly. */
+@source "../node_modules/streamdown/dist/index.js";
+@plugin "@tailwindcss/typography";
+
+/* Map the Ambient site design system (site/public/assets/css/styles.css —
+   warm cream canvas, dark-brown ink, one orange accent) onto the Tailwind
+   tokens the components use, so the gallery + replay match the marketing site. */
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+:root {
+  --radius: 0.85rem;
+
+  /* Surfaces (warm cream canvas, white panels) */
+  --background: #fdf6f1;
+  --foreground: #1a110d; /* dark-brown ink */
+  --card: #ffffff;
+  --card-foreground: #1a110d;
+  --popover: #ffffff;
+  --popover-foreground: #1a110d;
+
+  /* One orange accent */
+  --primary: #ff5a14;
+  --primary-foreground: #ffffff;
+
+  --secondary: #fbf1ea;
+  --secondary-foreground: #6b5850;
+  --muted: #f6e9e0;
+  --muted-foreground: #6b5850; /* text-muted */
+  --accent: #ffe5d8; /* accent-soft */
+  --accent-foreground: #1a110d;
+  --destructive: #c0392b;
+
+  --border: rgba(58, 28, 12, 0.11); /* hairline */
+  --input: rgba(58, 28, 12, 0.11);
+  --ring: #ff5a14;
+
+  --sidebar: #f8ece4;
+  --sidebar-foreground: #6b5850;
+  --sidebar-border: rgba(58, 28, 12, 0.11);
+
+  --shadow-card: 0 1px 2px rgba(58, 28, 12, 0.05), 0 1px 1px rgba(58, 28, 12, 0.04);
+  --shadow-float: 0 1px 2px rgba(58, 28, 12, 0.05), 0 12px 32px -14px rgba(58, 28, 12, 0.18);
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+}
+
+* {
+  border-color: var(--border);
+}
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  /* Warm canvas with the site's faint orange glow in the top-right. */
+  background:
+    radial-gradient(900px 600px at 85% -10%, rgba(255, 122, 46, 0.1), transparent 60%),
+    var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+::selection {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Heavy display face for headings, matching the site. */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.03em;
+}
+
+/* Subtle fade-in as replayed parts appear. */
+@keyframes replay-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.replay-in {
+  animation: replay-in 0.28s var(--ease-spring) both;
+}
+
+/* Shimmering "Thinking…" label while a reasoning step streams. */
+@keyframes replay-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+.replay-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--muted-foreground) 0%,
+    var(--foreground) 50%,
+    var(--muted-foreground) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: replay-shimmer 1.6s linear infinite;
+}
