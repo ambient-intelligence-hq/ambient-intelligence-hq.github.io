@@ -82,51 +82,52 @@ export function ReplayView({ fixture }: { fixture: Fixture }) {
             {state.messages.length === 0 && (
               <p className="text-muted-foreground text-sm">Starting replay…</p>
             )}
-            {state.done && outcome && (
-              <div className="replay-in flex gap-3">
-                <AmbientMark className="mt-0.5 size-6 shrink-0" />
-                <div className="flex-1 rounded-2xl border border-primary/30 bg-primary/5 p-4">
-                  <div className="mb-1 flex items-center gap-1.5 font-medium text-primary text-xs uppercase tracking-wide">
-                    <SparklesIcon className="size-3.5" /> Outcome
-                  </div>
-                  <p className="text-[13px] leading-[1.6]">{outcome}</p>
-                  <Artifacts artifacts={fixture.artifacts} />
-                </div>
-              </div>
-            )}
             <div className="h-2" />
           </div>
         </div>
 
-        <aside className="order-1 flex min-h-0 flex-col gap-4 border-b bg-muted/20 p-4 lg:order-2 lg:border-b-0 lg:border-l">
-          <div className="lg:sticky lg:top-4 flex flex-col gap-4">
-            <VideoStage
-              posterKey={fixture.media.poster}
-              ref={videoRef}
-              sourceKey={fixture.media.source}
-              title={fixture.title}
-            />
-            <ActivityTimeline
-              activeToolId={state.currentToolId}
-              durationSec={fixture.durationSec}
-              getVideo={() => videoRef.current?.el ?? null}
-              markers={markers}
-            />
-            <Controls
-              done={state.done}
-              onCycleSpeed={() => engine.setSpeed(nextSpeed(state.speed))}
-              onRestart={() => engine.restart()}
-              onSeek={(f) => engine.seek(f)}
-              onSkip={() => engine.skipToEnd()}
-              onToggle={() => engine.toggle()}
-              playing={state.playing}
-              progress={state.progress}
-              speed={state.speed}
-            />
-            <p className={cn("px-1 text-muted-foreground text-xs leading-relaxed")}>
-              {fixture.summary} Click any timestamp in the answer to jump the video.
-            </p>
-          </div>
+        <aside className="order-1 flex min-h-0 flex-col gap-4 overflow-y-auto border-b bg-muted/20 p-4 lg:order-2 lg:border-b-0 lg:border-l">
+          <VideoStage
+            posterKey={fixture.media.poster}
+            ref={videoRef}
+            sourceKey={fixture.media.source}
+            title={fixture.title}
+          />
+          <ActivityTimeline
+            activeToolId={state.currentToolId}
+            durationSec={fixture.durationSec}
+            getVideo={() => videoRef.current?.el ?? null}
+            markers={markers}
+          />
+          <Controls
+            done={state.done}
+            onCycleSpeed={() => engine.setSpeed(nextSpeed(state.speed))}
+            onRestart={() => engine.restart()}
+            onSeek={(f) => engine.seek(f)}
+            onSkip={() => engine.skipToEnd()}
+            onToggle={() => engine.toggle()}
+            playing={state.playing}
+            progress={state.progress}
+            speed={state.speed}
+          />
+
+          {/* The outcome, shown up-front so visitors see what Ambient produced
+              without waiting for the replay to finish. */}
+          {(outcome || fixture.artifacts.length > 0) && (
+            <div className="flex flex-col gap-2 rounded-2xl border border-primary/30 bg-primary/5 p-4">
+              <div className="flex items-center gap-1.5 font-medium text-primary text-xs uppercase tracking-wide">
+                <SparklesIcon className="size-3.5" /> Outcome
+              </div>
+              {outcome && (
+                <p className="text-[13px] leading-[1.6]">{outcome}</p>
+              )}
+              <Artifacts artifacts={fixture.artifacts} />
+            </div>
+          )}
+
+          <p className={cn("px-1 text-muted-foreground text-xs leading-relaxed")}>
+            Click any timestamp in the answer to jump the source video.
+          </p>
         </aside>
       </div>
     </div>
