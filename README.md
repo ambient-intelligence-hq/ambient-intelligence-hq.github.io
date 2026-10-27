@@ -1,9 +1,7 @@
 # Ambient website
 
 The public marketing site for [Ambient](https://github.com/ambient-intelligence-hq/ambient),
-the open video-understanding agent engine. Deployed to GitHub Pages. The domain
-is configurable (proposed: **goambient.ai**) — until one is registered it serves
-on the default `*.github.io` URL.
+the open video-understanding agent engine. Deployed to GitHub Pages.
 
 ```
 site/     Astro site — landing + blog + docs (served at /)
