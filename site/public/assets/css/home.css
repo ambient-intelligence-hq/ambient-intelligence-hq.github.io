@@ -19,9 +19,9 @@
 .gh-ic { width: 22px; height: 22px; fill: var(--text); }
 
 /* "Just ask Ambient" typing prompt */
-.ask { margin-top: 38px; max-width: 34rem; }
+.ask { margin-top: 38px; max-width: 37rem; }
 .ask-label { font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: 0.2em; text-transform: uppercase; color: #4a3a33; margin-bottom: 10px; }
-.ask-box { display: flex; align-items: center; gap: 12px; background: rgba(255, 255, 255, 0.72); border: 1px solid var(--hairline); border-radius: 12px; padding: 16px 20px; font-family: var(--font-mono); font-size: clamp(0.9rem, 1.2vw, 1.05rem); color: var(--text); box-shadow: 0 14px 30px -24px rgba(58, 28, 12, 0.38); min-height: 58px; }
+.ask-box { display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.72); border: 1px solid var(--hairline); border-radius: 12px; padding: 16px 18px; font-family: var(--font-mono); font-size: clamp(0.68rem, 1.05vw, 0.8rem); line-height: 1.4; color: var(--text); box-shadow: 0 14px 30px -24px rgba(58, 28, 12, 0.38); min-height: 56px; white-space: nowrap; overflow: hidden; }
 .ask-box .gt { color: var(--accent); font-weight: 600; }
 .ask-box .cursor { display: inline-block; width: 0.62em; height: 1.2em; background: var(--accent); vertical-align: text-bottom; margin-left: 2px; animation: blink 1s steps(1) infinite; }
 

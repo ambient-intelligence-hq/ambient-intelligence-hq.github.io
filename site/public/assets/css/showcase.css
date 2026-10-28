@@ -1,0 +1,53 @@
+/* Studio demo in the hero — a browser-framed, muted, looping screen recording of
+   a real session (replaces the old product/mascot card on the right). */
+.hero-demo { align-self: center; width: 100%; }
+
+/* "Structured output" section — the video → JSON animation. */
+.sc-head { text-align: center; max-width: 720px; margin: 0 auto 40px; }
+.sc-head .lede { margin-top: 14px; }
+.sc-single { max-width: 1060px; margin-inline: auto; }
+.json-frame {
+  border-radius: var(--radius); overflow: hidden; border: 1px solid var(--hairline);
+  box-shadow: 0 1px 2px rgba(58, 28, 12, 0.06), 0 40px 80px -30px rgba(58, 28, 12, 0.4);
+}
+.json-frame video { display: block; width: 100%; }
+
+/* Reusable "input → output" split (video→video, video→document). */
+.io { display: flex; align-items: center; justify-content: center; gap: 22px; flex-wrap: wrap; }
+.io-panel { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; }
+.io-frame {
+  border-radius: 14px; overflow: hidden; border: 1px solid var(--hairline); background: #000;
+  box-shadow: 0 1px 2px rgba(58, 28, 12, 0.06), 0 30px 60px -28px rgba(58, 28, 12, 0.4);
+}
+.io-frame video { display: block; height: 440px; width: auto; }
+.io-arrow { color: var(--accent); font-size: 28px; flex: none; }
+.io-cap { font-size: 0.72rem; color: var(--text-faint); letter-spacing: 0.08em; }
+.io-cap.accent { color: var(--accent); }
+
+/* video → document: a scrolling page next to the source video. */
+.io-frame.doc { background: #fff; width: 430px; height: 440px; position: relative; }
+.io-frame.doc img { position: absolute; top: 0; left: 0; width: 100%; animation: doc-scroll 34s linear infinite alternate; }
+@keyframes doc-scroll { 0%, 4% { transform: translateY(0); } 96%, 100% { transform: translateY(calc(-100% + 440px)); } }
+.io-frame.vid-src { width: 600px; height: 440px; }
+.io-frame.vid-src video { width: 100%; height: 100%; object-fit: cover; }
+
+@media (max-width: 760px) { .io-arrow { transform: rotate(90deg); } }
+
+.sc-browser {
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--ink-panel);
+  border: 1px solid rgba(58, 28, 12, 0.12);
+  box-shadow: 0 1px 2px rgba(58, 28, 12, 0.06), 0 40px 80px -30px rgba(58, 28, 12, 0.45);
+}
+.sc-bar { display: flex; align-items: center; gap: 8px; padding: 11px 14px; background: #140b07; }
+.sc-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+.sc-dot.r { background: #ff5f57; }
+.sc-dot.y { background: #febc2e; }
+.sc-dot.g { background: #28c840; }
+.sc-url {
+  margin-left: 12px; font-family: var(--font-mono); font-size: 0.72rem; color: var(--on-ink-muted);
+  background: rgba(255, 255, 255, 0.06); padding: 4px 12px; border-radius: 7px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sc-browser video { display: block; width: 100%; }
