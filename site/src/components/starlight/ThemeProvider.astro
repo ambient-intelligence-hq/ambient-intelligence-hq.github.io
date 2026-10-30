@@ -1,0 +1,14 @@
+---
+// Docs open in light mode for first-time visitors. Starlight's default would
+// follow the OS. The theme picker still offers Light, Dark and System:
+// Starlight stores "light"/"dark", or "" for System, so a missing key means
+// the visitor has never chosen and is safe to default.
+import Default from "@astrojs/starlight/components/ThemeProvider.astro";
+---
+
+<script is:inline>
+  try {
+    if (localStorage.getItem("starlight-theme") === null) localStorage.setItem("starlight-theme", "light");
+  } catch {}
+</script>
+<Default />

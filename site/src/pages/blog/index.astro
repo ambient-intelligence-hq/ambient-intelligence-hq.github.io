@@ -1,19 +1,12 @@
 ---
 import Base from "../../layouts/Base.astro";
-import { getCollection } from "astro:content";
+import { getPosts, readingTime, formatDate } from "../../lib/blog";
 
 const base = import.meta.env.BASE_URL;
 
-const posts = (await getCollection("blog"))
-  .filter((p) => !p.data.draft)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-function fmt(d: Date) {
-  const y = d.getUTCFullYear();
-  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(d.getUTCDate()).padStart(2, "0");
-  return `${y} · ${m} · ${day}`;
-}
+const posts = await Promise.all(
+  (await getPosts()).map(async (post) => ({ post, minutes: await readingTime(post) })),
+);
 ---
 
 <Base
@@ -31,9 +24,9 @@ function fmt(d: Date) {
 
   <div class="wrap">
     <div class="post-list">
-      {posts.map((post) => (
+      {posts.map(({ post, minutes }) => (
         <a class="post-card reveal" href={`${base}blog/${post.id}/`}>
-          <div class="meta">{fmt(post.data.date)}{post.data.readingTime ? <><br />{post.data.readingTime}</> : null}</div>
+          <div class="meta">{formatDate(post.data.date)}{minutes ? <><br />{minutes}</> : null}</div>
           <div>
             <h3>{post.data.title}</h3>
             <p>{post.data.description}</p>
@@ -43,7 +36,7 @@ function fmt(d: Date) {
       ))}
 
       {posts.length === 0 && (
-        <p style="color:var(--text-muted)">No posts yet. Add a Markdown file under <code>src/content/blog/</code>.</p>
+        <p style="color:var(--text-muted)">No posts yet. Add a Markdown or MDX file under <code>src/content/blog/</code>.</p>
       )}
     </div>
   </div>

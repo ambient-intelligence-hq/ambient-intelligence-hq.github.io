@@ -1,6 +1,8 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import mdx from "@astrojs/mdx";
+import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 
 // Deploy target is configurable so this works before a domain is chosen and
 // after. Set these as repo *variables* (Settings → Actions → Variables); the
@@ -26,6 +28,9 @@ export default defineConfig({
 
   build: { format: "directory" },
 
+  // Blog posts get an automatic reading time (frontmatter.minutesRead).
+  markdown: { remarkPlugins: [remarkReadingTime] },
+
   // Developer docs are Starlight: Markdown/MDX pages in src/content/docs/docs/
   // become /docs/<path>/. Starlight only owns those routes — the marketing
   // pages and blog in src/pages/ are unaffected.
@@ -37,6 +42,8 @@ export default defineConfig({
       favicon: "/assets/img/ambient-mark.svg",
       social: [{ icon: "github", label: "GitHub", href: "https://github.com/ambient-intelligence-hq/ambient" }],
       customCss: ["./src/styles/starlight.css"],
+      // Default to light mode; see the component for how System/Dark still work.
+      components: { ThemeProvider: "./src/components/starlight/ThemeProvider.astro" },
       head: [
         { tag: "link", attrs: { rel: "preconnect", href: "https://fonts.googleapis.com" } },
         { tag: "link", attrs: { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: true } },
@@ -80,5 +87,9 @@ export default defineConfig({
         },
       ],
     }),
+    // MDX for blog posts. Starlight would add it for the docs anyway; listing
+    // it here keeps the blog independent. It must come after Starlight so
+    // Starlight's remark plugins are applied to docs pages.
+    mdx({ optimize: true }),
   ],
 });

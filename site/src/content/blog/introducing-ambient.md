@@ -3,7 +3,6 @@ title: Any video in, any action out
 description: Why we built Ambient as a video-understanding agent engine, and what "video to action" means when the agent watches instead of transcribes.
 date: 2026-09-22
 tag: Introducing
-readingTime: 4 min read
 draft: false
 ---
 
