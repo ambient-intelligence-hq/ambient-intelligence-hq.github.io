@@ -99,6 +99,10 @@ export default defineConfig({
           ],
         },
         {
+          label: "Examples",
+          items: [{ label: "Car damage report", slug: "docs/examples/car-damage-report" }],
+        },
+        {
           label: "Reference",
           items: [{ label: "Configuration", slug: "docs/reference/configuration" }],
         },

@@ -52,3 +52,19 @@ pre,
 .expressive-code {
   font-variant-ligatures: none;
 }
+
+/* Highlighted / numbered code lines (e.g. the SDK quickstart script): a faint
+   Ambient-orange tint with a solid orange number badge. Starlight's theme sets
+   neutral greys; this stylesheet isn't in a cascade layer, so it wins. */
+.expressive-code {
+  --ec-tm-markBg: rgba(255, 90, 20, 0.09);
+  --ec-tm-markBrdCol: #ff5a14;
+  --ec-tm-lineMarkerLabelCol: #ffffff;
+  --ec-tm-lineMarkerLabelPadInl: 0.35rem;
+}
+
+/* Frame screenshots so light ones don't blend into the page. */
+.sl-markdown-content img {
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.75rem;
+}
