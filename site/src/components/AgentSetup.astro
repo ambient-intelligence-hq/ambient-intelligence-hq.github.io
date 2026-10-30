@@ -1,0 +1,15 @@
+---
+// The "set up with your coding agent" prompt. Rendered on the Quickstart page
+// and in the docs header modal (starlight/AgentSetupDialog.astro), so both
+// always show the same text. Edit the prompt in src/data/agent-setup.ts.
+// Everything else (Docker, API key, settings) the agent works through with
+// the user, following public/agents/setup.md.
+import { Code } from "@astrojs/starlight/components";
+import { AGENT_SETUP_PROMPT, AGENT_SETUP_INTRO, AGENT_SETUP_NOTE } from "../data/agent-setup";
+
+const guide = `${import.meta.env.BASE_URL}agents/setup.md`;
+---
+
+<p>{AGENT_SETUP_INTRO}</p>
+<Code code={AGENT_SETUP_PROMPT} lang="text" title="Paste into your coding agent" wrap />
+<p>The agent follows the <a href={guide}>setup guide for agents</a>. {AGENT_SETUP_NOTE}</p>

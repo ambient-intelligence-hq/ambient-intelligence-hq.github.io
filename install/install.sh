@@ -2,7 +2,7 @@
 #
 # Ambient installer — a video-understanding agent (engine + Studio) on Docker.
 #
-#   curl -fsSL https://ambient-intelligence-hq.github.io/ambient/install.sh | bash
+#   curl -fsSL https://ambient-intelligence-hq.github.io/install.sh | bash
 #
 # Needs only Docker (Docker Desktop on macOS/Windows, Docker Engine + the compose
 # plugin on Linux). Writes ~/.ambient/{docker-compose.yml,.env,bin/ambientctl},
@@ -12,7 +12,7 @@
 # docker-compose.yml + ambientctl, pulls newer images, and restarts.
 #
 # Non-interactive:
-#   curl -fsSL https://ambient-intelligence-hq.github.io/ambient/install.sh | AMBIENT_LLM_KEY=sk-or-... bash -s -- --yes
+#   curl -fsSL https://ambient-intelligence-hq.github.io/install.sh | AMBIENT_LLM_KEY=sk-or-... bash -s -- --yes
 #
 # Options:
 #   -y, --yes          accept defaults; don't prompt (key from AMBIENT_LLM_KEY)

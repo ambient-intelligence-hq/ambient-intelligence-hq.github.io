@@ -197,6 +197,11 @@ section { position: relative; }
 }
 .nav-links a:hover { color: var(--text); }
 .nav-links a.active { color: var(--text); font-weight: 600; }
+/* GitHub link: the mark alone in the bar; the label shows in the mobile dropdown. */
+.nav-gh { display: inline-flex; align-items: center; gap: 10px; }
+.nav-gh svg { width: 22px; height: 22px; fill: currentColor; }
+.nav-gh-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.nav-links.open .nav-gh-label { position: static; width: auto; height: auto; overflow: visible; clip: auto; }
 .nav-toggle { display: none; margin-left: auto; background: none; border: 1px solid var(--hairline); border-radius: 9px; padding: 8px; color: var(--text); cursor: pointer; }
 
 /* ----- Logo mark (inline svg) ------------------------------------------ */
