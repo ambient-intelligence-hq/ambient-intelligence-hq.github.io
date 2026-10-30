@@ -115,9 +115,10 @@ agent = client.beta.agents.create(
 )
 ```
 
-- **Mode comes from `tools`.** `video_agent_20260825` selects agent mode. The legacy `agent_toolset_20260401` also selects agent mode. `video_fast_20260825`, or no tools at all, selects fast mode.
+- **Mode comes from `tools`.** Ambient's video tools are built in, so `tools` only holds a mode marker. Omit it, or pass `video_agent_20260825`, for agent mode. Pass `video_fast_20260825` for fast mode. The legacy `agent_toolset_20260401` also selects agent mode. Any other tool type is rejected with a 400. The returned agent has a `mode` field (`agent.mode`) so you can check, and a session's `metadata={"mode": "fast"}` (or `"agent"`) overrides the agent for that session.
+- **The Python SDK requires `model`.** To use the engine's configured model, borrow it from a built-in agent: `client.beta.agents.retrieve("ambient_v1").model.id` for agent mode, or `"ambient_fast"` for fast mode. Over raw HTTP `model` is optional and falls back the same way (`AGENT_MODEL` for agent mode, `LLM_MODEL` for fast mode).
 - **`system` is added to Ambient's own video prompt** as a task section. It doesn't replace that prompt.
-- **`model` must be a model your LLM endpoint serves.** The built-in agents pick up the engine's configured models every time it starts. Custom agents keep the model they were created with.
+- **An explicit `model` must be one your LLM endpoint serves.** The built-in agents pick up the engine's configured models every time it starts. Custom agents keep the model they were created with.
 - **Per-agent LLM endpoint.** To send this agent's own LLM calls to a different OpenAI-compatible endpoint, pass `extra_body={"base_url": "...", "api_key": "..."}`. Otherwise it uses the engine's endpoint.
 
 To reuse an agent, keep its `id`, or look it up by name with `agents.list()`. Agents can't be updated or deleted through the API, so reuse agents rather than creating a new one on every run.

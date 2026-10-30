@@ -69,9 +69,9 @@ You need a running engine. If you don't have one yet, follow the [Quickstart](..
 
 4. **Save the script.**
 
-   This script uploads a video, reuses an agent (or creates it on the first run), opens a session, asks one question, and prints the run as it streams.
+   This script uploads a video, reuses an agent (or creates it on the first run), opens a session, asks one question, and prints the run as it streams. It looks long, but it's five SDK calls; the numbers in the margin match [How the script works](#how-the-script-works) below.
 
-   ```python title="quickstart.py"
+   ```python title="quickstart.py" {"2":23-28} {"1":50} {"2":54} {"3":59-64} {"4":69-72} {"5":76}
    """Ask Ambient a question about a video, using the Anthropic SDK."""
    import mimetypes
    import os
@@ -185,15 +185,85 @@ You need a running engine. If you don't have one yet, follow the [Quickstart](..
 You don't have to create an agent. The built-in agents work out of the box: pass `agent="ambient_v1"` for agent mode or `agent="ambient_fast"` for fast mode when you create the session.
 </Aside>
 
-## What each step does
+## How the script works
 
-- **`files.upload`** stores the video on the engine and returns its metadata. The file `id` (for example `vid_…`) is the video id you use everywhere else. Ids are derived from the file's contents, so uploading the same bytes again returns the same id and reuses the work already done on that video.
-- **`agents.create`** saves a reusable template: a model, an optional `system` prompt that Ambient adds to its own video prompt as the task, and a tool marker that selects the mode. `video_agent_20260825` selects agent mode. An agent with no tools runs in fast mode.
-- **`sessions.create`** binds an agent to one video. `agent` and `environment_id` are required by the SDK; `"default"` is the environment the engine creates at startup. See [Environments](../environments/) for what environments do in Ambient. The video goes in `metadata.video_id`.
-- **`events.send`** posts your question as a `user.message` event and starts a run. Only one run can be in flight per session.
-- **`events.stream`** opens a server-sent event stream for the current run. It replays the run from its start, so it doesn't matter if you open it a moment after sending. It closes after `session.status_idle`.
+Everything else in the script is setup and printing. These are the five parts that talk to Ambient.
 
-To ask a follow-up, call `events.send` again on the same session after the stream closes, then open a new stream. The conversation and everything the agent already gathered are kept on the server. See [SDK operations](../operations/#sessions-and-follow-up-questions).
+### 1. Upload the video
+
+```python
+with path.open("rb") as fh:
+    video = client.beta.files.upload(file=(path.name, fh, mime))
+```
+
+`files.upload` stores the video on the engine and returns its metadata. The file `id` (for example `vid_…`) **is the video id** you use everywhere else. Ids come from the file's contents, so uploading the same bytes again returns the same id and reuses the work already done on that video.
+
+### 2. Get an agent
+
+```python
+builtin = client.beta.agents.retrieve("ambient_v1")
+return client.beta.agents.create(
+    name=AGENT_NAME,
+    model=builtin.model.id,
+    system="Answer concisely. Cite the mm:ss timestamps that support each claim.",
+    tools=[{"type": "video_agent_20260825"}],  # agent mode (tool loop)
+)
+```
+
+An agent is a **reusable template**, not a running process. It has three parts:
+
+- **`model`:** the LLM it runs. The script borrows the model from the built-in `ambient_v1` agent, so it's always one your LLM endpoint actually serves.
+- **`system`:** your task instructions. Ambient **adds** this to its own video prompt (how to search clips, cite timestamps); it doesn't replace it. Describe the job, not how to watch video.
+- **`tools`:** a marker that picks the mode. `video_agent_20260825` (or no tools) selects **agent mode**, a multi-step tool loop. `video_fast_20260825` selects **fast mode**, a single vision pass.
+
+`get_or_create_agent` first looks the agent up by name, because agents can't be updated or deleted through the API; creating one on every run would leave duplicates behind. To skip this step entirely, use a built-in agent: `agent="ambient_v1"` or `agent="ambient_fast"`.
+
+### 3. Open a session
+
+```python
+session = client.beta.sessions.create(
+    agent=agent.id,
+    environment_id="default",
+    metadata={"video_id": video.id},
+    title="SDK quickstart",
+)
+```
+
+A session is **one conversation about one video**. It holds the conversation and everything the agent has gathered, so follow-up questions build on earlier ones.
+
+- **`metadata.video_id`** tells Ambient which video to analyze.
+- **`environment_id="default"`** is required by the SDK. It's the environment the engine creates at startup and has no effect on how the session runs. See [Environments](../environments/).
+- Optional: `metadata["max_turns_per_run"]` sets the agent's step budget per question (default 20).
+
+A new session starts as `pending` while its media sandbox boots. `wait_until_ready` polls until it's `idle`, which usually takes a second or two.
+
+### 4. Ask the question
+
+```python
+client.beta.sessions.events.send(
+    session.id,
+    events=[{"type": "user.message", "content": question}],
+)
+```
+
+Sending a `user.message` event **starts a run** on the server and returns right away; it doesn't wait for the answer. Only one run can be in flight per session.
+
+### 5. Stream the run
+
+```python
+with client.beta.sessions.events.stream(session.id) as stream:
+    for ev in stream:
+        if ev.type == "agent.tool_use":        # the agent calls a tool
+            ...
+        elif ev.type == "agent.message":       # the final answer
+            answer = "".join(block.text for block in ev.content)
+        elif ev.type == "session.status_idle": # the run is over
+            ...
+```
+
+`events.stream` delivers what the agent does as it happens. It replays the run from its start, so it doesn't matter if you open it a moment after sending, and it closes on its own after `session.status_idle`. The full list is under [Events you'll see](#events-youll-see).
+
+**To ask a follow-up,** call `events.send` again on the same session after the stream closes, then open a new stream. See [SDK operations](../operations/#sessions-and-follow-up-questions), or the [car damage report example](../../examples/car-damage-report/) for a complete multi-step task with structured output.
 
 ## Events you'll see
 
@@ -218,6 +288,7 @@ Fields marked as extras aren't part of the Anthropic schema. The SDK keeps them 
 ## Next steps
 
 <CardGrid>
+  <LinkCard title="Example: car damage report" description="A complete task: custom prompt, annotated evidence, structured JSON." href="../../examples/car-damage-report/" />
   <LinkCard title="SDK operations" description="Every supported call: uploads, YouTube imports, structured output, citations, artifacts, errors." href="../operations/" />
   <LinkCard title="Environments" description="What environment_id means in Ambient." href="../environments/" />
   <LinkCard title="Sandbox setup" description="Where the agent's media work runs." href="../sandbox/" />
