@@ -7,8 +7,8 @@ sidebar:
 ---
 
 import { Aside, LinkCard, CardGrid } from '@astrojs/starlight/components';
-import summary from '../../../../assets/docs/examples/car-damage-report-summary.jpg';
-import finding from '../../../../assets/docs/examples/car-damage-report-finding.jpg';
+import summary from '../../../../assets/docs/examples/car-damage-report-summary.png';
+import finding from '../../../../assets/docs/examples/car-damage-report-finding.png';
 import { Image } from 'astro:assets';
 
 This example builds a **vehicle damage inspector** on top of Ambient. You give it a walk-around video of a car, and it returns:
@@ -26,13 +26,13 @@ It uses the same five calls as the [SDK quickstart](../../sdk/quickstart/), plus
 
 ## What you'll build
 
-From a 21-second walk-around of a damaged car, the agent produced this report. It found two areas of damage, rated each one, cited where they're visible, and listed what the video never showed:
+From a walk-around video of a damaged car, the agent produced this report. It found two areas of damage, rated each one, cited where they're visible, and listed what the video never showed:
 
-<Image src={summary} alt="The generated report: title, a scope note saying only the driver side was filmed, and a summary table with two moderate findings: front-left fender paint loss at 00:20–00:21 and a rear-left quarter panel scrape at 00:14–00:17." />
+<Image src={summary} widths={[720, 1440]} sizes="(max-width: 50rem) 100vw, 720px" alt="The generated report: title, a scope note saying only the driver side was filmed, and a summary table with two moderate findings: front-left fender paint loss at 00:20–00:21 and a rear-left quarter panel scrape at 00:14–00:17." />
 
 Each finding has an annotated frame as evidence. The agent drew the box, grabbed the frame, and built the page itself:
 
-<Image src={finding} alt="Finding 1, front-left fender: a video frame with a red box labeled 'Paint scraped off / filler exposed', followed by the damage type, a Moderate severity badge, and the timestamps 00:20–00:21." />
+<Image src={finding} widths={[720, 1440]} sizes="(max-width: 50rem) 100vw, 720px" alt="Finding 1, front-left fender: a video frame with a red box labeled 'Paint scraped off / filler exposed', followed by the damage type, a Moderate severity badge, and the timestamps 00:20–00:21." />
 
 ## Before you start
 
