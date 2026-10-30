@@ -37,6 +37,8 @@ export default defineConfig({
       favicon: "/assets/img/ambient-mark.svg",
       social: [{ icon: "github", label: "GitHub", href: "https://github.com/ambient-intelligence-hq/ambient" }],
       customCss: ["./src/styles/starlight.css"],
+      // Default to light mode; see the component for how System/Dark still work.
+      components: { ThemeProvider: "./src/components/starlight/ThemeProvider.astro" },
       head: [
         { tag: "link", attrs: { rel: "preconnect", href: "https://fonts.googleapis.com" } },
         { tag: "link", attrs: { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: true } },

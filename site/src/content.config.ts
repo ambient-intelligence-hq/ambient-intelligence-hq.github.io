@@ -1,7 +1,7 @@
 import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
-import { docsLoader } from "@astrojs/starlight/loaders";
-import { docsSchema } from "@astrojs/starlight/schema";
+import { docsLoader, i18nLoader } from "@astrojs/starlight/loaders";
+import { docsSchema, i18nSchema } from "@astrojs/starlight/schema";
 
 // Developer docs live as Markdown/MDX in src/content/docs/ (Starlight).
 // src/content/docs/docs/quickstart.mdx → /docs/quickstart/.
@@ -21,4 +21,7 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog, docs };
+// Overrides for Starlight's built-in UI strings (src/content/i18n/en.json).
+const i18n = defineCollection({ loader: i18nLoader(), schema: i18nSchema() });
+
+export const collections = { blog, docs, i18n };
