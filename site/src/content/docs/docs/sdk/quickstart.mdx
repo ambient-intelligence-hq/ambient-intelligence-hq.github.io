@@ -188,7 +188,7 @@ You don't have to create an agent. The built-in agents work out of the box: pass
 ## What each step does
 
 - **`files.upload`** stores the video on the engine and returns its metadata. The file `id` (for example `vid_…`) is the video id you use everywhere else. Ids are derived from the file's contents, so uploading the same bytes again returns the same id and reuses the work already done on that video.
-- **`agents.create`** saves a reusable template: a model, an optional `system` prompt that Ambient adds to its own video prompt as the task, and a tool marker that selects the mode. `video_agent_20260825` selects agent mode. An agent with no tools runs in fast mode.
+- **`agents.create`** saves a reusable template: a model, an optional `system` prompt that Ambient adds to its own video prompt as the task, and a tool marker that selects the mode. `video_agent_20260825` (or no tools) selects agent mode; `video_fast_20260825` selects fast mode. `agent.mode` and `session.mode` show which one you got.
 - **`sessions.create`** binds an agent to one video. `agent` and `environment_id` are required by the SDK; `"default"` is the environment the engine creates at startup. See [Environments](../environments/) for what environments do in Ambient. The video goes in `metadata.video_id`.
 - **`events.send`** posts your question as a `user.message` event and starts a run. Only one run can be in flight per session.
 - **`events.stream`** opens a server-sent event stream for the current run. It replays the run from its start, so it doesn't matter if you open it a moment after sending. It closes after `session.status_idle`.
