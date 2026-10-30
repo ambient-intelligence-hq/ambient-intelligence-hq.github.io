@@ -1,0 +1,103 @@
+---
+// The homepage's "Set up with your agent" popup, in the marketing site's style
+// (the docs have their own, starlight/AgentSetupDialog.astro). The text comes
+// from src/data/agent-setup.ts. Any element with `data-agent-setup-open`
+// opens it; main.js adds the Copy button to the .code block.
+import {
+  AGENT_SETUP_PROMPT,
+  AGENT_SETUP_TITLE,
+  AGENT_SETUP_INTRO,
+  AGENT_SETUP_NOTE,
+} from "../data/agent-setup";
+
+const guide = `${import.meta.env.BASE_URL}agents/setup.md`;
+---
+
+<dialog class="agent-modal" aria-labelledby="agent-modal-title">
+  <div class="panel">
+    <div class="head">
+      <h2 id="agent-modal-title">{AGENT_SETUP_TITLE}</h2>
+      <button type="button" class="close" aria-label="Close">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <p>{AGENT_SETUP_INTRO}</p>
+    <div class="code">
+      <div class="code-head"><span class="dots"><i></i><i></i><i></i></span><span class="file">paste into your coding agent</span></div>
+      <pre>{AGENT_SETUP_PROMPT}</pre>
+    </div>
+    <p class="note">The agent follows the <a href={guide}>setup guide for agents</a>. {AGENT_SETUP_NOTE}</p>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>("dialog.agent-modal")!;
+  document.querySelectorAll("[data-agent-setup-open]").forEach((el) =>
+    el.addEventListener("click", () => dialog.showModal()),
+  );
+  dialog.querySelector(".close")!.addEventListener("click", () => dialog.close());
+  // A click on the backdrop lands on the <dialog> itself, outside .panel.
+  dialog.addEventListener("click", (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+</script>
+
+<style>
+  .agent-modal {
+    margin: auto;
+    width: min(42rem, calc(100vw - 2rem));
+    max-height: calc(100vh - 4rem);
+    padding: 0;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--text);
+    box-shadow: var(--shadow);
+  }
+  .agent-modal::backdrop {
+    background: rgb(26 17 13 / 0.5);
+  }
+  .panel {
+    padding: 24px 28px 28px;
+  }
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+  }
+  .close {
+    display: flex;
+    padding: 4px;
+    border: 0;
+    background: none;
+    color: var(--text-faint);
+    cursor: pointer;
+  }
+  .close:hover {
+    color: var(--text);
+  }
+  p {
+    margin: 0 0 12px;
+    color: var(--text-muted);
+  }
+  .note {
+    margin: 16px 0 0;
+  }
+  .note a {
+    color: var(--accent);
+  }
+  /* Wrap long lines here instead of scrolling; copying keeps the real line breaks. */
+  .code pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+</style>

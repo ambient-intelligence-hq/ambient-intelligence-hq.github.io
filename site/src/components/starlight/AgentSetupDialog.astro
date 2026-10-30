@@ -4,17 +4,18 @@
 // the SocialIcons override, so it also appears in the mobile menu.
 import { Icon } from "@astrojs/starlight/components";
 import AgentSetup from "../AgentSetup.astro";
+import { AGENT_SETUP_BUTTON, AGENT_SETUP_TITLE } from "../../data/agent-setup";
 ---
 
 <ambient-agent-setup>
   <button type="button" class="open" aria-haspopup="dialog">
     <Icon name="rocket" size="1rem" />
-    <span>Set up with your agent</span>
+    <span>{AGENT_SETUP_BUTTON}</span>
   </button>
-  <dialog aria-label="Set up with your coding agent">
+  <dialog aria-label={AGENT_SETUP_TITLE}>
     <div class="panel">
       <div class="head">
-        <h2>Set up with your coding agent</h2>
+        <h2>{AGENT_SETUP_TITLE}</h2>
         <button type="button" class="close" aria-label="Close">
           <Icon name="close" size="1.25rem" />
         </button>
