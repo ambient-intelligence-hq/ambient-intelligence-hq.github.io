@@ -19,11 +19,13 @@ site/
 ├── src/
 │   ├── layouts/Base.astro     # shared shell: <head>, nav, footer, point cloud
 │   ├── content.config.ts      # blog + docs collection schemas
-│   ├── content/blog/          # ← blog posts live here, one .md per post
+│   ├── content/blog/          # ← blog posts (.md / .mdx, or a folder with images)
 │   │   └── introducing-ambient.md
 │   ├── content/docs/docs/     # ← developer docs (Starlight), one .mdx per page
 │   ├── assets/docs/           # docs screenshots (optimized at build time)
 │   ├── styles/starlight.css   # Ambient brand theme for the docs
+│   ├── lib/blog.ts            # post listing, reading time, date format
+│   ├── plugins/               # remark-reading-time
 │   └── pages/
 │       ├── index.astro        # landing page
 │       ├── blog/index.astro   # post listing (generated from the collection)
@@ -48,27 +50,48 @@ that build.
 
 ## Writing a blog post
 
-Add a Markdown file to `src/content/blog/`. The filename becomes the URL slug
-(`my-post.md` → `/blog/my-post/`). Frontmatter:
+Add a Markdown (`.md`) or MDX (`.mdx`) file to `src/content/blog/`. The name
+becomes the URL slug (`my-post.mdx` → `/blog/my-post/`). If the post has
+images, make it a folder instead and keep the images next to it:
+
+```
+src/content/blog/my-post/
+├── index.mdx      # → /blog/my-post/
+├── cover.jpg
+└── diagram.png
+```
+
+Frontmatter:
 
 ```markdown
 ---
 title: My post title
 description: One-line summary for the card + <meta> + RSS.
 date: 2026-10-01
-tag: Engineering        # shown as the card pill
-readingTime: 5 min read # optional
-draft: false            # true hides it from the listing, RSS, and build
+tag: Engineering         # shown as the card pill
+cover: ./cover.jpg       # optional; also used as the social preview image
+coverAlt: What the cover shows
+draft: false             # true: visible in `npm run dev`, left out of builds
 ---
 
 Write the body in **Markdown**. Headings, lists, `inline code`, and
 blockquotes are all styled to match the site.
+
+![Alt text](./diagram.png)
 ```
+
+- **Reading time** is calculated at build time (`src/plugins/remark-reading-time.mjs`).
+  Set `readingTime: 5 min read` in the frontmatter only to override it.
+- **Images** referenced with a relative path (`./diagram.png`) and the `cover`
+  are optimized by Astro (`astro:assets`): resized, converted to WebP, and lazy-loaded.
+- **MDX** posts can import and use components, e.g. a video embed or an
+  interactive demo, alongside Markdown.
 
 The listing, the post page, and the RSS feed pick it up automatically — no code
 changes. To manage posts through a web UI instead of editing Markdown directly,
-a git-based CMS such as [Decap](https://decapcms.org) can be layered on top
-(it commits to `src/content/blog/`); ask if you want that wired up.
+a git-based CMS such as [Keystatic](https://keystatic.com) or
+[Decap](https://decapcms.org) can be layered on top (it commits to
+`src/content/blog/`).
 
 ## Writing docs
 

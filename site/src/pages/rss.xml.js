@@ -1,10 +1,8 @@
 import rss from "@astrojs/rss";
-import { getCollection } from "astro:content";
+import { getPosts } from "../lib/blog";
 
 export async function GET(context) {
-  const posts = (await getCollection("blog"))
-    .filter((p) => !p.data.draft)
-    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  const posts = await getPosts();
 
   return rss({
     title: "Ambient Blog",

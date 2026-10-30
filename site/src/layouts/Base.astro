@@ -4,12 +4,15 @@ export interface Props {
   description?: string;
   active?: "home" | "docs" | "blog" | null;
   extraCss?: string[];
+  /** Absolute URL of a social preview image (og:image). */
+  image?: string;
 }
 const {
   title,
   description = "Ambient is a video-to-action agent: it watches long-form video, gathers evidence over time, answers questions with citations, and invokes tools to take action.",
   active = null,
   extraCss = [],
+  image,
 } = Astro.props;
 
 // BASE_URL always ends with "/" — prefix asset + internal links so the site
@@ -29,6 +32,8 @@ const brandMark = `${base}assets/img/ambient-mark.svg`;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    {image && <meta property="og:image" content={image} />}
+    <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
     <meta name="theme-color" content="#fdf6f1" />
     <link rel="icon" href={brandMark} type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title="Ambient Blog" href={`${base}rss.xml`} />
