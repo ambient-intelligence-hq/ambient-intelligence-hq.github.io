@@ -195,6 +195,7 @@
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .quickstart-single { max-width: 760px; margin-inline: auto; }
 .quickstart-note { margin-top: 18px; text-align: center; color: var(--text-muted); font-size: 0.95rem; }
+.quickstart-alt { margin: 22px 0 10px; color: var(--text-muted); font-size: 0.95rem; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .inline-code { font-family: var(--font-mono); font-size: 0.82em; background: var(--accent-soft); color: #c2410c; border-radius: 5px; padding: 0.08em 0.35em; }
 

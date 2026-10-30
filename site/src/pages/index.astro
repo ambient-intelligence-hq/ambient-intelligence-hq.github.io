@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import { AGENT_SETUP_PROMPT } from "../data/agent-setup";
 const base = import.meta.env.BASE_URL;
 // Hero demo video is swappable for review (HERO_VIDEO = filename in assets/video).
 const heroVideo = process.env.HERO_VIDEO || "montage-demo.mp4";
@@ -450,6 +451,11 @@ curl -fsSL {installUrl} | bash
 <span class="cc"># when ready, the installer prints and opens Studio</span>
 <span class="cc"># add a video or paste a YouTube link, then ask:</span>
 <span class="cp">&gt;</span> Investigate the incident and share a report with evidence ?</pre>
+        </div>
+        <p class="quickstart-alt">Or let your coding agent set it up. Paste this into Claude Code, Codex, or Cursor:</p>
+        <div class="code">
+          <div class="code-head"><span class="dots"><i></i><i></i><i></i></span><span class="file">paste into your coding agent</span></div>
+          <pre>{AGENT_SETUP_PROMPT}</pre>
         </div>
         <p class="quickstart-note">Deploying for a team or cluster? Detailed self-hosting guidance is coming soon.</p>
         </div>

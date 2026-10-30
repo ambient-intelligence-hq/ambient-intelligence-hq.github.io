@@ -1,0 +1,107 @@
+---
+// Header button that opens the agent setup steps in a modal. A native <dialog>
+// gives Esc-to-close, focus handling, and the backdrop for free. Rendered via
+// the SocialIcons override, so it also appears in the mobile menu.
+import { Icon } from "@astrojs/starlight/components";
+import AgentSetup from "../AgentSetup.astro";
+---
+
+<ambient-agent-setup>
+  <button type="button" class="open" aria-haspopup="dialog">
+    <Icon name="rocket" size="1rem" />
+    <span>Set up with your agent</span>
+  </button>
+  <dialog aria-label="Set up with your coding agent">
+    <div class="panel">
+      <div class="head">
+        <h2>Set up with your coding agent</h2>
+        <button type="button" class="close" aria-label="Close">
+          <Icon name="close" size="1.25rem" />
+        </button>
+      </div>
+      <div class="sl-markdown-content">
+        <AgentSetup />
+      </div>
+    </div>
+  </dialog>
+</ambient-agent-setup>
+
+<script>
+  class AmbientAgentSetup extends HTMLElement {
+    constructor() {
+      super();
+      const dialog = this.querySelector("dialog")!;
+      this.querySelector(".open")!.addEventListener("click", () => dialog.showModal());
+      this.querySelector(".close")!.addEventListener("click", () => dialog.close());
+      // A click on the backdrop lands on the <dialog> itself, outside .panel.
+      dialog.addEventListener("click", (e) => {
+        if (e.target === dialog) dialog.close();
+      });
+    }
+  }
+  customElements.define("ambient-agent-setup", AmbientAgentSetup);
+</script>
+
+<style>
+  .open {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.85rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--sl-color-accent);
+    color: var(--sl-color-black);
+    font: inherit;
+    font-size: var(--sl-text-sm);
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .open:hover {
+    background: var(--sl-color-accent-high);
+  }
+  dialog {
+    /* Starlight's reset zeroes margins; auto restores the native centering. */
+    margin: auto;
+    width: min(44rem, calc(100vw - 2rem));
+    max-height: calc(100vh - 4rem);
+    padding: 0;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 1rem;
+    background: var(--sl-color-bg);
+    color: var(--sl-color-text);
+    box-shadow: var(--sl-shadow-lg);
+  }
+  dialog::backdrop {
+    background: rgb(0 0 0 / 0.55);
+  }
+  .panel {
+    padding: 1.5rem 1.75rem 1.75rem;
+  }
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--sl-color-hairline);
+  }
+  .head h2 {
+    margin: 0;
+    font-size: var(--sl-text-h4);
+    color: var(--sl-color-white);
+  }
+  .close {
+    display: flex;
+    padding: 0.25rem;
+    border: 0;
+    background: none;
+    color: var(--sl-color-gray-3);
+    cursor: pointer;
+  }
+  .close:hover {
+    color: var(--sl-color-white);
+  }
+</style>

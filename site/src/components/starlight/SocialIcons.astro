@@ -1,0 +1,9 @@
+---
+// Adds the "Set up with your agent" button next to the GitHub icon in the docs
+// header (and in the mobile menu), then renders Starlight's default icons.
+import Default from "@astrojs/starlight/components/SocialIcons.astro";
+import AgentSetupDialog from "./AgentSetupDialog.astro";
+---
+
+<AgentSetupDialog />
+<Default />

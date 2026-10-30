@@ -2,6 +2,7 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import mdx from "@astrojs/mdx";
+import starlightLlmsTxt from "starlight-llms-txt";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 
 // Deploy target is configurable so this works before a domain is chosen and
@@ -42,8 +43,24 @@ export default defineConfig({
       favicon: "/assets/img/ambient-mark.svg",
       social: [{ icon: "github", label: "GitHub", href: "https://github.com/ambient-intelligence-hq/ambient" }],
       customCss: ["./src/styles/starlight.css"],
+      // /llms.txt, /llms-full.txt and /llms-small.txt: the docs as plain text
+      // for AI agents. The agent setup guide itself is public/agents/setup.md.
+      plugins: [
+        starlightLlmsTxt({
+          projectName: "Ambient",
+          description:
+            "Ambient is a video-understanding agent engine: give it a video and a question, and it answers with timestamp citations. It runs locally with Docker and includes a web UI (Studio) and an API compatible with the Anthropic SDK.",
+          details:
+            "To install Ambient on the user's machine, follow the agent setup guide first: https://ambient-intelligence-hq.github.io/agents/setup.md",
+          promote: ["docs/quickstart*", "docs/sdk/quickstart*"],
+        }),
+      ],
       // Default to light mode; see the component for how System/Dark still work.
-      components: { ThemeProvider: "./src/components/starlight/ThemeProvider.astro" },
+      components: {
+        ThemeProvider: "./src/components/starlight/ThemeProvider.astro",
+        // Adds the "Set up with your agent" button and modal to the header.
+        SocialIcons: "./src/components/starlight/SocialIcons.astro",
+      },
       head: [
         { tag: "link", attrs: { rel: "preconnect", href: "https://fonts.googleapis.com" } },
         { tag: "link", attrs: { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: true } },

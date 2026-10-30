@@ -112,6 +112,18 @@ slug to the `sidebar` in `astro.config.mjs`.
 Search (Pagefind), the sidebar, the on-page table of contents, and
 prev/next links are generated; there's nothing to maintain by hand.
 
+### Docs for AI agents
+
+- **`public/agents/setup.md`** is the setup guide coding agents follow when a
+  user pastes the "Set up with your coding agent" prompt (Quickstart page and
+  homepage). It's served as-is at `/agents/setup.md`. Keep its commands, flags,
+  and expected output in sync with `install/install.sh` and `ambientctl`, and
+  bump `version`/`updated` in its frontmatter when you change it. When an agent
+  gets stuck in practice, add the case to its Troubleshooting table.
+- **`/llms.txt`, `/llms-full.txt`, `/llms-small.txt`** are generated from the
+  docs by `starlight-llms-txt` (configured in `astro.config.mjs`). Pages marked
+  `draft: true` are left out.
+
 ## Editing pages
 
 - **Landing** — edit `src/pages/index.astro`.
