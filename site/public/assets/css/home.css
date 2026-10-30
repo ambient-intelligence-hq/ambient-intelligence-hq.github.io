@@ -102,51 +102,121 @@
 /* ==========================================================================
    ECCV award band
    ========================================================================== */
+/* Hero badge: links down to the band. */
+.award-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  margin-bottom: 22px;
+  padding: 5px 14px 5px 5px;
+  border: 1px solid rgba(255, 90, 20, 0.28);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  box-shadow: 0 8px 20px -14px rgba(120, 50, 10, 0.45);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.award-pill:hover { border-color: var(--accent); box-shadow: 0 10px 24px -14px rgba(255, 90, 20, 0.55); }
+.award-pill strong { color: #c2410c; font-weight: 700; }
+.award-pill-ic {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--accent);
+}
+.award-pill-ic svg { width: 16px; height: 16px; }
+.award-pill .chev { color: var(--accent); transition: transform 0.15s ease; }
+.award-pill:hover .chev { transform: translateX(3px); }
+
+/* The band: dark, so it reads as a highlight on the cream page. */
 .award-band {
+  scroll-margin-top: 110px;   /* clears the sticky nav when the hero badge jumps here */
+  margin-top: clamp(42px, 5vw, 64px);
+  padding: 26px 28px 28px;
+  color: var(--on-ink);
+  border-radius: 18px;
+  background:
+    radial-gradient(60% 140% at 0% 0%, rgba(255, 110, 30, 0.28), transparent 60%),
+    radial-gradient(40% 120% at 100% 100%, rgba(246, 193, 119, 0.12), transparent 70%),
+    var(--ink-panel);
+  box-shadow: 0 28px 60px -32px rgba(42, 23, 14, 0.7);
+}
+.award-head {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 22px;
-  margin-top: clamp(42px, 5vw, 64px);
-  padding: 22px 26px;
-  color: var(--text);
-  border: 1px solid rgba(255, 90, 20, 0.2);
-  border-radius: 16px;
-  background:
-    radial-gradient(70% 180% at 0% 50%, rgba(255, 110, 30, 0.12), transparent 64%),
-    linear-gradient(135deg, #fff, #fff6f0);
-  box-shadow: 0 20px 44px -30px rgba(120, 50, 10, 0.38);
+  gap: 20px;
 }
 .award-medal {
-  width: 54px;
-  height: 54px;
+  width: 56px;
+  height: 56px;
   display: grid;
   place-items: center;
-  border-radius: 14px;
-  color: var(--accent-2);
-  background: rgba(255, 110, 30, 0.12);
-  border: 1px solid rgba(255, 122, 46, 0.3);
+  border-radius: 16px;
+  color: #1c100b;
+  background: linear-gradient(140deg, #ffd27a, #f6a53b);
+  box-shadow: 0 10px 24px -10px rgba(246, 165, 59, 0.7);
 }
 .award-medal svg { width: 28px; height: 28px; }
-.award-copy .eyebrow { margin-bottom: 4px; color: var(--accent-2); font-size: 0.68rem; }
-.award-copy h2 { color: var(--text); font-size: clamp(1.35rem, 2.2vw, 1.8rem); }
-.award-copy p { max-width: 58rem; margin-top: 7px; color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
-.award-copy strong { color: var(--text); font-weight: 600; }
+.award-copy .eyebrow { margin-bottom: 6px; color: var(--accent-2); font-size: 0.68rem; }
+.award-copy h2 { color: #fff; font-size: clamp(1.5rem, 2.6vw, 2.1rem); }
 .award-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
-  border: 1px solid rgba(255, 90, 20, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 10px;
-  color: #c2410c;
-  background: rgba(255, 255, 255, 0.72);
+  color: var(--on-ink);
+  background: rgba(255, 255, 255, 0.05);
   font-weight: 600;
   font-size: 0.9rem;
   white-space: nowrap;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
-.award-link:hover { background: var(--accent-soft); border-color: var(--accent); }
+.award-link:hover { color: #fff; background: rgba(255, 90, 20, 0.18); border-color: var(--accent); }
+.award-places {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.award-places li {
+  --medal: #f6c177;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+}
+.award-places li.gold { border-color: rgba(246, 193, 119, 0.35); background: rgba(246, 193, 119, 0.07); }
+.award-places li.silver { --medal: #d5d9e0; }
+.award-places .place {
+  grid-row: 1 / 3;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: #1c100b;
+  background: var(--medal);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+.award-places .track { color: #fff; font-weight: 700; }
+.award-places .cat { color: var(--on-ink-muted); font-size: 0.85rem; }
 
 /* ==========================================================================
    Lower sections
@@ -254,10 +324,12 @@
   .m-host-fast { margin-top: 140px; }
 }
 @media (max-width: 1020px) {
-  .hero-grid { grid-template-columns: 1fr; }
+  /* minmax(0, …) lets the column shrink below its widest content (the typing
+     prompt), so the hero doesn't overflow narrow phones. */
+  .hero-grid { grid-template-columns: minmax(0, 1fr); }
   .pc { transform: none; }
   .product:hover .pc { transform: none; }
-  .award-band { grid-template-columns: auto 1fr; }
+  .award-head { grid-template-columns: auto 1fr; }
   .award-link { grid-column: 2; justify-self: start; }
 }
 @media (max-width: 940px) {
@@ -275,10 +347,13 @@
 }
 @media (max-width: 600px) {
   .hero h1 .l2 { white-space: normal; }
-  .award-band { grid-template-columns: 1fr; gap: 16px; padding: 22px; }
+  .award-band { padding: 22px; }
+  .award-head { grid-template-columns: 1fr; gap: 16px; }
   .award-medal { width: 48px; height: 48px; border-radius: 12px; }
   .award-medal svg { width: 24px; height: 24px; }
   .award-link { grid-column: auto; }
+  .award-places { grid-template-columns: 1fr; }
+  .award-pill { font-size: 0.82rem; }
   .m-watch { --w: 128px; }
   .m-host-watch { margin-top: 116px; }
   .m-sit { --w: 116px; left: 50%; }

@@ -15,13 +15,21 @@ const installUrl = "https://ambient-intelligence-hq.github.io/install.sh";
   title="Ambient — turn video into understanding + action"
   description="Ambient is an open-source video-to-action agent. It watches videos, gathers evidence over time, answers questions with citations, and invokes tools to take action."
   active="home"
-  extraCss={["assets/css/home.css?v=5", "assets/css/showcase.css"]}
+  extraCss={["assets/css/home.css?v=6", "assets/css/showcase.css"]}
 >
   <!-- ============================ HERO ============================ -->
   <section class="hero">
     <div class="wrap">
       <div class="hero-grid">
         <div>
+          <a class="award-pill" href="#award">
+            <span class="award-pill-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"></path>
+                <path d="M7 6H4v1a4 4 0 0 0 4 4M17 6h3v1a4 4 0 0 1-4 4"></path>
+              </svg></span>
+            <span><strong>1st place</strong> · Meta Wearable AI Challenge, ECCV 2026</span>
+            <span class="chev" aria-hidden="true">›</span>
+          </a>
           <span class="eyebrow">Video to action agent</span>
           <h1>Turn video into<br /><span class="l2"><span class="mark">action.</span></span></h1>
           <p class="lede">
@@ -64,25 +72,27 @@ const installUrl = "https://ambient-intelligence-hq.github.io/install.sh";
         </div>
       </div>
 
-      <aside class="award-band reveal" aria-labelledby="eccv-award-title">
-        <div class="award-medal" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"></path>
-            <path d="M7 6H4v1a4 4 0 0 0 4 4M17 6h3v1a4 4 0 0 1-4 4"></path>
-          </svg>
+      <aside class="award-band reveal" id="award" aria-labelledby="eccv-award-title">
+        <div class="award-head">
+          <div class="award-medal" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"></path>
+              <path d="M7 6H4v1a4 4 0 0 0 4 4M17 6h3v1a4 4 0 0 1-4 4"></path>
+            </svg>
+          </div>
+          <div class="award-copy">
+            <span class="eyebrow">Recognized at ECCV 2026 · Meta Wearable AI Challenge</span>
+            <h2 id="eccv-award-title">1st place in two tracks</h2>
+          </div>
+          <a class="award-link" href="https://huggingface.co/spaces/facebook/wearable-ai-leaderboard" target="_blank" rel="noopener">
+            Official leaderboard <span aria-hidden="true">↗</span>
+          </a>
         </div>
-        <div class="award-copy">
-          <span class="eyebrow">Recognized at ECCV 2026</span>
-          <h2 id="eccv-award-title">Award-winning video agent</h2>
-          <p>
-            At the Meta Wearable AI Challenge, Ambient won the <strong>EgoProactive Large Model</strong> and
-            <strong>EgoLongQA Small Model</strong> tracks, and placed second in
-            <strong>EgoProactive Small Model</strong>.
-          </p>
-        </div>
-        <a class="award-link" href="https://huggingface.co/spaces/facebook/wearable-ai-leaderboard" target="_blank" rel="noopener">
-          Official leaderboard <span aria-hidden="true">↗</span>
-        </a>
+        <ul class="award-places">
+          <li class="gold"><span class="place">1st</span><span class="track">EgoProactive</span><span class="cat">Large model track</span></li>
+          <li class="gold"><span class="place">1st</span><span class="track">EgoLongQA</span><span class="cat">Small model track</span></li>
+          <li class="silver"><span class="place">2nd</span><span class="track">EgoProactive</span><span class="cat">Small model track</span></li>
+        </ul>
       </aside>
     </div>
   </section>
