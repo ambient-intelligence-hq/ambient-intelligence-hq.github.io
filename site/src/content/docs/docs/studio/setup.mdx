@@ -1,0 +1,226 @@
+---
+title: Studio setup
+description: Run Ambient Studio, the web UI for the Ambient engine, with Docker or from source, point it at an engine, and open it for the first time.
+sidebar:
+  order: 0
+---
+
+import { Steps, Tabs, TabItem, Aside, LinkCard, CardGrid } from '@astrojs/starlight/components';
+
+Ambient Studio is the web UI for the Ambient engine. You add a video, ask a question, and watch the agent work: its reasoning, its tool calls, and an answer whose timestamps jump the player to the moment they cite.
+
+Studio is a Next.js app that runs as its own service. It needs two things:
+
+- **An Ambient engine.** Studio talks to the engine's `/v1` API from its server. The engine API key stays on the server and never reaches the browser.
+- **A Postgres database.** Studio stores its own chats, messages, and users there. It can be a separate database on the same Postgres server the engine uses. Studio does not need Redis.
+
+## Run Studio with Docker
+
+### With the installer (recommended)
+
+The Ambient installer runs the engine, Studio, Postgres, and Redis together in Docker. If you followed the [Quickstart](../../quickstart/), Studio is already running.
+
+<Steps>
+
+1. Run the installer.
+
+   ```bash title="Terminal"
+   curl -fsSL https://ambient-intelligence-hq.github.io/install.sh | bash
+   ```
+
+   It asks for your LLM endpoint, models, and API key, writes `~/.ambient/`, pulls the images, starts everything, and opens Studio in your browser when the stack is healthy.
+
+2. Find the Studio URL.
+
+   Studio listens on port `3000` by default. If that port is taken, the installer picks the next free one and prints it at the end. To see it again:
+
+   ```bash title="Terminal"
+   ambientctl status
+   ```
+
+   ```text title="Output (excerpt)"
+   Studio:  http://localhost:3000
+   API:     http://localhost:8080   (Anthropic SDK base_url; key: ambientctl config get ENGINE_API_KEY)
+   ```
+
+3. Open it.
+
+   ```bash title="Terminal"
+   ambientctl open
+   ```
+
+</Steps>
+
+The installer wires Studio up for you: it creates Studio's own `ambient_studio` database on the bundled Postgres, generates `AUTH_SECRET` and `ENGINE_API_KEY`, and points Studio at the engine container. You don't need to set any Studio variables yourself.
+
+Useful commands for the Studio container:
+
+```bash title="Terminal"
+ambientctl logs studio   # follow Studio's logs
+ambientctl restart       # restart the stack
+ambientctl update        # pull newer images and restart (Studio migrates its database on start)
+```
+
+<Aside type="tip">
+To choose the Studio port up front, set `AMBIENT_STUDIO_PORT` when you run the installer, for example `AMBIENT_STUDIO_PORT=3005`. A port you ask for must be free.
+</Aside>
+
+### On its own, against an existing engine
+
+The Studio image is published as `ghcr.io/ambient-intelligence-hq/ambient-studio`. Use it when you already have an engine and a Postgres server running. On start, the container creates its database if it's missing, applies migrations, and then serves on port `3000`.
+
+<Steps>
+
+1. Generate a session secret, and keep it somewhere safe so you can reuse it.
+
+   ```bash title="Terminal"
+   export AUTH_SECRET="$(openssl rand -base64 32)"
+   ```
+
+2. Start the container. Set the four required variables: the Postgres URL, the secret, the engine URL, and the engine's API key.
+
+   ```bash title="Terminal"
+   docker run -d --name ambient-studio -p 3000:3000 \
+     -e POSTGRES_URL=postgresql://ambient:ambient@host.docker.internal:5432/ambient_studio \
+     -e AUTH_SECRET \
+     -e ENGINE_URL=http://host.docker.internal:8080 \
+     -e ENGINE_API_KEY=dev-token \
+     ghcr.io/ambient-intelligence-hq/ambient-studio:latest
+   ```
+
+   `ENGINE_URL` and `POSTGRES_URL` are resolved from inside the container, so `127.0.0.1` would point at the container itself. `host.docker.internal` reaches your machine on Docker Desktop. On Linux, add `--add-host=host.docker.internal:host-gateway`.
+
+3. Check that it's up.
+
+   ```bash title="Terminal"
+   curl http://localhost:3000/ping
+   ```
+
+   ```text title="Output"
+   pong
+   ```
+
+</Steps>
+
+## Run Studio from source
+
+Use this path when you're working on Studio itself. Studio lives in `ambient/studio/console` in the Ambient repository.
+
+**You need:** Node.js (the Studio image uses Node 24), pnpm 10, a Postgres server, and a running engine. To run the engine from source, see the Development section of the repository README.
+
+<Steps>
+
+1. Start Postgres. From the repository root, the dev compose file starts Postgres (user and password `ambient`) and Redis for the engine:
+
+   ```bash title="Terminal"
+   docker compose up -d postgres redis
+   ```
+
+2. Install Studio's dependencies.
+
+   ```bash title="Terminal"
+   cd ambient/studio/console
+   pnpm install
+   ```
+
+3. Create `.env.local` from the example and fill it in. See [Configure Studio](#configure-studio) for what each variable does.
+
+   ```bash title="Terminal"
+   cp .env.example .env.local
+   ```
+
+   ```ini title=".env.local"
+   AUTH_SECRET=<output of: openssl rand -base64 32>
+   POSTGRES_URL=postgresql://ambient:ambient@127.0.0.1:5432/ambient_studio
+   ENGINE_URL=http://127.0.0.1:8080
+   ENGINE_API_KEY=dev-token
+   ```
+
+   `ENGINE_API_KEY` must match the engine's `API_KEY`. `dev-token` is the value the README uses for a local engine.
+
+4. Create the database schema. This creates the `ambient_studio` database if it doesn't exist, then applies migrations.
+
+   ```bash title="Terminal"
+   pnpm db:migrate
+   ```
+
+5. Start the dev server.
+
+   ```bash title="Terminal"
+   pnpm dev
+   ```
+
+   Studio is now at [http://localhost:3000](http://localhost:3000).
+
+</Steps>
+
+<Aside type="note">
+`pnpm build` runs the migrations and then `next build`, so it needs a reachable database. The Docker image builds without one and migrates when the container starts instead.
+</Aside>
+
+## Configure Studio
+
+Studio reads its settings from environment variables: `.env.local` when you run from source, or the container environment with Docker.
+
+### Required
+
+| Variable | What it does |
+| --- | --- |
+| `ENGINE_URL` | Base URL of the Ambient engine, for example `http://127.0.0.1:8080`. Studio calls `${ENGINE_URL}/v1/...` from its server. |
+| `ENGINE_API_KEY` | The engine's API key, sent as the `x-api-key` header. Must match the engine's `API_KEY`. It is never sent to the browser. |
+| `POSTGRES_URL` | Studio's own database for chats, messages, and users, for example `postgresql://ambient:ambient@127.0.0.1:5432/ambient_studio`. A separate database on the engine's Postgres server is fine. |
+| `AUTH_SECRET` | Encrypts the sign-in session cookie. Generate it with `openssl rand -base64 32`. |
+
+<Aside type="caution">
+Keep `AUTH_SECRET` stable. If it changes, existing session cookies can't be read, so every browser starts over as a new guest and no longer sees its earlier chats.
+</Aside>
+
+### Optional
+
+| Variable | What it does |
+| --- | --- |
+| `STUDIO_MAX_MESSAGES_PER_HOUR` | Per-user message quota. Unset or `0` means unlimited, which suits a self-hosted install with your own key. Set it for a public demo. |
+| `AI_GATEWAY_API_KEY` | A Vercel AI Gateway key, used only to write chat titles with an LLM. Without it, a chat's title is taken from its first message. |
+
+The model, LLM endpoint, and video settings belong to the engine, not Studio. See the [configuration reference](../../reference/configuration/). You can also override the model, endpoint, and system prompt per agent from Studio's **Settings** page. The [walkthrough](../walkthrough/#customize-the-agent) shows how.
+
+### Point Studio at a different engine
+
+Set `ENGINE_URL` and `ENGINE_API_KEY` to the engine you want, then restart Studio. Before you do, check that the engine is reachable from where Studio runs:
+
+```bash title="Terminal"
+curl http://127.0.0.1:8080/v1/healthz
+```
+
+```json title="Output"
+{"status":"ok"}
+```
+
+<Aside type="note">
+The installer's compose file points Studio at the bundled engine container (`http://engine:8080`). To use a different engine, run Studio on its own with Docker or from source.
+</Aside>
+
+## Open Studio
+
+Open the Studio URL in your browser. There's no sign-in screen: on your first visit, Studio creates a guest user for your browser and signs you in automatically. Your chats belong to that guest, so they show up in the sidebar on later visits from the same browser.
+
+![Studio on first launch: the empty stage with Add video, Browse files and a YouTube URL field, the Agent/Fast toggle at the top, and the Assistant panel on the right](../../../../assets/docs/studio/studio-first-launch.jpg)
+
+Every new chat starts on the **Add a video to get started** stage. You can:
+
+- click **Add video** to upload a file from your computer, or drop a video file anywhere on the stage;
+- click **Browse files** to reuse a video already in the engine;
+- paste a YouTube URL into the field under **or paste a YouTube URL**.
+
+The question box on the right stays disabled, with the hint *Add a video to start asking…*, until a video is picked.
+
+<CardGrid>
+  <LinkCard title="Studio walkthrough" description="Ask a question about a video, end to end." href="../walkthrough/" />
+  <LinkCard title="Configuration reference" description="Engine settings: models, endpoints, sandbox." href="../../reference/configuration/" />
+</CardGrid>
+
+## Troubleshooting
+
+- **The video list is empty or videos fail to load.** Studio can't reach the engine. Check that `ENGINE_URL` is reachable from where Studio runs (from inside the container, with Docker) and that `ENGINE_API_KEY` matches the engine's key. `ambientctl logs studio` or the dev server output shows the engine's error.
+- **The container exits on start.** It runs migrations first. Check that `POSTGRES_URL` is correct and the database server is reachable. If the user can't create databases, create `ambient_studio` yourself.
+- **You lost your chats.** Chats belong to the guest user tied to your browser's session cookie. Clearing cookies, switching browsers, or changing `AUTH_SECRET` starts a new guest. Your videos are kept, because they're stored in the engine.

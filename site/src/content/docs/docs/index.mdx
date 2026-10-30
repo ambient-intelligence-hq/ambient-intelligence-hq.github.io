@@ -1,0 +1,45 @@
+---
+title: Overview
+description: What Ambient is, how its video agent works, and the ways you can use it.
+sidebar:
+  order: 0
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+Ambient is a video-understanding agent engine. Give it a video (a short clip or hours of footage) and a question, and it answers with timestamp citations back into the video. You can also get the answer as JSON that matches a schema you supply.
+
+## How it works
+
+Ambient doesn't flatten a video into one transcript and hope the answer is in it. It runs an agent that calls tools on **time windows** of the video, the way a person would scrub through footage:
+
+1. **Search.** `search_clip` scans a stretch of the video for the moments that matter.
+2. **Focus.** `focus_clip` looks closely at a short window. If the agent model can see video itself, it watches the clip directly with `self_focus_clip`.
+3. **Grab frames.** On image-capable models, `grab_frames` pulls exact frames, and `draw_bounding_box` / `draw_point` mark what's in them.
+4. **Verify.** The agent checks what it found against the footage before committing.
+5. **Answer with citations.** The final answer cites timestamps such as `12:05` or ranges such as `12:05::18:20`.
+
+The toolset adapts to the model you pick. Text-only models get `annotate_frames` instead of the image tools, and an optional `bash` tool lets the agent run ffmpeg and other shell commands.
+
+There is also a **Fast** mode: one dense-frame vision pass with no tools. It is much quicker and works well for whole-video summaries that don't need frame-accurate grounding.
+
+## Ways to use Ambient
+
+<CardGrid>
+  <Card title="Studio" icon="laptop">
+    A web UI for uploading videos (or importing a YouTube URL), asking questions, and watching the agent work. The one-line installer sets it up for you.
+  </Card>
+  <Card title="Python SDK" icon="seti:python">
+    The engine implements the Anthropic **Managed Agents** API, so the official `anthropic` SDK drives it directly through `client.beta.files`, `client.beta.sessions`, and related endpoints.
+  </Card>
+</CardGrid>
+
+## Where to go next
+
+<CardGrid>
+  <LinkCard title="Quickstart" description="Install Ambient and get your first answer in a few minutes." href="./quickstart/" />
+  <LinkCard title="Studio setup" description="Run and configure the Studio web UI." href="./studio/setup/" />
+  <LinkCard title="Studio walkthrough" description="Upload a video, ask questions, and read the agent's work." href="./studio/walkthrough/" />
+  <LinkCard title="SDK quickstart" description="Drive the engine from Python with the Anthropic SDK." href="./sdk/quickstart/" />
+  <LinkCard title="Configuration reference" description="Every setting the engine reads, with defaults." href="./reference/configuration/" />
+</CardGrid>

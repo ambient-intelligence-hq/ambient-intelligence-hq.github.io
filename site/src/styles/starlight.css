@@ -1,0 +1,54 @@
+/* Ambient brand theme for Starlight. Tokens mirror public/assets/css/styles.css. */
+
+:root {
+  --sl-font: "Inter", system-ui, -apple-system, sans-serif;
+  --sl-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Dark theme: warm ink panels from the marketing site */
+  --sl-color-accent-low: #3a1a0a;
+  --sl-color-accent: #ff5a14;
+  --sl-color-accent-high: #ffc7ad;
+  --sl-color-white: #fbeee6;
+  --sl-color-gray-1: #f1ddd2;
+  --sl-color-gray-2: #d2bcb0;
+  --sl-color-gray-3: #a08a7f;
+  --sl-color-gray-4: #6b5850;
+  --sl-color-gray-5: #3d2a21;
+  --sl-color-gray-6: #2a170e;
+  --sl-color-black: #1c100b;
+}
+
+/* Light theme: cream background, ink text, Ambient orange */
+:root[data-theme="light"] {
+  --sl-color-accent-low: #ffe5d8;
+  --sl-color-accent: #d9480b;
+  --sl-color-accent-high: #8a2c05;
+  --sl-color-white: #1a110d;
+  --sl-color-gray-1: #2a1d17;
+  --sl-color-gray-2: #45342c;
+  --sl-color-gray-3: #6b5850;
+  --sl-color-gray-4: #9a877e;
+  --sl-color-gray-5: #d9c8be;
+  --sl-color-gray-6: #f8ece4;
+  --sl-color-gray-7: #fbf1ea;
+  --sl-color-black: #fdf6f1;
+}
+
+h1,
+h2,
+h3,
+.site-title {
+  font-family: "Inter Tight", "Inter", system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.site-title img {
+  border-radius: 6px;
+}
+
+/* JetBrains Mono ligatures turn `>=` into `≥`; keep commands literal. */
+code,
+pre,
+.expressive-code {
+  font-variant-ligatures: none;
+}

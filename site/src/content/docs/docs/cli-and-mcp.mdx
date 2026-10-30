@@ -1,0 +1,252 @@
+---
+title: CLI & MCP
+description: The ambient command-line tool (analyze, chat, doctor, config) and the MCP server that exposes Ambient to Claude Code and other MCP clients.
+sidebar:
+  order: 2
+# Hidden until the CLI & MCP docs are reworked: drafts are served by `npm run dev`
+# but left out of production builds. Re-add it to the sidebar in astro.config.mjs too.
+draft: true
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+Ambient has two developer-facing entry points besides the SDK:
+
+- **The `ambient` CLI** asks questions about a local video file or a URL from your terminal. It runs the same agent loop as the server, in memory, so you don't need Postgres, Redis, S3, or a sandbox.
+- **The MCP server** exposes an `analyze_video` tool to Claude Code (or any MCP client). Unlike the CLI, it talks to a **running Ambient server**.
+
+## The `ambient` CLI
+
+### Install
+
+The CLI ships with the Python package. From a checkout of the repo:
+
+```bash title="Terminal"
+git clone https://github.com/ambient-intelligence-hq/ambient.git
+cd ambient
+uv sync                     # or: uv sync --extra youtube   (adds yt-dlp for URL input)
+uv run ambient --help
+```
+
+It needs `ffmpeg` and `ffprobe` on your `PATH`. Media is cut and sampled by host ffmpeg straight from the local file. Fetching YouTube or other http(s) URLs also needs `yt-dlp`.
+
+### Configure
+
+The CLI needs an API key for an OpenAI-compatible chat-completions endpoint. It reads settings from these places, highest priority first:
+
+1. Environment variables in your shell.
+2. `~/.config/ambient/env`, written by [`ambient config set`](#ambient-config).
+3. `.env` in the current directory.
+
+If the same key appears in both files, the value in `~/.config/ambient/env` wins.
+
+| Variable | Purpose |
+|---|---|
+| `OPENROUTER_API_KEY` | Shortcut for OpenRouter. Fills in `LLM_API_KEY` and `AGENT_API_KEY` and, unless `LLM_BASE_URL` is set, points the base URL at `https://openrouter.ai/api/v1`. |
+| `LLM_BASE_URL`, `LLM_API_KEY` | The OpenAI-compatible endpoint and its key. |
+| `AGENT_MODEL` | The model that runs the tool loop and writes the answer. Default: `google/gemini-3.1-pro-preview`. |
+| `LLM_MODEL` | The vision model the tools use to watch clips. Default: `qwen/qwen3.5-27b`. |
+| `AGENT_BASE_URL`, `AGENT_API_KEY` | Optional separate endpoint for the agent model. Falls back to `LLM_*`. |
+
+The CLI always runs locally, whatever your `.env` says: it forces the host media backend, disables S3, and stages videos in `~/.cache/ambient/videos`. Local files are symlinked there (or copied if a symlink fails), and URLs are downloaded at up to 720p.
+
+### `ambient analyze`
+
+Ask one question about a video and print the answer.
+
+```bash title="Terminal"
+uv run ambient analyze VIDEO QUESTION [OPTIONS]
+```
+
+`VIDEO` is a path to a local file or a YouTube/http(s) URL. Local files must have one of these extensions: `.mp4`, `.mov`, `.mkv`, `.webm`, `.m4v`, `.avi`, `.mpeg`, `.mpg`, `.flv`, `.wmv`.
+
+| Option | Default | Description |
+|---|---|---|
+| `--model`, `-m` | `AGENT_MODEL` | Agent model id. It also sets the vision model, unless `--vision-model` is given. |
+| `--vision-model` | | Override only the vision/tool model (`LLM_MODEL`). |
+| `--max-turns` | `20` | Maximum agent turns for the run. |
+| `--fast` | off | Fast mode: one dense-frame vision pass, no tools. |
+| `--subtitles` | | Path to a subtitle or transcript file to ground the answer. |
+| `--schema` | | Path to a JSON Schema file. Steers the final answer into that shape. |
+| `--show-thinking` | off | Print the agent's reasoning as it works. |
+| `--json` | off | Print a JSON result to stdout. All logs go to stderr. |
+
+```bash title="Terminal"
+# A local file
+uv run ambient analyze trip.mp4 "When do they reach the summit?"
+
+# A YouTube URL (needs yt-dlp), with a specific model
+uv run ambient analyze "https://www.youtube.com/watch?v=..." "Summarize the itinerary" -m google/gemini-3.1-pro-preview
+
+# Structured output for scripts
+uv run ambient analyze game.mp4 "List every goal" --schema goals.json --json > goals.out.json
+```
+
+With `--json`, stdout holds a single object:
+
+```json title="stdout"
+{
+  "answer": "...",
+  "video_id": "game_1a2b3c4d",
+  "model": "google/gemini-3.1-pro-preview",
+  "usage": { "input_tokens": 0, "output_tokens": 0, "cost": 0.0 }
+}
+```
+
+<Aside>
+If the agent model doesn't accept image input, the CLI warns `has no image input; using the text-only toolset (degraded)` and continues with the text-only tools.
+</Aside>
+
+### `ambient chat`
+
+Open an interactive session over one video. Follow-up questions keep the conversation and everything the agent has already looked at.
+
+```bash title="Terminal"
+uv run ambient chat lecture.mp4
+```
+
+`chat` takes the same `VIDEO` argument and the options `--model`/`-m`, `--vision-model`, `--max-turns` (default `20`, applied per question), `--fast`, `--subtitles`, and `--show-thinking`. It has no `--schema` or `--json`.
+
+Type a question at the `›` prompt. To quit, press Ctrl-D or type `/exit`, `/quit`, or `:q`.
+
+### `ambient doctor`
+
+Check your environment and print the resolved configuration.
+
+```bash title="Terminal"
+uv run ambient doctor
+```
+
+It reports whether `ffmpeg`, `ffprobe`, and `yt-dlp` are on your `PATH`, along with the API key (redacted), base URL, model, and workspace directory. It exits with code `1` and lists each problem if `ffmpeg`, `ffprobe`, or the API key is missing. A missing `yt-dlp` only disables URL input.
+
+### `ambient config`
+
+Save settings so you don't need a `.env` in every directory.
+
+```bash title="Terminal"
+uv run ambient config set OPENROUTER_API_KEY sk-or-...
+uv run ambient config set AGENT_MODEL google/gemini-3.1-pro-preview
+uv run ambient config show
+```
+
+| Command | Description |
+|---|---|
+| `config set KEY VALUE` | Write `KEY=VALUE` to `~/.config/ambient/env`, replacing an existing value. The file is `chmod 600`. |
+| `config show` | Print the saved settings. Values of keys containing `KEY` or `SECRET` are redacted. |
+
+<Aside type="note">
+`ambient` (this CLI) and `ambientctl` (installed by the [one-line installer](../quickstart/#install-with-docker)) are different tools. `ambientctl` manages the Docker install: starting and stopping services, logs, updates, and settings in `~/.ambient/.env`.
+</Aside>
+
+## MCP server
+
+`integrations/mcp_video_agent.py` is an MCP server (stdio transport) with one tool, `analyze_video`. When an MCP client calls it, the server:
+
+1. uploads the video (if you passed a local path),
+2. creates an agent, an environment, and a session over the video,
+3. waits up to 120 seconds for the session to become ready,
+4. sends your question and streams each tool call and result back as MCP progress and log notifications,
+5. returns the final answer, the `session_id`, the `video_id`, and a transcript of the agent's steps.
+
+### The `analyze_video` tool
+
+| Parameter | Description |
+|---|---|
+| `question` | Required. What to ask about the video. |
+| `video_path` | A local video file to upload. Use this **or** `video_id` on the first call. |
+| `video_id` | The id of a video already uploaded to the server. |
+| `session_id` | For follow-ups: the `session_id` returned by an earlier call. Keeps the conversation and analysis. |
+
+### Configuration
+
+The MCP server reads three environment variables:
+
+| Variable | Default | Description |
+|---|---|---|
+| `AMBIENT_BASE_URL` | `http://127.0.0.1:8080` | The Ambient engine API. |
+| `AMBIENT_API_KEY` | `dev-token` | The engine API key, sent as `x-api-key`. |
+| `AMBIENT_AGENT_MODEL` | `z-ai/glm-5.2` | Model for the agent the tool creates for each new session. |
+
+Use the API key that matches your server:
+
+- **Installed with the one-line installer:** run `ambientctl config get ENGINE_API_KEY`. The API listens on `http://localhost:8080` unless the installer picked another port (check `ambientctl status`).
+- **Server run from source:** the value of `API_KEY` in your `.env` (default `dev-token`).
+
+### Add it to Claude Code
+
+<Steps>
+
+1. **Make sure the engine is reachable.**
+
+   ```bash title="Terminal"
+   curl http://127.0.0.1:8080/v1/healthz
+   ```
+
+   You should see `{"status":"ok"}`. If not, start the server with the [Quickstart](../quickstart/) (installer) or see the [SDK quickstart](../sdk/quickstart/) to run it from source.
+
+2. **Register the server.**
+
+   <Tabs>
+     <TabItem label="uv (from a checkout)">
+       Run this from anywhere, replacing `/path/to/ambient` with your clone. The `mcp` dependency group provides the MCP library, which a plain `uv sync` doesn't install.
+
+       ```bash title="Terminal"
+       claude mcp add ambient-video \
+         -e AMBIENT_BASE_URL=http://127.0.0.1:8080 \
+         -e AMBIENT_API_KEY=<your-engine-api-key> \
+         -- uv run --directory /path/to/ambient --group mcp python integrations/mcp_video_agent.py
+       ```
+     </TabItem>
+     <TabItem label="Docker">
+       Build the self-contained image from the repo root, so you don't need the repo's uv environment at run time:
+
+       ```bash title="Terminal"
+       docker build -f integrations/Dockerfile -t ambient-video-mcp .
+       ```
+
+       Then register it. Inside the container the default `AMBIENT_BASE_URL` is `http://host.docker.internal:8080`, which reaches the host's port 8080 on Docker Desktop (macOS and Windows).
+
+       ```bash title="Terminal"
+       claude mcp add ambient-video -- \
+         docker run -i --rm -e AMBIENT_API_KEY=<your-engine-api-key> ambient-video-mcp
+       ```
+
+       On Linux, add `--add-host=host.docker.internal:host-gateway` to the `docker run` arguments, or set `-e AMBIENT_BASE_URL=...` to an address the container can reach.
+     </TabItem>
+   </Tabs>
+
+   You should see `claude mcp list` show `ambient-video` as connected.
+
+3. **Ask about a video.**
+
+   In Claude Code, ask something like *"Use analyze_video on /path/to/clip.mp4: when does the speaker first show the chart?"* Claude calls the tool, and the agent's tool calls stream as progress. The result starts with a `session_id` line. Claude can pass that back for follow-up questions about the same video.
+
+</Steps>
+
+<Aside type="caution">
+`video_path` is opened by the MCP server process. With the Docker variant, that process runs inside the container, so host paths aren't visible unless you mount them. For example, add `-v /path/to/videos:/path/to/videos:ro` to the `docker run` arguments so the same path works inside the container. Alternatively, pass a `video_id` for a video you've already uploaded.
+</Aside>
+
+### Other MCP clients
+
+Any client that launches stdio MCP servers from a JSON config can use the same command. For example:
+
+```json title="mcp.json"
+{
+  "mcpServers": {
+    "ambient-video": {
+      "command": "uv",
+      "args": [
+        "run", "--directory", "/path/to/ambient", "--group", "mcp",
+        "python", "integrations/mcp_video_agent.py"
+      ],
+      "env": {
+        "AMBIENT_BASE_URL": "http://127.0.0.1:8080",
+        "AMBIENT_API_KEY": "<your-engine-api-key>"
+      }
+    }
+  }
+}
+```
+
+To check the server starts at all, run it directly with `uv run --group mcp python integrations/mcp_video_agent.py`. It prints nothing and waits for JSON-RPC on stdin. Press Ctrl-C to stop it.

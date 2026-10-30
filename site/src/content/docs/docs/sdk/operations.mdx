@@ -1,0 +1,441 @@
+---
+title: SDK operations
+description: Task-by-task guide to every Anthropic SDK call Ambient supports, from uploads and sessions to structured output, citations, artifacts, and errors.
+sidebar:
+  order: 1
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Each section below covers one task with a short explanation and a minimal snippet. The snippets assume a client set up as in the [SDK quickstart](../quickstart/):
+
+```python title="client.py"
+import os
+from anthropic import Anthropic
+
+client = Anthropic(
+    base_url=os.environ["AMBIENT_BASE_URL"],  # e.g. http://localhost:8080
+    api_key=os.environ["AMBIENT_API_KEY"],
+)
+```
+
+Ambient implements a subset of the Managed Agents API. If a call isn't on this page, the engine doesn't serve it; see [What isn't supported](#what-isnt-supported).
+
+## Authenticate
+
+The engine checks every `/v1` request against one API key, its `API_KEY` setting. With the install script, read it with `ambientctl config get ENGINE_API_KEY`. When running from source it defaults to `dev-token`.
+
+The engine accepts the key in any of three places:
+
+| Where | How to send it from the SDK |
+|---|---|
+| `x-api-key` header | `Anthropic(api_key=...)`, the usual way |
+| `Authorization: Bearer <key>` header | `Anthropic(auth_token=...)` |
+| `?api_key=<key>` query parameter | For browser elements that can't set headers, such as a `<video>` tag pointing at a file's content URL |
+
+`GET /v1/healthz` needs no key and returns `{"status": "ok"}` when the engine is up.
+
+```python title="auth.py"
+client = Anthropic(base_url="http://localhost:8080", auth_token=os.environ["AMBIENT_API_KEY"])
+```
+
+<Aside type="caution">
+If you don't pass `base_url` and `api_key`, the SDK falls back to the `ANTHROPIC_BASE_URL` and `ANTHROPIC_API_KEY` environment variables. If those point at Anthropic's own API in your shell, pass the Ambient values explicitly.
+</Aside>
+
+## Upload a local video
+
+`files.upload` sends a video to the engine as a multipart upload. The returned `id` is the video id that sessions use.
+
+```python title="upload.py"
+from pathlib import Path
+
+path = Path("clip.mp4")
+with path.open("rb") as fh:
+    video = client.beta.files.upload(file=(path.name, fh, "video/mp4"))
+
+print(video.id, video.filename, video.size_bytes)
+```
+
+- Ids are derived from the file's bytes. Uploading the same file again returns the existing record and reuses its processing instead of starting over.
+- After an upload, the engine prepares a description of the video in the background. Sessions don't wait for it. In agent mode, the first question waits for it for a bounded time, so it can be slower than later questions.
+- An empty upload, or a request without a file part, returns `400`.
+
+## Import a YouTube video
+
+The engine can import a video from a YouTube URL. The SDK has no method for this route, so call it with the client's generic `post` helper, which still sends your API key.
+
+```python title="youtube.py"
+video = client.post(
+    "/v1/files/import",
+    body={"source_type": "youtube", "url": "https://www.youtube.com/watch?v=<id>"},
+    cast_to=object,  # returns the file metadata as a dict
+)
+video_id = video["id"]
+print(video_id, video["source_status"])  # "pending" at first
+```
+
+- Accepted hosts are `youtube.com`, `www.youtube.com`, `m.youtube.com`, and `youtu.be`. Any other URL returns `400` (`url must be a YouTube URL`). Only `source_type: "youtube"` is supported.
+- You can pass an optional `filename` in the body.
+- The download happens in the background. You can open a session right away: the video tools wait until the source is ready.
+- Importing the same URL again returns the same id. If the earlier import failed, importing again retries it.
+- If the engine has YouTube imports turned off, the route returns `400`. The setting is covered in [Configuration](../../reference/configuration/).
+
+## Check a video's processing status
+
+`files.retrieve_metadata` returns the file record, including two Ambient-specific status fields. They aren't part of the SDK's `FileMetadata` type, so read them with `getattr`.
+
+```python title="status.py"
+meta = client.beta.files.retrieve_metadata(video_id)
+
+print(getattr(meta, "source_status", None))       # YouTube imports: pending, processing, ready, failed
+print(getattr(meta, "description_status", None))  # pending, processing, ready, failed
+print(getattr(meta, "description", None))         # the background description, once ready
+```
+
+`source_status` is `ready` immediately for uploads. Retrieve also returns `description_error` and `source_error` when something failed, and a `youtube` dict (title, duration, and so on) for imports.
+
+## Create and reuse agents
+
+An agent is a reusable template: a model, an optional system prompt, and a tool marker that picks the mode. The engine creates two at startup that you can use without calling `agents.create`:
+
+| Agent id | Mode | What it does |
+|---|---|---|
+| `ambient_v1` | Agent | A multi-step tool loop that searches, focuses on clips, and grabs frames. |
+| `ambient_fast` | Fast | One vision pass over frames sampled across the whole video. No tools. Much faster. |
+
+Create your own agent to change the model or add task instructions:
+
+```python title="agents.py"
+agent = client.beta.agents.create(
+    name="Incident reviewer",
+    model="google/gemini-3.1-pro-preview",  # any model your LLM endpoint serves
+    system="Focus on vehicles and people. Report times as mm:ss.",
+    tools=[{"type": "video_agent_20260825"}],
+)
+```
+
+- **Mode comes from `tools`.** `video_agent_20260825` selects agent mode. The legacy `agent_toolset_20260401` also selects agent mode. `video_fast_20260825`, or no tools at all, selects fast mode.
+- **`system` is added to Ambient's own video prompt** as a task section. It doesn't replace that prompt.
+- **`model` must be a model your LLM endpoint serves.** The built-in agents pick up the engine's configured models every time it starts. Custom agents keep the model they were created with.
+- **Per-agent LLM endpoint.** To send this agent's own LLM calls to a different OpenAI-compatible endpoint, pass `extra_body={"base_url": "...", "api_key": "..."}`. Otherwise it uses the engine's endpoint.
+
+To reuse an agent, keep its `id`, or look it up by name with `agents.list()`. Agents can't be updated or deleted through the API, so reuse agents rather than creating a new one on every run.
+
+## Open a session
+
+A session binds an agent to one video. The SDK requires `agent` and `environment_id`. Use `"default"` for the environment, which the engine creates at startup; [Environments](../environments/) explains what it controls.
+
+```python title="session.py"
+session = client.beta.sessions.create(
+    agent="ambient_v1",
+    environment_id="default",
+    metadata={"video_id": video.id},
+    title="Intersection review",
+)
+```
+
+Tell the engine which video to use in one of two ways:
+
+- `metadata={"video_id": "<id>"}`, the preferred way.
+- `resources=[{"type": "file", "file_id": "<id>"}]`, the SDK's file-mount shape.
+
+Without either, the call returns `400`. An unknown agent id also returns `400`.
+
+`metadata` values must be strings. Ambient reads these keys:
+
+| Key | Default | Effect |
+|---|---|---|
+| `video_id` | none | The video to analyze. |
+| `mode` | from the agent's tools | `"agent"` or `"fast"`. Overrides the agent's mode for this session. |
+| `max_turns_per_run` | `"20"` | The most agent turns one question may use. |
+
+A new session starts as `pending` and becomes `idle` when it's ready for a message. Poll `sessions.retrieve(session.id).status` before your first message, as the quickstart does. Statuses are `pending`, `idle`, `running`, and `terminated`. The session also carries an Ambient extra, `sandbox`, with the media backend and its status. See [Sandbox setup](../sandbox/).
+
+## Sessions and follow-up questions
+
+Each `events.send` with a `user.message` starts one run. When the run ends (`session.status_idle`), send the next question on the same session. The engine keeps the conversation and everything the agent gathered, such as clips and frames, so follow-ups are faster and can refer back.
+
+```python title="followup.py"
+def ask(session_id: str, question: str) -> str:
+    client.beta.sessions.events.send(
+        session_id, events=[{"type": "user.message", "content": question}]
+    )
+    answer = ""
+    with client.beta.sessions.events.stream(session_id) as stream:
+        for ev in stream:
+            if ev.type == "agent.message":
+                answer = "".join(block.text for block in ev.content)
+    return answer
+
+print(ask(session.id, "When does the collision happen?"))
+print(ask(session.id, "What happens in the minute after that?"))
+```
+
+- `content` can be a string or a list of `{"type": "text", "text": "..."}` blocks. Text blocks are joined with newlines. Other block types are ignored.
+- Send one `user.message` per call. If `events` holds several, only the last one with text is used.
+- `send` returns the stored event's `event_id`, `seq`, and `accepted_at`.
+- A session runs one question at a time. Sending while a run is in flight returns `409`.
+
+## Stream events
+
+`events.stream` opens a server-sent event stream for the session's latest run. It replays that run from its start and then follows it live, so opening it just after `send` never misses events. It closes by itself after `session.status_idle`.
+
+```python title="stream.py"
+with client.beta.sessions.events.stream(session.id) as stream:
+    for ev in stream:
+        if ev.type == "agent.tool_use":
+            print("tool:", ev.name, ev.input)
+        elif ev.type == "span.model_request_end":
+            print("tokens:", ev.model_usage.input_tokens, ev.model_usage.output_tokens)
+        elif ev.type == "agent.message":
+            print("answer:", "".join(b.text for b in ev.content))
+        elif ev.type == "session.status_idle":
+            print("stop reason:", ev.stop_reason)
+```
+
+| Event | Key fields |
+|---|---|
+| `user.message` | `content[].text`. Replayed at the start; may be absent if the run had already started. |
+| `session.status_running` | none |
+| `agent.thinking` | `content[].text` (Ambient extra), the model's reasoning for that turn |
+| `agent.tool_use` | `id`, `name`, `input` |
+| `agent.tool_result` | `tool_use_id`, `content[].text`, `is_error`, `attachments` (extra) |
+| `span.model_request_end` | `model_usage`, plus extras `model`, `source` (`agent` or `tool:<name>`), `cost` |
+| `session.error` | `error.message`. Doesn't always end the run. |
+| `agent.message` | `content[].text`, the final answer. Sent once per run and skipped if the answer is empty. |
+| `session.status_idle` | `stop_reason`, plus extra `usage` with the session's running totals |
+
+`stop_reason` is a plain string: `end_turn` (normal), `max_turns` (the turn budget ran out; the engine then asks the model for a final answer from what it gathered), `error`, or `cancelled` (the engine stopped the run, for example while shutting down).
+
+Fast-mode runs have no `agent.tool_use` or `agent.tool_result` events.
+
+To replay a specific earlier run, pass that run's `seq` from `send` minus one as `after_seq`:
+
+```python title="replay.py"
+sent = client.beta.sessions.events.send(session.id, events=[{"type": "user.message", "content": "..."}])
+with client.beta.sessions.events.stream(session.id, extra_query={"after_seq": sent.seq - 1}) as stream:
+    ...
+```
+
+## Read past events
+
+`events.list` returns a session's stored events without streaming. It includes `agent.message.delta` and `agent.reasoning.delta` token chunks, which the stream hides, so filter on `type`. Each event carries an extra `seq`.
+
+The SDK can't page through this list automatically. Page manually with `after_seq` and the page's `last_seq`:
+
+```python title="history.py"
+after = 0
+while True:
+    page = client.beta.sessions.events.list(session.id, limit=1000, extra_query={"after_seq": after})
+    for ev in page.data:
+        if ev.type == "agent.message":
+            print("".join(b.text for b in ev.content))
+    if not page.has_more:
+        break
+    after = page.last_seq
+```
+
+## Get structured output with a JSON Schema
+
+Pass a JSON Schema as `output_structure` in the body of `events.send`. The SDK has no named parameter for it, so use `extra_body`. The final `agent.message` text is then a JSON object in that shape. The schema applies to that one run only.
+
+```python title="structured.py"
+import json
+from pydantic import BaseModel, Field
+
+class Moment(BaseModel):
+    description: str
+    start: str = Field(description="mm:ss")
+    end: str = Field(description="mm:ss")
+
+class Report(BaseModel):
+    summary: str
+    moments: list[Moment]
+
+client.beta.sessions.events.send(
+    session.id,
+    events=[{"type": "user.message", "content": "List the key moments."}],
+    extra_body={"output_structure": Report.model_json_schema()},
+)
+
+answer = ""
+with client.beta.sessions.events.stream(session.id) as stream:
+    for ev in stream:
+        if ev.type == "agent.message":
+            answer = "".join(b.text for b in ev.content)
+
+text = answer.strip()
+if text.startswith("```"):  # tolerate a fenced JSON block
+    text = text.split("\n", 1)[1].rsplit("```", 1)[0]
+report = Report.model_validate(json.loads(text))
+```
+
+How strictly the schema is applied depends on the mode:
+
+- **Fast mode** sends the schema to the model as a strict `json_schema` response format, so the endpoint enforces it.
+- **Agent mode** adds the schema to your question as an instruction. The model is told to answer with a single matching JSON object, but nothing enforces it, so always validate.
+
+## Read citations
+
+Ambient doesn't return citations in a separate field. The agent is instructed to back each claim with the video timestamps that support it, and those timestamps appear inline in the answer text, usually as `mm:ss` or `hh:mm:ss`. Extract them with a regular expression. The Studio uses the same pattern to make timestamps clickable:
+
+```python title="citations.py"
+import re
+
+TIMESTAMP = re.compile(r"\b(\d{1,2}):([0-5]\d)(?::([0-5]\d))?\b")
+
+def timestamps(text: str) -> list[tuple[str, int]]:
+    """Return (label, seconds) for every mm:ss or hh:mm:ss in the text."""
+    found = []
+    for m in TIMESTAMP.finditer(text):
+        a, b, c = m.groups()
+        seconds = int(a) * 3600 + int(b) * 60 + int(c) if c else int(a) * 60 + int(b)
+        found.append((m.group(0), seconds))
+    return found
+```
+
+Two more sources of grounding:
+
+- **Tool results.** The clip tools mark their evidence with tags such as `<citation>12:05</citation>` for a moment or `<citation>12:05::18:20</citation>` for a span. Read them from `agent.tool_result` text with `re.findall(r"<citation>(.*?)</citation>", text)`.
+- **Structured output.** For machine-readable citations, add a citation field to your schema, as `start` and `end` are in the example above. The engine's prompt tells the model to put the supporting timestamps in the schema's citation fields.
+
+## Retrieve artifacts
+
+There are three kinds of media you can get back.
+
+**Frames and clips the tools looked at.** `agent.tool_result` events carry an extra `attachments` list. Each item is a dict like `{"type": "image_url", "url": "..."}`, or `video_url` for clips. The URL is either an inline base64 `data:` URL, which is typical with the host backend, or a time-limited presigned S3 URL, which is typical with the e2b backend. The helper below handles both. See [Sandbox setup](../sandbox/) for the backends.
+
+```python title="attachments.py"
+import base64
+import urllib.request
+from pathlib import Path
+
+def save_attachment(att: dict, dest: str) -> None:
+    url = att["url"]
+    if url.startswith("data:"):
+        Path(dest).write_bytes(base64.b64decode(url.split(",", 1)[1]))
+    else:
+        urllib.request.urlretrieve(url, dest)
+
+with client.beta.sessions.events.stream(session.id) as stream:
+    n = 0
+    for ev in stream:
+        if ev.type == "agent.tool_result":
+            for att in getattr(ev, "attachments", None) or []:
+                ext = "jpg" if att["type"] == "image_url" else "mp4"
+                save_attachment(att, f"evidence_{n}.{ext}")
+                n += 1
+```
+
+**Files the agent produced.** When the engine has S3 configured, the agent gets an `upload_artifact` tool. It uploads a file the agent made, such as a report, chart, or rendered clip, and returns a download link. The tool result text includes a line beginning `Download URL`, and the agent is told to include the URL in its answer. The link lasts 7 days by default.
+
+```python title="artifacts.py"
+import re
+
+artifact_calls, links = set(), []
+with client.beta.sessions.events.stream(session.id) as stream:
+    for ev in stream:
+        if ev.type == "agent.tool_use" and ev.name == "upload_artifact":
+            artifact_calls.add(ev.id)
+        elif ev.type == "agent.tool_result" and ev.tool_use_id in artifact_calls:
+            text = "".join(b.text for b in ev.content)
+            links += re.findall(r"Download URL[^:]*:\s*(\S+)", text)
+print(links)
+```
+
+**The source video.** `files.download` streams the original video back when the engine holds a local copy. It returns `404` when the source only exists in object storage, which can be the case for YouTube imports.
+
+```python title="download.py"
+client.beta.files.download(video.id).write_to_file("copy.mp4")
+```
+
+## List, retrieve, and delete resources
+
+| Resource | List | Retrieve | Delete |
+|---|---|---|---|
+| Files | `files.list()` | `files.retrieve_metadata(id)` | `files.delete(id)` |
+| Agents | `agents.list()` | `agents.retrieve(id)` | not supported |
+| Environments | not supported | `environments.retrieve(id)` | not supported |
+| Sessions | `sessions.list(limit=50)` | `sessions.retrieve(id)` | not supported |
+| Events | `sessions.events.list(id)` | n/a | n/a |
+
+```python title="manage.py"
+for f in client.beta.files.list():
+    print(f.id, f.filename, getattr(f, "description_status", None))
+
+for s in client.beta.sessions.list(limit=10):  # newest first
+    print(s.id, s.status, s.metadata.get("video_id"))
+
+client.beta.files.delete(video.id)
+```
+
+- `files.list` and `agents.list` return everything in one page.
+- `sessions.list` returns the newest sessions first. It reads only `limit` (default 50) and ignores the SDK's other filters.
+- `files.delete` removes the file record and the engine's local copy of the video. Because ids come from the file's contents, uploading the same file later gives the same id again.
+- Unknown ids return `404` (`anthropic.NotFoundError`).
+
+## Interrupt or cancel a run
+
+The SDK API can't interrupt or cancel a run. A `user.interrupt` event has no text, so the engine rejects it with `400`.
+
+What you can do instead:
+
+- **Stop reading.** Leaving the `with ... stream` block or breaking out of the loop closes your connection, but the run keeps going on the server until it finishes.
+- **Reconnect.** Opening `events.stream` again replays the latest run from its start and follows it to the end.
+- **Bound the run.** Set `metadata={"max_turns_per_run": "8"}` when you create the session to cap how many turns one question can use. When the cap is hit, the run ends with `stop_reason` `max_turns` and a final answer built from what the agent gathered.
+- **Wait before the next question.** A new `user.message` returns `409` until the current run ends.
+
+## Handle errors and status codes
+
+The SDK raises a typed exception for each error status. Ambient's error bodies look like this:
+
+```json title="Error body"
+{"detail": {"error": {"code": "conflict", "message": "a run is already in flight for this session", "details": {}}}}
+```
+
+| Status | SDK exception | When Ambient returns it |
+|---|---|---|
+| `400` | `BadRequestError` | No video id on `sessions.create`; unknown agent id; empty `events` or no user text; empty upload or no file part; YouTube import disabled, non-YouTube URL, or missing `url` |
+| `401` | `AuthenticationError` | Missing key, or a key that doesn't match the engine's `API_KEY` |
+| `404` | `NotFoundError` | Unknown agent, environment, file, or session id; file content not on the engine host; routes the engine doesn't serve, such as threads or archive |
+| `405` | `APIStatusError` | A method the engine doesn't serve on an existing path, such as `sessions.delete`, `agents.update`, or `environments.list` |
+| `409` | `ConflictError` | A run is already in flight for the session, or the session's sandbox is still starting |
+| `416` | `APIStatusError` | A `Range` header outside the file on a content download |
+| `422` | `UnprocessableEntityError` | The request body failed validation, for example it isn't JSON |
+
+```python title="errors.py"
+import anthropic
+
+def error_message(e: anthropic.APIStatusError) -> str:
+    detail = e.body.get("detail") if isinstance(e.body, dict) else None
+    if isinstance(detail, dict):
+        return detail.get("error", {}).get("message", str(detail))
+    return str(detail or e.message)
+
+try:
+    client.beta.sessions.events.send(
+        session.id, events=[{"type": "user.message", "content": "And then?"}]
+    )
+except anthropic.ConflictError:
+    print("still answering the previous question; wait for session.status_idle")
+except anthropic.APIStatusError as e:
+    print(e.status_code, error_message(e))
+```
+
+<Aside type="note" title="The SDK retries 409s">
+By default the SDK retries `409` responses, along with timeouts, `429`, and `5xx` errors, up to 2 times with backoff before raising. That's helpful while a session's sandbox is starting. Pass `max_retries=0` to `Anthropic(...)` to fail immediately.
+</Aside>
+
+Errors during a run don't raise. They arrive on the stream as `session.error` events, and the run then ends with `session.status_idle`, often with `stop_reason` `error`.
+
+## What isn't supported
+
+The engine serves only the routes on this page. These SDK calls exist but return `404` or `405` against Ambient:
+
+- `agents.update`, `agents.archive`, `agents.versions`
+- `environments.list`, `environments.update`, `environments.delete`, `environments.archive`
+- `sessions.update`, `sessions.delete`, `sessions.archive`, `sessions.resources`, `sessions.threads`
+- Input events other than `user.message`, such as `user.interrupt` and `user.tool_confirmation`, which return `400`
+
+For the server-side settings behind these behaviors, see [Configuration](../../reference/configuration/).
