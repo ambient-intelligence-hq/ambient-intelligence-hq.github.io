@@ -3,8 +3,9 @@
 The marketing site, blog, and developer docs for **Ambient** — the
 video-understanding agent engine. *Any video in. Any action out.*
 
-Built with [Astro](https://astro.build). The landing page and docs are Astro
-pages; **blog posts are Markdown** in a content collection. Dark-first,
+Built with [Astro](https://astro.build). The landing page is an Astro page;
+**blog posts are Markdown** in a content collection, and the **developer docs
+are MDX** rendered by [Starlight](https://starlight.astro.build). Dark-first,
 Baseten-inspired: chunky grotesk display type, monospace UI labels, dotted-grid
 backgrounds, an electric-green accent, and a scroll-driven WebGL point cloud on
 the home page.
@@ -17,12 +18,14 @@ site/
 ├── package.json
 ├── src/
 │   ├── layouts/Base.astro     # shared shell: <head>, nav, footer, point cloud
-│   ├── content.config.ts      # blog collection schema (Markdown frontmatter)
+│   ├── content.config.ts      # blog + docs collection schemas
 │   ├── content/blog/          # ← blog posts live here, one .md per post
 │   │   └── introducing-ambient.md
+│   ├── content/docs/docs/     # ← developer docs (Starlight), one .mdx per page
+│   ├── assets/docs/           # docs screenshots (optimized at build time)
+│   ├── styles/starlight.css   # Ambient brand theme for the docs
 │   └── pages/
 │       ├── index.astro        # landing page
-│       ├── docs/index.astro   # developer documentation
 │       ├── blog/index.astro   # post listing (generated from the collection)
 │       ├── blog/[...slug].astro   # renders each Markdown post
 │       └── rss.xml.js         # RSS feed
@@ -67,10 +70,28 @@ changes. To manage posts through a web UI instead of editing Markdown directly,
 a git-based CMS such as [Decap](https://decapcms.org) can be layered on top
 (it commits to `src/content/blog/`); ask if you want that wired up.
 
+## Writing docs
+
+Docs are [Starlight](https://starlight.astro.build) pages: MDX files under
+`src/content/docs/docs/`. The path becomes the URL
+(`sdk/quickstart.mdx` → `/docs/sdk/quickstart/`). Each page needs a `title` and
+`description` in its frontmatter. To add a page, create the file and add its
+slug to the `sidebar` in `astro.config.mjs`.
+
+- Use Starlight's components (`Steps`, `Tabs`, `Aside`, `CardGrid`, `LinkCard`)
+  from `@astrojs/starlight/components`.
+- Give code fences a title: ```` ```bash title="Terminal" ````.
+- **Link between docs pages with relative paths** (`../operations/`) so links
+  keep working when the site is served under a `BASE_PATH`.
+- Put screenshots in `src/assets/docs/` and reference them relatively; Astro
+  optimizes them at build time.
+
+Search (Pagefind), the sidebar, the on-page table of contents, and
+prev/next links are generated; there's nothing to maintain by hand.
+
 ## Editing pages
 
-- **Landing / docs** — edit `src/pages/index.astro` / `src/pages/docs/index.astro`.
-  A new docs section is an `<h2 id="…">` plus a matching sidebar link.
+- **Landing** — edit `src/pages/index.astro`.
 - **Nav / footer** — `src/layouts/Base.astro`.
 - **Design tokens** — CSS variables at the top of `public/assets/css/styles.css`.
 

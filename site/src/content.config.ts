@@ -1,5 +1,11 @@
 import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
+import { docsLoader } from "@astrojs/starlight/loaders";
+import { docsSchema } from "@astrojs/starlight/schema";
+
+// Developer docs live as Markdown/MDX in src/content/docs/ (Starlight).
+// src/content/docs/docs/quickstart.mdx → /docs/quickstart/.
+const docs = defineCollection({ loader: docsLoader(), schema: docsSchema() });
 
 // Blog posts live as Markdown in src/content/blog/*.md.
 // Each file's name (without .md) becomes its URL slug: /blog/<slug>/.
@@ -15,4 +21,4 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+export const collections = { blog, docs };

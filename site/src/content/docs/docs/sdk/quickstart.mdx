@@ -1,0 +1,225 @@
+---
+title: SDK quickstart
+description: Drive Ambient from Python with the official Anthropic SDK. Upload a video, open a session, ask a question, and stream the answer.
+sidebar:
+  order: 0
+---
+
+import { Steps, Aside, LinkCard, CardGrid } from '@astrojs/starlight/components';
+
+The Ambient engine implements the Anthropic **Managed Agents** API. That means the official `anthropic` Python SDK talks to it directly: you point the client at your engine and use `client.beta.files`, `client.beta.agents`, and `client.beta.sessions`. There is no Ambient-specific client library to install.
+
+The flow you'll build:
+
+1. Upload a video. You get back a file id, which is also the video id.
+2. Get an agent: a reusable model and prompt template.
+3. Open a session over the video.
+4. Send a question.
+5. Stream the run: tool calls, tool results, and the final answer.
+
+You need a running engine. If you don't have one yet, follow the [Quickstart](../../quickstart/) first.
+
+## Run your first question
+
+<Steps>
+
+1. **Install the SDK.**
+
+   Ambient is tested against `anthropic` 0.111.0, which is the version the engine pins.
+
+   ```bash title="Terminal"
+   pip install "anthropic>=0.111.0"
+   ```
+
+2. **Find your engine URL and API key.**
+
+   Ambient checks every request against a single API key.
+
+   - **Installed with the install script:** the engine API runs on `http://localhost:8080` by default. If that port was taken, the installer chose the next free port; `ambientctl status` prints the URL. Print the key with:
+
+     ```bash title="Terminal"
+     ambientctl config get ENGINE_API_KEY
+     ```
+
+   - **Running from source:** the key is `API_KEY` in your `.env`. It defaults to `dev-token`, and the server listens on `http://127.0.0.1:8080`.
+
+   Export both so the script below can read them:
+
+   ```bash title="Terminal"
+   export AMBIENT_BASE_URL=http://localhost:8080
+   export AMBIENT_API_KEY=<your-engine-api-key>
+   ```
+
+3. **Check the connection.**
+
+   Point the SDK at the engine with `base_url` and pass the engine key as `api_key`. The SDK sends it in the `x-api-key` header. Listing agents is a quick authenticated check:
+
+   ```python title="check.py"
+   import os
+   from anthropic import Anthropic
+
+   client = Anthropic(
+       base_url=os.environ["AMBIENT_BASE_URL"],
+       api_key=os.environ["AMBIENT_API_KEY"],
+   )
+   print([agent.id for agent in client.beta.agents.list()])
+   ```
+
+   The list includes the two agents the engine creates at startup: `ambient_v1` (agent mode, a multi-step tool loop) and `ambient_fast` (fast mode, a single vision pass with no tools). A wrong key raises `anthropic.AuthenticationError` (HTTP 401).
+
+4. **Save the script.**
+
+   This script uploads a video, reuses an agent (or creates it on the first run), opens a session, asks one question, and prints the run as it streams.
+
+   ```python title="quickstart.py"
+   """Ask Ambient a question about a video, using the Anthropic SDK."""
+   import mimetypes
+   import os
+   import sys
+   import time
+   from pathlib import Path
+
+   from anthropic import Anthropic
+
+   BASE_URL = os.environ.get("AMBIENT_BASE_URL", "http://localhost:8080")
+   API_KEY = os.environ.get("AMBIENT_API_KEY", "dev-token")
+   AGENT_NAME = "SDK quickstart analyst"
+
+
+   def get_or_create_agent(client: Anthropic):
+       """Reuse the quickstart agent if it exists, otherwise create it."""
+       for agent in client.beta.agents.list():
+           if agent.name == AGENT_NAME:
+               return agent
+       # Borrow the model the engine is configured with, so the new agent
+       # always points at a model your LLM endpoint serves.
+       builtin = client.beta.agents.retrieve("ambient_v1")
+       return client.beta.agents.create(
+           name=AGENT_NAME,
+           model=builtin.model.id,
+           system="Answer concisely. Cite the mm:ss timestamps that support each claim.",
+           tools=[{"type": "video_agent_20260825"}],  # agent mode (tool loop)
+       )
+
+
+   def wait_until_ready(client: Anthropic, session_id: str, timeout: int = 90) -> None:
+       """A new session starts as `pending` and turns `idle` when it can take a message."""
+       for _ in range(timeout):
+           status = client.beta.sessions.retrieve(session_id).status
+           if status in ("idle", "running"):
+               return
+           if status == "terminated":
+               sys.exit("session terminated before it was ready")
+           time.sleep(1)
+       sys.exit("session did not become ready in time")
+
+
+   def main(video_path: str, question: str) -> None:
+       client = Anthropic(base_url=BASE_URL, api_key=API_KEY)
+
+       # 1. Upload the video. The returned file id is the video id.
+       path = Path(video_path)
+       mime = mimetypes.guess_type(path.name)[0] or "video/mp4"
+       with path.open("rb") as fh:
+           video = client.beta.files.upload(file=(path.name, fh, mime))
+       print(f"video:   {video.id}")
+
+       # 2. Get an agent.
+       agent = get_or_create_agent(client)
+       print(f"agent:   {agent.id}")
+
+       # 3. Open a session over the video. `metadata.video_id` tells Ambient
+       #    which video to analyze; "default" is the built-in environment.
+       session = client.beta.sessions.create(
+           agent=agent.id,
+           environment_id="default",
+           metadata={"video_id": video.id},
+           title="SDK quickstart",
+       )
+       print(f"session: {session.id}")
+       wait_until_ready(client, session.id)
+
+       # 4. Send the question. This starts a run on the server.
+       client.beta.sessions.events.send(
+           session.id,
+           events=[{"type": "user.message", "content": question}],
+       )
+
+       # 5. Stream the run. The stream closes on its own when the run ends.
+       answer = ""
+       with client.beta.sessions.events.stream(session.id) as stream:
+           for ev in stream:
+               if ev.type == "agent.tool_use":
+                   print(f"  tool call:   {ev.name} {ev.input}")
+               elif ev.type == "agent.tool_result":
+                   text = "".join(block.text for block in ev.content)
+                   label = "tool error " if ev.is_error else "tool result"
+                   print(f"  {label}: {text[:200]}")
+               elif ev.type == "agent.message":
+                   answer = "".join(block.text for block in ev.content)
+               elif ev.type == "session.error":
+                   print(f"  error: {ev.error.message}")
+               elif ev.type == "session.status_idle":
+                   print(f"  done: {ev.stop_reason}")
+
+       print("\n=== ANSWER ===\n" + answer)
+
+
+   if __name__ == "__main__":
+       if len(sys.argv) != 3:
+           sys.exit('usage: python quickstart.py <video-file> "<question>"')
+       main(sys.argv[1], sys.argv[2])
+   ```
+
+5. **Run it.**
+
+   ```bash title="Terminal"
+   python quickstart.py path/to/clip.mp4 "What happens in this video? Give a short summary."
+   ```
+
+   The script prints the video, agent, and session ids, then one line per tool call and tool result while the agent works, then the final answer. The first question on a new video can take longer, because the engine first prepares a description of the video in the background.
+
+</Steps>
+
+<Aside type="tip" title="Skip agent creation">
+You don't have to create an agent. The built-in agents work out of the box: pass `agent="ambient_v1"` for agent mode or `agent="ambient_fast"` for fast mode when you create the session.
+</Aside>
+
+## What each step does
+
+- **`files.upload`** stores the video on the engine and returns its metadata. The file `id` (for example `vid_…`) is the video id you use everywhere else. Ids are derived from the file's contents, so uploading the same bytes again returns the same id and reuses the work already done on that video.
+- **`agents.create`** saves a reusable template: a model, an optional `system` prompt that Ambient adds to its own video prompt as the task, and a tool marker that selects the mode. `video_agent_20260825` selects agent mode. An agent with no tools runs in fast mode.
+- **`sessions.create`** binds an agent to one video. `agent` and `environment_id` are required by the SDK; `"default"` is the environment the engine creates at startup. See [Environments](../environments/) for what environments do in Ambient. The video goes in `metadata.video_id`.
+- **`events.send`** posts your question as a `user.message` event and starts a run. Only one run can be in flight per session.
+- **`events.stream`** opens a server-sent event stream for the current run. It replays the run from its start, so it doesn't matter if you open it a moment after sending. It closes after `session.status_idle`.
+
+To ask a follow-up, call `events.send` again on the same session after the stream closes, then open a new stream. The conversation and everything the agent already gathered are kept on the server. See [SDK operations](../operations/#sessions-and-follow-up-questions).
+
+## Events you'll see
+
+The stream yields these event types. Each has a `type` field and a `processed_at` timestamp.
+
+| Event | When it arrives | What to read |
+|---|---|---|
+| `user.message` | Your question, replayed at the start of the stream. It may be absent if you open the stream after the run has already begun. | `content[].text` |
+| `session.status_running` | The run has started. | none |
+| `agent.thinking` | The model produced reasoning before acting. Only when the model returns reasoning and the engine's `EXPOSE_THINKING` setting is on (the default). | `content[].text`, an Ambient extra field |
+| `agent.tool_use` | The agent called one of its video tools. Agent mode only. | `name`, `input`, `id` |
+| `agent.tool_result` | A tool finished. | `content[].text`, `is_error`, `tool_use_id`, plus Ambient's extra `attachments` (frames and clips) |
+| `span.model_request_end` | One LLM request finished, either the agent's own or one made inside a tool. | `model_usage.input_tokens`, `model_usage.output_tokens`, plus extras `model`, `source`, `cost` |
+| `session.error` | Something went wrong during the run, such as an LLM call failing. The run may still continue, so keep reading until `session.status_idle`. | `error.message` |
+| `agent.message` | The final answer, delivered once, as a whole, at the end of the run. | `content[].text` |
+| `session.status_idle` | The run is over and the stream closes. | `stop_reason` (a string: `end_turn`, `max_turns`, or `error`), plus an extra `usage` dict with session totals |
+
+The answer is not streamed token by token through the SDK. The engine also emits `agent.message.delta` and `agent.reasoning.delta` events for token-level UIs, but the SDK's stream decoder drops event names it doesn't know, so you won't see them in Python.
+
+Fields marked as extras aren't part of the Anthropic schema. The SDK keeps them on the event object, so read them with `getattr(ev, "attachments", None)`.
+
+## Next steps
+
+<CardGrid>
+  <LinkCard title="SDK operations" description="Every supported call: uploads, YouTube imports, structured output, citations, artifacts, errors." href="../operations/" />
+  <LinkCard title="Environments" description="What environment_id means in Ambient." href="../environments/" />
+  <LinkCard title="Sandbox setup" description="Where the agent's media work runs." href="../sandbox/" />
+  <LinkCard title="Configuration" description="Engine settings such as API_KEY and EXPOSE_THINKING." href="../../reference/configuration/" />
+</CardGrid>

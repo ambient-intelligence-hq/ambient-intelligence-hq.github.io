@@ -1,0 +1,200 @@
+---
+title: Quickstart
+description: Install Ambient with one command, or run it from source, and get your first cited answer about a video.
+sidebar:
+  order: 1
+---
+
+import { Steps, Tabs, TabItem, Aside, LinkCard, CardGrid } from '@astrojs/starlight/components';
+
+There are two ways to get a first answer:
+
+- **Install with Docker** (recommended). One command starts the engine, the Studio web UI, Postgres, and Redis on your machine. Videos are processed locally with ffmpeg inside the engine container, so you don't need S3 or a cloud sandbox.
+- **Run from source.** Clone the repo and use the `ambient` CLI against a local video file. It needs no Docker, database, or server.
+
+Either way you need an API key for an **OpenAI-compatible** chat-completions endpoint. Ambient defaults to [OpenRouter](https://openrouter.ai/keys).
+
+## Install with Docker
+
+<Steps>
+
+1. **Check that Docker is running.**
+
+   You need Docker Desktop on macOS or Windows, or Docker Engine with the compose plugin on Linux.
+
+   ```bash title="Terminal"
+   docker compose version
+   ```
+
+   You should see a version string such as `Docker Compose version v2.x`. If the command fails, install or start Docker first. The installer checks this too and stops with a hint.
+
+2. **Run the installer.**
+
+   <Tabs>
+     <TabItem label="Hosted script">
+       ```bash title="Terminal"
+       curl -fsSL https://ambient-intelligence-hq.github.io/install.sh | bash
+       ```
+     </TabItem>
+     <TabItem label="From GitHub">
+       ```bash title="Terminal"
+       curl -fsSL https://raw.githubusercontent.com/ambient-intelligence-hq/ambient/main/install/install.sh | bash
+       ```
+     </TabItem>
+     <TabItem label="From a clone">
+       ```bash title="Terminal"
+       bash install/install.sh
+       ```
+     </TabItem>
+   </Tabs>
+
+   The installer asks four questions. Press Enter to accept a default:
+
+   | Prompt | Default |
+   |---|---|
+   | LLM endpoint (OpenAI-compatible) | `https://openrouter.ai/api/v1` |
+   | Agent model (plans and answers) | `qwen/qwen3.8-27b` |
+   | Video model (watches the clips; must accept video input) | `qwen/qwen3.8-27b` |
+   | API key | none. Input is hidden; leave it empty to add it later. |
+
+   It then writes `~/.ambient/` (a `docker-compose.yml`, a private `.env` with generated secrets, and `bin/ambientctl`, which is also linked into `~/.local/bin`), pulls the images, and starts everything. The first pull takes a few minutes.
+
+   You should see `Ambient is running.`, followed by the Studio and API URLs. Your browser opens the Studio automatically.
+
+3. **Confirm the services are healthy.**
+
+   ```bash title="Terminal"
+   ambientctl status
+   curl http://localhost:8080/v1/healthz
+   ```
+
+   `ambientctl status` lists the `postgres`, `redis`, `engine`, and `studio` containers and prints the URLs. The health check should return `{"status":"ok"}`.
+
+   | Service | Default URL |
+   |---|---|
+   | Studio (web UI) | `http://localhost:3000` |
+   | API (Anthropic SDK `base_url`) | `http://localhost:8080` |
+
+   <Aside>
+   If port 3000 or 8080 is already taken, the installer picks the next free port and prints it at the end. Use the URLs from `ambientctl status`. If `ambientctl` isn't found, add `~/.local/bin` to your `PATH` or run `~/.ambient/bin/ambientctl`.
+   </Aside>
+
+4. **Set your LLM key, if you skipped it.**
+
+   ```bash title="Terminal"
+   ambientctl config set LLM_API_KEY sk-or-...
+   ```
+
+   You should see `Updated LLM_API_KEY. Applying…`, and the stack restarts with the new key. `ambientctl config show` lists every setting with secrets redacted. Use the same command to change models, for example `ambientctl config set AGENT_MODEL google/gemini-3.1-pro-preview`.
+
+5. **Ask your first question in the Studio.**
+
+   Open the Studio (`ambientctl open`, or the Studio URL from step 3). Click **Add video**, drop a file onto the stage, or paste a YouTube URL. Then type a question.
+
+   Choose **Agent** mode to have the agent work step by step with tools, or **Fast** mode for a single quick pass. You should see the agent's tool calls stream in, followed by an answer that cites timestamps in the video.
+
+</Steps>
+
+### Install without prompts
+
+To script the install, pass the key as an environment variable and use `--yes`:
+
+```bash title="Terminal"
+curl -fsSL https://ambient-intelligence-hq.github.io/install.sh | AMBIENT_LLM_KEY=sk-or-... bash -s -- --yes
+```
+
+| Option | What it does |
+|---|---|
+| `-y`, `--yes` | Accept defaults and don't prompt. The key comes from `AMBIENT_LLM_KEY`. |
+| `--dir DIR` | Install directory. Default: `~/.ambient`. |
+| `--version TAG` | Image tag. Default: `latest`. |
+| `--no-start` | Write the config only; don't pull or start anything. |
+| `--no-open` | Don't open the browser at the end. |
+
+Environment variables `AMBIENT_LLM_BASE_URL`, `AMBIENT_MODEL`, `AMBIENT_VIDEO_MODEL`, `AMBIENT_STUDIO_PORT`, `AMBIENT_ENGINE_PORT`, and `AMBIENT_BIND` override the matching defaults. Run `bash install/install.sh --help` from a clone for the full list.
+
+Re-running the installer upgrades in place and keeps your settings, secrets, and data.
+
+### Manage the install
+
+```bash title="Terminal"
+ambientctl status                 # containers + URLs
+ambientctl logs engine            # follow logs (engine, studio, postgres, redis)
+ambientctl stop                   # stop everything
+ambientctl start                  # start and wait until healthy
+ambientctl update                 # pull newer images for this tag and restart
+ambientctl config get ENGINE_API_KEY   # the API key for the Anthropic SDK
+ambientctl uninstall              # remove containers, keep data (--purge deletes it)
+```
+
+<Aside type="caution">
+The Studio has no sign-in yet: every visitor gets a guest session, and every question spends your LLM credits. The installer binds ports to `127.0.0.1` so only your machine can reach them. Don't expose them to a network without putting access control in front.
+</Aside>
+
+## Run from source
+
+This path runs the `ambient` CLI directly against a video file on disk. It runs the same agent loop as the server but keeps everything in memory, so you don't need Postgres, Redis, S3, or a sandbox.
+
+**Prerequisites:**
+
+- [uv](https://docs.astral.sh/uv/) and Python 3.13
+- `ffmpeg` and `ffprobe` on your `PATH` (macOS: `brew install ffmpeg`; Debian/Ubuntu: `apt install ffmpeg`)
+- An API key for an OpenAI-compatible endpoint, such as OpenRouter
+
+<Steps>
+
+1. **Clone the repo and install dependencies.**
+
+   ```bash title="Terminal"
+   git clone https://github.com/ambient-intelligence-hq/ambient.git
+   cd ambient
+   uv sync
+   ```
+
+   You should see uv create `.venv` and install the packages. To ask about YouTube or other http(s) URLs as well as local files, run `uv sync --extra youtube` instead, which adds `yt-dlp`.
+
+2. **Add your LLM settings.**
+
+   Create a `.env` in the repo root:
+
+   ```ini title=".env"
+   LLM_BASE_URL=https://openrouter.ai/api/v1
+   LLM_API_KEY=sk-or-...
+   AGENT_MODEL=google/gemini-3.1-pro-preview
+   ```
+
+   `AGENT_MODEL` plans and answers. It can be any model your endpoint serves, and `google/gemini-3.1-pro-preview` is the default if you leave it out.
+
+   <Aside type="tip">
+   With OpenRouter, a single key is enough: `uv run ambient config set OPENROUTER_API_KEY sk-or-...` saves it to `~/.config/ambient/env`, and the CLI points itself at OpenRouter.
+   </Aside>
+
+3. **Check your setup.**
+
+   ```bash title="Terminal"
+   uv run ambient doctor
+   ```
+
+   You should see `ok` next to `ffmpeg` and `ffprobe`, your redacted API key, the base URL and model, and then `All good`. Any problems are listed with a fix. `yt-dlp` shows as missing unless you installed the `youtube` extra, and that only matters for URL input.
+
+4. **Run your first analysis.**
+
+   ```bash title="Terminal"
+   uv run ambient analyze path/to/video.mp4 "What happens in this video?"
+   ```
+
+   You should see a panel with the model, video, mode, and question. Next, each tool call streams in as a line such as `→ search_clip(...)`. Then the answer is rendered as Markdown with timestamp citations, followed by a token and cost footer.
+
+   For follow-up questions with the conversation kept, use `uv run ambient chat path/to/video.mp4`.
+
+</Steps>
+
+To run the HTTP server from source instead (for the SDK or the Studio), see the [SDK quickstart](../sdk/quickstart/).
+
+## Next steps
+
+<CardGrid>
+  <LinkCard title="Studio walkthrough" description="Get the most out of the web UI." href="../studio/walkthrough/" />
+  <LinkCard title="SDK quickstart" description="Drive the engine from Python with the Anthropic SDK." href="../sdk/quickstart/" />
+  <LinkCard title="Configuration reference" description="Models, keys, sandbox backends, and storage." href="../reference/configuration/" />
+</CardGrid>

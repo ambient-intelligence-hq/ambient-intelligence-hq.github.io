@@ -1,0 +1,460 @@
+---
+title: Configuration reference
+description: Every environment variable that configures the Ambient engine, its server, storage, sandbox, LLM providers, the CLI, the installer and Studio, with code defaults and when each one is required.
+sidebar:
+  order: 0
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+This page lists every setting Ambient reads. The defaults come from the source code (mostly `ambient/config.py`). Where a README, `.env.example` or compose file shows a different value, the table gives the code default and a note explains the difference.
+
+## How configuration is loaded
+
+### The engine and server
+
+All engine settings live on one `Settings` class in `ambient/config.py`, built with **pydantic-settings**:
+
+- **Where `.env` is read from.** `ambient/config.py` resolves `.env` relative to its own location, not the working directory. In a source checkout that means the **repository root** (`<checkout>/.env`), wherever you launch the server from. The file is loaded twice: once into `os.environ` with `python-dotenv` (`override=False`), and once by pydantic-settings. The `os.environ` copy is what lets third-party SDKs such as the E2B client see `E2B_API_KEY`.
+- **Precedence**, highest first:
+  1. Real environment variables in the process, including anything Docker Compose injects.
+  2. The repo-root `.env`.
+  3. The default in `ambient/config.py`.
+- **Names are case-insensitive.** `S3_ENDPOINT` and `s3_endpoint` both set the `s3_endpoint` field. Each variable name is the field name in upper case.
+- **Validation.** pydantic converts every value to the field's type (`int`, `bool`, `float`, `str`) when the module is imported. A value that won't convert, such as `SERVER_PORT=abc`, raises a `ValidationError` and the process doesn't start. Booleans accept `true`/`false`, `1`/`0`, `yes`/`no` and `on`/`off`. Don't leave a numeric key blank (`SERVER_PORT=`); comment it out instead.
+- **Unknown keys are ignored** (`extra="ignore"`), so a misspelled variable is skipped without any warning. If a setting seems to have no effect, check the spelling first.
+- **Settings are read once.** The `Settings` object is created at import and cached for the life of the process. Any change needs a restart.
+
+### Docker images and Compose
+
+The engine image doesn't contain a `.env`. Its Dockerfile copies only `pyproject.toml`, `uv.lock`, `README.md` and `ambient/`, so in a container every setting comes from the environment. The image sets three defaults of its own: `SERVER_HOST=0.0.0.0`, `SERVER_PORT=8080` and `VIDEO_FOLDER=/data/videos`.
+
+In Compose, precedence is `environment:` > `env_file:` > the image's `ENV`. The two compose files in the project use this differently:
+
+- **The repo's `docker-compose.yml`** (`api` service) loads your whole repo-root `.env` through `env_file: .env`, then pins `DATABASE_URL`, `REDIS_URL` and `SERVER_WORKERS: "2"` under `environment:` so the API reaches the sibling `postgres` and `redis` containers. Those three values always override whatever `.env` says.
+- **The installer's `~/.ambient/docker-compose.yml`** has **no `env_file`** for the engine. It passes only a fixed list: `DATABASE_URL`, `REDIS_URL`, `API_KEY` (from `ENGINE_API_KEY`), `LLM_BASE_URL`, `LLM_API_KEY`, `AGENT_MODEL`, `LLM_MODEL`, `SANDBOX_BACKEND=inprocess`, `VIDEO_FOLDER=/data/videos`, `YOUTUBE_IMPORT_ENABLED="true"` and `ENABLE_BASH_TOOL`. Any other engine variable has to go in `~/.ambient/docker-compose.override.yml`, because the installer rewrites `docker-compose.yml` every time it runs.
+
+### The CLI
+
+The `ambient` CLI (`ambient/cli.py`) sets up the environment **before** it imports the engine, so the cached settings see its changes:
+
+<Steps>
+1. It loads `~/.config/ambient/env` (written by `ambient config set`), then `./.env` from the current directory. Both loads use `override=False`, so real environment variables win, and a key that is already in `~/.config/ambient/env` is **not** replaced by `./.env`. The repo-root `.env` is loaded after both when you run from a checkout.
+2. If `OPENROUTER_API_KEY` is set, it fills in `LLM_API_KEY` and `AGENT_API_KEY` where they're unset, sets `LLM_BASE_URL=https://openrouter.ai/api/v1` if that's empty, and sets `AGENT_BASE_URL` to the same URL if it's unset.
+3. `--model` sets both `AGENT_MODEL` and `LLM_MODEL`. `--vision-model` then sets `LLM_MODEL` alone. Flags overwrite the environment.
+4. It always forces `SANDBOX_BACKEND=host`, `S3_BUCKET=` (empty) and `VIDEO_FOLDER=~/.cache/ambient/videos`, whatever your `.env` says. The CLI always runs locally.
+</Steps>
+
+The CLI runs the same `SessionRunner` as the server, backed by an in-memory store and broker (`ambient/lite.py`), so it needs no Postgres or Redis. "Lite" mode has no settings of its own.
+
+## Minimal configurations
+
+<Tabs>
+<TabItem label="Local CLI only">
+
+One OpenRouter key is enough. `ffmpeg` and `ffprobe` have to be on your `PATH`. Run `ambient doctor` to check.
+
+```ini title="~/.config/ambient/env (or ./.env)"
+OPENROUTER_API_KEY=sk-or-...
+# Optional: choose the models (or pass --model / --vision-model)
+# AGENT_MODEL=google/gemini-3.1-pro-preview
+# LLM_MODEL=google/gemini-3.1-pro-preview
+```
+
+To use a different OpenAI-compatible endpoint, set `LLM_BASE_URL` and `LLM_API_KEY` instead of `OPENROUTER_API_KEY`.
+
+</TabItem>
+<TabItem label="Self-hosted server">
+
+The engine with Postgres and Redis, media processed on the host with ffmpeg (`inprocess`). No S3 and no sandbox.
+
+```ini title=".env"
+# LLM endpoint (the server ignores OPENROUTER_API_KEY; set LLM_* explicitly)
+LLM_BASE_URL=https://openrouter.ai/api/v1
+LLM_API_KEY=sk-or-...
+AGENT_MODEL=google/gemini-3.1-pro-preview   # plans + answers
+LLM_MODEL=google/gemini-3.1-pro-preview     # watches clips, fast mode, descriptions
+
+# Server
+API_KEY=change-me-to-a-long-random-string   # clients send this as x-api-key
+SANDBOX_BACKEND=inprocess
+VIDEO_FOLDER=/data/videos
+
+# Persistence (the repo docker-compose.yml overrides these for the api container)
+DATABASE_URL=postgresql://ambient:ambient@localhost:5432/ambient
+REDIS_URL=redis://localhost:6379/0
+
+# Shell tool runs on the host with no isolation under inprocess
+ENABLE_BASH_TOOL=false
+```
+
+</TabItem>
+<TabItem label="Server + E2B sandbox">
+
+Media work runs in a per-session E2B sandbox. This needs an S3-compatible bucket and the `video-analysis-v1` template built in your E2B team. See [Sandbox setup](../../sdk/sandbox/).
+
+```ini title=".env"
+LLM_BASE_URL=https://openrouter.ai/api/v1
+LLM_API_KEY=sk-or-...
+AGENT_MODEL=google/gemini-3.1-pro-preview
+LLM_MODEL=google/gemini-3.1-pro-preview
+
+API_KEY=change-me-to-a-long-random-string
+DATABASE_URL=postgresql://ambient:ambient@localhost:5432/ambient
+REDIS_URL=redis://localhost:6379/0
+
+# Sandbox
+SANDBOX_BACKEND=e2b
+E2B_API_KEY=e2b_...
+E2B_TEMPLATE=video-analysis-v1
+
+# Object storage (required for e2b)
+S3_ENDPOINT=https://<account>.r2.cloudflarestorage.com
+S3_BUCKET=ambient-videos
+S3_VIDEO_BASE_KEY=videos
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+```
+
+</TabItem>
+</Tabs>
+
+## LLM provider and models
+
+Ambient talks to any OpenAI-compatible `/chat/completions` endpoint. There are two roles:
+
+- The **agent model** (`AGENT_MODEL`) runs the tool loop in Agent mode, plans, and writes the answer.
+- The **vision model** (`LLM_MODEL`) runs the vision sub-calls inside tools (`focus_clip`, `search_clip`, `annotate_frames`), Fast mode, and video descriptions.
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `LLM_BASE_URL` | none | **Yes** for the server | Base URL of the vision endpoint, for example `https://openrouter.ai/api/v1`. `/chat/completions` is appended. It is also the fallback agent endpoint when `AGENT_BASE_URL` is unset. The CLI fills it in from `OPENROUTER_API_KEY`. |
+| `LLM_API_KEY` | none | **Yes** for the server | Bearer token for `LLM_BASE_URL`. Also the fallback for `AGENT_API_KEY`. |
+| `LLM_MODEL` | `qwen/qwen3.5-27b` | No | The vision model. It must accept image or video input. Also the model of the built-in Fast agent `ambient_fast`. |
+| `AGENT_BASE_URL` | none (falls back to `LLM_BASE_URL`) | No | A separate endpoint for the agent loop only. |
+| `AGENT_API_KEY` | none (falls back to `LLM_API_KEY`) | No | Key for `AGENT_BASE_URL`. |
+| `AGENT_MODEL` | `google/gemini-3.1-pro-preview` | No | The agent model. Also the model of the built-in agent `ambient_v1`, and the model whose input modalities decide which tools the agent gets. |
+| `OPENROUTER_API_KEY` | none | **CLI only** | Convenience key for the CLI: it fills in `LLM_API_KEY`, `AGENT_API_KEY` and the OpenRouter base URL. The server **doesn't** read it. |
+| `MODEL_DEFINITIONS_FILE` | `ambient/artifacts/models.json` (inside the package) | No | Model catalog in OpenRouter format. It supplies each model's input modalities (used for tool selection and for turning on self-video-analysis) and per-token prices (used for cost estimates). Models missing from it are looked up in the live OpenRouter catalog. An unreadable file raises `Error loading model definitions file`. |
+| `OPENROUTER_PROVIDERS_FILE` | `ambient/artifacts/openrouter_providers.json` | No | Per-model preferred OpenRouter upstream (`provider`), `image_cap` and `video` flag. Used only when the base URL contains `openrouter`. A missing or broken file means auto-routing everywhere. |
+
+<Aside type="note" title="Per-agent endpoints">
+An agent record created through the API can carry its own `base_url` and `api_key`. Those take precedence over `AGENT_BASE_URL`/`LLM_BASE_URL` and the matching keys for sessions that use that agent. The built-in agents don't set them, so they always follow the environment.
+</Aside>
+
+## Agent behavior
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `DEFAULT_AGENT_NAME` | `Video Analyst` | No | Name of the built-in `ambient_v1` agent seeded at startup. |
+| `DEFAULT_AGENT_SYSTEM` | `Analyze videos and answer with citations.` | No | System prompt for both built-in agents (`ambient_v1`, `ambient_fast`). Re-synced on every start. |
+| `EXPOSE_THINKING` | `true` | No | Emit the model's reasoning as `agent.thinking` session events. |
+| `TRACK_USAGE` | `true` | No | Add up token usage and cost (agent and tool LLM calls) on the session and in `run.completed`. |
+| `DISABLE_SELF_VIDEO_ANALYSIS_TOOL` | `false` | No | Self-video-analysis is on whenever the agent model accepts image or video input: the agent watches clips itself (`self_focus_clip` plus a whole-video context prefix). Set this to `true` to always delegate to the vision model (`focus_clip`). |
+| `INLINE_CLIPS` | `false` | No | Skip the S3 upload and embed clips as base64 data URLs in the LLM payload, so the agent can run with no bucket. |
+| `MAX_CLIPS_PER_PROMPT` | `18` | No | The most video attachments kept in one prompt. Older clips are windowed out to stay under provider caps; one provider allows at most 20. |
+| `MAX_FRAMES_PER_PROMPT` | `500` | No | The most image frames kept in one prompt. |
+| `FIRST_TURN_WAIT_FOR_DESCRIPTION` | `true` | No | Make the first run wait (up to a time limit) for the video description, so the first answer can use it. |
+| `FIRST_TURN_DESCRIPTION_TIMEOUT_SECONDS` | `300` | No | How long that first-run wait lasts. On timeout, the run starts with the video metadata and the description is added when it arrives. |
+| `MAX_TURNS_PER_RUN` | `5` | No | Defined but not used by server sessions. Sessions default to **20** turns per run, which you can change per session with `metadata={"max_turns_per_run": N}`. The CLI uses `--max-turns` (default 20). |
+| `AMBIENT_TRAJECTORY_DIR` | `ambient/trajectories/` if writable, else `~/.local/share/ambient/trajectories` | No | Where the standalone harness `ambient/agent.py` writes run trajectories. The server doesn't use it. |
+
+## Bash tool and exported files
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `ENABLE_BASH_TOOL` | `true` | No | Register the `bash` tool. It runs in the session's E2B sandbox when one is active. Otherwise it runs **on the host with the server's privileges and no OS isolation**. Set it to `false` on shared `inprocess` installs. |
+| `BASH_TIMEOUT_SECONDS` | `120` | No | Wall-clock limit per command before it's killed. |
+| `BASH_MAX_OUTPUT_BYTES` | `20000` | No | stdout and stderr are each cut to this many bytes. |
+| `BASH_CWD` | none (uses `VIDEO_FOLDER`) | No | Working directory for host commands. |
+| `EXTERNAL_VIDEO_ALLOWED_ROOTS` | empty | No | Comma-separated extra host directories that video tools may read through an absolute `video_path`, for example a file the agent downloaded. These roots are always allowed: `VIDEO_FOLDER`, `BASH_CWD` and the system temp directory. |
+| `ARTIFACT_URL_TTL_SECONDS` | `604800` (7 days, the SigV4 maximum) | No | How long the presigned download URLs from `upload_artifact` stay valid. |
+| `ARTIFACT_MAX_SIZE_MB` | `1024` | No | `upload_artifact` rejects files larger than this. The tool is registered only when `S3_BUCKET` is set. |
+
+## Server
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `API_KEY` | `dev-token` | **Change it** | The engine's single API key. Clients send it as `x-api-key`, `Authorization: Bearer <key>` or `?api_key=`. The installer and Studio call it `ENGINE_API_KEY`. |
+| `SERVER_HOST` | `127.0.0.1` (image: `0.0.0.0`) | No | Bind address for `python -m ambient.server`. |
+| `SERVER_PORT` | `8080` | No | Bind port. |
+| `SERVER_WORKERS` | `1` (repo compose: `2`) | No | Number of uvicorn worker processes. Workers coordinate through Postgres and Redis. |
+| `WORKER_ID` | empty (a random ID per process) | No | Identity stamped on Redis run leases and used as the ingest consumer name. **Leave it unset** when `SERVER_WORKERS > 1`, or every worker gets the same identity. |
+| `VIDEO_FOLDER` | `/Users/logesh/self/video-llm-tests/videos` (image: `/data/videos`, CLI: `~/.cache/ambient/videos`) | **Yes** outside Docker | Where uploaded videos are stored and where the host backend reads them. The code default is a developer's machine path, so always set it when you run from source. |
+
+<Aside type="caution">
+`GET /v1/healthz` needs no key. Every `/v1` Managed Agents route requires `API_KEY`. With the default `dev-token`, anyone who can reach the port can use your LLM credits.
+</Aside>
+
+## Persistence (Postgres and Redis)
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `DATABASE_URL` | `postgresql://ambient:ambient@localhost:5432/ambient` | **Yes** (server) | Engine database: sessions, events, agents, environments, files. The engine creates its tables at startup and holds an `asyncpg` pool of up to 10 connections per worker. |
+| `REDIS_URL` | `redis://localhost:6379/0` | **Yes** (server) | Per-session run leases, SSE fan-out across workers, and the ingest job stream. Use `rediss://` for TLS. Needs Streams and Pub/Sub. |
+
+Both compose files override these two variables to point at their own `postgres` and `redis` services.
+
+### Background ingestion
+
+When a video is uploaded, its ID goes onto a Redis stream. A consumer in each worker then writes the video's description and handles YouTube downloads. With `SANDBOX_BACKEND=e2b` this work runs in a short-lived sandbox. Otherwise it runs on the host.
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `INGEST_STREAM` | `ingest:video` | No | Redis stream name. |
+| `INGEST_GROUP` | `ingest-workers` | No | Redis consumer group. |
+| `INGEST_CONCURRENCY` | `2` | No | Maximum ingest jobs running at once per worker. |
+| `INGEST_BLOCK_MS` | `5000` | No | `XREADGROUP` block timeout. |
+| `INGEST_MAX_ATTEMPTS` | `3` | No | Tries before a job is marked `failed`. |
+| `INGEST_STALE_SECONDS` | `300` | No | A `processing` row older than this can be reclaimed. |
+| `INGEST_SWEEP_SECONDS` | `300` | No | How often stuck `pending`/`processing` rows are re-queued. |
+| `INGEST_WAIT_TIMEOUT_SECONDS` | `60` | No | How long a tool call waits for a job that's already running. |
+| `INGEST_WAIT_POLL_SECONDS` | `1.5` | No | How often the tool checks during that wait. |
+| `DESCRIPTION_MODEL` | none (uses `LLM_MODEL`) | No | Optional faster model just for video descriptions. Uses the `LLM_BASE_URL` endpoint. |
+| `DESCRIPTION_MAX_FRAMES` | `50` | No | Overview frames sent for the description. The code comment says not to lower it, for quality reasons. |
+| `DESCRIPTION_MAX_DIM` | `768` | No | Longest edge in pixels of the description frames. |
+
+## Storage (S3 / R2)
+
+Any S3-compatible store with SigV4 works: Cloudflare R2, MinIO or AWS S3. The engine's boto3 client always signs with `s3v4`.
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `S3_BUCKET` | none | Required when `SANDBOX_BACKEND=e2b` | Bucket for source videos, pre-cut clip tiles and exported artifacts. Setting it also registers the `upload_artifact` tool. Optional with `inprocess`. |
+| `S3_ENDPOINT` | none (boto3's AWS default) | Required for R2/MinIO | For example `https://<account>.r2.cloudflarestorage.com`. |
+| `S3_VIDEO_BASE_KEY` | `videos` | No | Key prefix for source videos (`videos/<video_id>.mp4`). |
+| `AWS_ACCESS_KEY_ID` | none | Required with `S3_BUCKET` | Storage access key. It is also passed into E2B sandboxes. |
+| `AWS_SECRET_ACCESS_KEY` | none | Required with `S3_BUCKET` | Storage secret key. It is also passed into E2B sandboxes. |
+
+Object layout: `videos/<video_id>.mp4` (sources), `<video_id>/tiles/…` (tiles) and `artifacts/<video_id>/…` (exports). The key needs `s3:GetObject`, `s3:PutObject` and `s3:ListBucket`. For AWS S3 without an endpoint, boto3 also reads its standard region settings (for example `AWS_DEFAULT_REGION`). Ambient itself doesn't read them.
+
+## Media sandbox (E2B)
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `SANDBOX_BACKEND` | `inprocess` | No | `e2b` runs media work in an E2B sandbox per session. **Any other value** (`inprocess`, `host`) uses the host range proxy: ffmpeg in the engine process, reading the local file or doing HTTP range reads from S3. LLM calls always stay on the host. |
+| `E2B_API_KEY` | none | Required when `SANDBOX_BACKEND=e2b` | Read by the E2B SDK straight from the process environment. Also needed when you build the template. |
+| `E2B_TEMPLATE` | `video-analysis-v1` | No | Template name for session and ingest sandboxes. It must exist in your E2B team (`build_prod.py` builds `video-analysis-v1` with 8 vCPU and 8 GB). |
+| `SANDBOX_WALL_SECONDS` | `1800` | No | The session sandbox's E2B timeout. It is reset on every command, so in practice it's an idle timeout. Ingest sandboxes always use 1800. |
+| `SANDBOX_CPU_SECONDS` | `600` | No | Shown in the session's `sandbox.limits`. Not enforced on the E2B sandbox. |
+| `SANDBOX_MEMORY_MB` | `4096` | No | Shown in the session's `sandbox.limits`. Not enforced; memory comes from the template. |
+| `BOX_VIDEO_FOLDER` | `/tmp/videos/` | No | Video cache directory **inside** the sandbox, passed to the box as `VIDEO_FOLDER`. |
+
+The sandbox receives only storage credentials and the media settings below. It **never receives an LLM key**. More on this in [Sandbox setup](../../sdk/sandbox/).
+
+### Video I/O and clip tiles
+
+The engine passes these into the sandbox when it starts the box, so changing them needs no template rebuild. The template has its own fallback defaults, used only when `main.py` runs on its own. Some of those differ (`UPLOAD_CONCURRENCY` 16, `OVERVIEW_SEEK_CONCURRENCY` 16, `TILE_WORKERS` = CPU count).
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `STREAM_SOURCE_VIDEO` | `true` | No | The sandbox reads the source through a presigned URL with HTTP range reads instead of downloading it. |
+| `SOURCE_URL_TTL` | `7200` | No | Lifetime in seconds of the presigned source URL (also used by the host range proxy). |
+| `STREAM_MIN_BYTES` | `104857600` (100 MiB) | No | Sources smaller than this are downloaded instead of streamed. |
+| `OVERVIEW_SEEK_CONCURRENCY` | `8` | No | Parallel seeks when sampling overview frames. |
+| `UPLOAD_CONCURRENCY` | `8` | No | Parallel S3 uploads per media command in the box. Each box runs up to 3 media commands at once, so setting this too high can exhaust threads (`EAGAIN` / `sandbox produced no result envelope`). |
+| `TILING_ENABLED` | `true` | No | At ingest (e2b only), transcode the whole video once into fixed tiles in S3 so `fetch_clip` can join tiles instead of transcoding on demand. |
+| `TILE_SECONDS` | `45` | No | Tile length, which is also the GOP/keyframe interval. |
+| `TILE_FPS` | `2` | No | Must match the provider quality fps, or `fetch_clip` falls back to on-demand transcoding. |
+| `TILE_MAX_DIM` | `768` | No | Must match the provider quality max dimension. |
+| `TILE_WORKERS` | `8` | No | Parallel decode ranges. Set it to the box's vCPU count. |
+| `DECORD_MAX_DURATION_SECS` | `300` | No | **Read inside the box only** and not passed by the engine, so changing it means rebuilding the template. |
+
+## YouTube imports
+
+With `e2b`, imports run in an ingest sandbox. Otherwise the host runs `yt-dlp`, which needs the `youtube` extra plus Deno; both are in the engine image.
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `YOUTUBE_IMPORT_ENABLED` | `true` | No | When `false`, `POST /v1/files/import` returns `YouTube URL imports are disabled`. |
+| `YOUTUBE_MAX_HEIGHT` | `720` | No | Download height cap. `0` means no cap. Nothing downstream uses more than 768px. |
+| `YOUTUBE_MAX_DURATION_SECONDS` | `10800` (3 h) | No | The longest video accepted. |
+| `YOUTUBE_MAX_SIZE_BYTES` | `5368709120` (5 GiB) | No | The largest download accepted. |
+| `YOUTUBE_DOWNLOAD_TIMEOUT_SECONDS` | `900` | No | Download timeout. The sandbox command timeout is the larger of this value and 1800 s. |
+
+## Per-provider quality caps
+
+`get_provider_quality_settings()` in `ambient/config.py` picks the quality used when clips are cut for vision calls:
+
+| Vision model (`LLM_MODEL`) | fps | Max dimension | Max clip size |
+|---|---|---|---|
+| Name contains `gemini` | `2` | `768` | `14` MB |
+| Anything else | `ANALYSIS_FPS` | `ANALYSIS_MAX_DIM` | `ANALYSIS_MAX_SIZE_MB` |
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `ANALYSIS_FPS` | `2` | No | Clip fps for non-Gemini vision models. Lower is faster on a self-hosted vLLM, with less temporal detail. |
+| `ANALYSIS_MAX_DIM` | `768` | No | Longest edge in pixels for non-Gemini clips. Also the default frame size for the host range proxy and `read_image`. |
+| `ANALYSIS_MAX_SIZE_MB` | `8` | No | Clip size cap for non-Gemini models. |
+
+Gemini models ignore the `ANALYSIS_*` variables. If you change `ANALYSIS_FPS` or `ANALYSIS_MAX_DIM`, set `TILE_FPS` and `TILE_MAX_DIM` to match, or tiles won't be used.
+
+### Endpoint profiles (not configurable by environment)
+
+`ambient/media_plan.py` decides between sending a video and sending frames, based on a substring of the base URL. These values are constants in code:
+
+| Base URL contains | Service | Controls video frame count | Image-block cap |
+|---|---|---|---|
+| `openrouter` | openrouter | No (frames are used) | Per model, from `OPENROUTER_PROVIDERS_FILE` (floor 100) |
+| `vercel` | vercel | No | 200 |
+| `modal` | modal | Yes | 100 |
+| `jarvislabs` | jarvislabs | Yes | 100 |
+| anything else | self_hosted (vLLM) | Yes | 1000 |
+
+Default sampling budgets per step are `context` 500 frames at 1 fps, `focus_clip` and `search_clip` 300 frames at 2 fps, and `grab_frames` 30 frames at 1 fps.
+
+## Fast mode
+
+Fast mode makes one vision call with no tools. It uses `LLM_MODEL` on the `LLM_BASE_URL` endpoint.
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `FAST_MAX_TOKENS` | `64000` | No | `max_tokens` for the fast call. It is large so a reasoning trace and the answer both fit. |
+| `FAST_DISABLE_THINKING` | `false` | No | When `true`, sends `reasoning.enabled=false` and vLLM's `chat_template_kwargs={"enable_thinking": false}`, so the model answers directly. |
+
+The frames-or-clips strategy constants in `ambient/fast_mode.py` aren't environment variables: 200 frames maximum, 768px, 16 s clips at 2 fps, a 120k-token budget, and frames for videos up to 300 s.
+
+## MCP bridge
+
+`integrations/mcp_video_agent.py` exposes `analyze_video` as an MCP tool over stdio by calling a running engine.
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `AMBIENT_BASE_URL` | `http://127.0.0.1:8080` | No | Engine URL. |
+| `AMBIENT_API_KEY` | `dev-token` | Match the engine's `API_KEY` | Sent as `x-api-key`. |
+| `AMBIENT_AGENT_MODEL` | `z-ai/glm-5.2` | No | Model for the agent this bridge creates. |
+
+## Studio
+
+The Studio (`ambient/studio/console`, Next.js) has its own environment. For `pnpm dev`, put it in `.env.local`. In the image, pass it as container environment. The Studio needs Postgres but not Redis.
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `AUTH_SECRET` | none | **Yes** | Encrypts sign-in sessions. Generate one with `openssl rand -base64 32`. |
+| `POSTGRES_URL` | none | **Yes** | The Studio's own database, for example `.../ambient_studio`. On start, the image creates the database if it's missing and runs migrations. If the URL is unset, migrations are skipped. |
+| `ENGINE_URL` | `http://127.0.0.1:8080` | Yes in Docker | The engine URL, used server-side only. |
+| `ENGINE_API_KEY` | `dev-token` | Yes | Must equal the engine's `API_KEY`. It never reaches the browser. |
+| `STUDIO_MAX_MESSAGES_PER_HOUR` | `0` (unlimited) | No | Per-user message quota. |
+| `AI_GATEWAY_API_KEY` | none | No | Vercel AI Gateway key, used only to generate chat titles. Without it, the title is the first message, cut to 70 characters. |
+| `BLOB_READ_WRITE_TOKEN` | none | No | Vercel Blob token, read by `@vercel/blob`. Only needed for composer file attachments. Videos don't use it. |
+| `NEXT_PUBLIC_BASE_PATH` | `""` | No | URL prefix that client code uses. See the caution below. |
+| `IS_DEMO` | unset | No | Build-time flag from the upstream template. `1` serves the Studio under `/demo` and changes the models route. Leave it unset. |
+| `PORT` / `HOSTNAME` | `3000` / `0.0.0.0` (image) | No | Listen port and address of the Next.js standalone server. |
+
+<Aside type="caution" title="Sub-path hosting">
+`.env.example` and the self-hosting guide say to build with `NEXT_PUBLIC_BASE_PATH=/studio`. But `next.config.ts` sets `NEXT_PUBLIC_BASE_PATH` itself, from `IS_DEMO` (`/demo` or `""`), and only sets Next's `basePath` in that case. So a custom sub-path doesn't work as the docs describe. Serve the Studio from the root of its own host name.
+</Aside>
+
+## Installer and `ambientctl`
+
+These variables apply only to `install/install.sh` and the `~/.ambient/.env` it writes.
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `AMBIENT_LLM_KEY` | prompted | Required with `--yes` | Written to `LLM_API_KEY`. |
+| `AMBIENT_LLM_BASE_URL` | `https://openrouter.ai/api/v1` | No | Written to `LLM_BASE_URL`. |
+| `AMBIENT_MODEL` | `qwen/qwen3.8-27b` | No | Written to `AGENT_MODEL`. The engine's own default is different. |
+| `AMBIENT_VIDEO_MODEL` | `qwen/qwen3.8-27b` | No | Written to `LLM_MODEL`. The engine's own default is different. |
+| `AMBIENT_BIND` | `127.0.0.1` | No | Host address the ports bind to. Use `0.0.0.0` only behind a proxy. |
+| `AMBIENT_STUDIO_PORT` | `3000` | No | If the port is taken, the next free one is used. |
+| `AMBIENT_ENGINE_PORT` | `8080` | No | Same behavior. |
+| `AMBIENT_PROJECT` | `ambient` | No | Saved as `COMPOSE_PROJECT_NAME`. |
+| `AMBIENT_ENGINE_IMAGE` | `ghcr.io/ambient-intelligence-hq/ambient-engine` | No | Engine image repository, without a tag. |
+| `AMBIENT_STUDIO_IMAGE` | `ghcr.io/ambient-intelligence-hq/ambient-studio` | No | Studio image repository. |
+| `AMBIENT_VERSION` | `latest` | No | Image tag. Same as `--version`. |
+| `AMBIENT_DIR` | `~/.ambient` | No | Install directory. Same as `--dir`. |
+| `AMBIENT_SKIP_PULL` | `0` | No | `1` uses images already present locally. |
+| `POSTGRES_PASSWORD` | generated | Keep it | Postgres password. Changing it after the first start locks you out of the existing database. |
+| `ENGINE_API_KEY` | generated | Keep it | Passed to the engine as `API_KEY` and to the Studio. |
+| `AUTH_SECRET` | generated | Keep it | Passed to the Studio. |
+
+`ambientctl config set KEY VALUE` writes `~/.ambient/.env` with mode `600` and runs `docker compose up -d --wait`. For engine variables the installer's compose file doesn't pass through, add them to `docker-compose.override.yml`. See [How configuration is loaded](#docker-images-and-compose).
+
+## Accepted but unused
+
+These fields exist on `Settings`, so setting them doesn't cause an error, but nothing on the current code path reads them: `SQLITE_DB_PATH` (`ambient_db.sqlite`), `SQLITE_COLLECTION_NAME` (`video_clips`), `SERVER_DB_PATH` (`ambient_server.sqlite`), `SESSION_IDLE_TTL_SECONDS` (`1800`), `SESSION_HARD_TTL_SECONDS` (`86400`), `VIDEO_CLIP_DURATION` (`60`), `VIDEO_CLIP_FPS` (`5`), `VIDEO_CLIP_MAX_DIMENTIONS` (`768`), `EMBEDDING_CLIENT` (`gemini`), `EMBEDDING_MODEL` (`models/gemini-embedding-2-preview`), `EMBEDDING_DIMENSION` (`1536`), `EMBEDDING_SERVICE_BASE_URL` (`https://generativelanguage.googleapis.com/v1beta`), `EMBEDDING_SERVICE_API_KEY` (empty).
+
+<Aside type="note">
+`.env.example` describes `EMBEDDING_SERVICE_API_KEY` as "video-description embedding (server ingest)", but nothing in the engine reads it today. Session TTLs aren't enforced either, so idle E2B boxes stop through `SANDBOX_WALL_SECONDS`.
+</Aside>
+
+## Maintaining your environment
+
+### Rotating keys
+
+- **`LLM_API_KEY` / `AGENT_API_KEY`.** Update the value and restart the engine (`ambientctl config set LLM_API_KEY …` restarts it for you). Agents you created with their own `api_key` keep that key until you update the agent record.
+- **`API_KEY` (engine).** Change the engine's `API_KEY` and the Studio's `ENGINE_API_KEY` together, then update every SDK client and the MCP bridge's `AMBIENT_API_KEY`. With the installer, change only `ENGINE_API_KEY`; it feeds both containers.
+- **`E2B_API_KEY`, `AWS_*`.** Restart the engine. Running sandboxes keep the credentials they were started with, and new sessions get the new ones.
+- **`AUTH_SECRET`.** Changing it invalidates existing Studio sign-in sessions.
+- **`POSTGRES_PASSWORD`.** Don't change it in `.env` on an existing installer volume. The Postgres image applies it only when the database is first created.
+
+### Changing models
+
+Set `AGENT_MODEL` and/or `LLM_MODEL`, then restart the engine. At startup, `seed_defaults` re-syncs the built-in agents (`ambient_v1` from `AGENT_MODEL`, `ambient_fast` from `LLM_MODEL`, both with `DEFAULT_AGENT_SYSTEM`) and logs `Re-syncing built-in agent …`. New sessions pick up the change. Existing sessions and custom agents keep their models.
+
+Check that the new model is in `models.json` or the OpenRouter catalog. An unknown model has no known modalities, so the agent gets neither the image tools nor self-video-analysis. On OpenRouter, a model with no entry in `openrouter_providers.json` logs `media_plan: no preferred OpenRouter provider for …` and auto-routes with an image cap of 100.
+
+### Upgrading
+
+<Tabs>
+<TabItem label="Installer">
+
+```bash title="Terminal"
+ambientctl update        # pull newer images for the current tag, then up -d --wait
+# To change tag or refresh the compose file, re-run the installer:
+curl -fsSL https://ambient-intelligence-hq.github.io/install.sh | bash -s -- --version <tag>
+```
+
+</TabItem>
+<TabItem label="Docker Compose">
+
+```bash title="Terminal"
+docker compose pull && docker compose up -d
+# or, building the repo's compose from source:
+docker compose up -d --build
+```
+
+</TabItem>
+<TabItem label="From source">
+
+```bash title="Terminal"
+git pull
+uv sync --extra youtube --extra e2b   # extras as needed
+uv run python -m ambient.server
+```
+
+</TabItem>
+</Tabs>
+
+The engine creates any new tables when it starts, and the Studio image runs its migrations on every start. For a Studio running from source, use `pnpm db:migrate`. If you use E2B, rebuild the template (`uv run python build_prod.py` in `ambient/sandboxes/e2b/templates/video-analysis-v1`) whenever a release changes that directory.
+
+### Checking health
+
+```bash title="Terminal"
+curl http://127.0.0.1:8080/v1/healthz     # engine -> {"status":"ok"}
+curl http://127.0.0.1:3000/ping           # Studio
+ambient doctor                            # CLI: ffmpeg, ffprobe, yt-dlp, key, base URL, model
+```
+
+`/v1/healthz` only shows that the process is serving. It doesn't check Postgres or Redis. However, the engine connects to both while starting up, so if either is unreachable the server never becomes healthy.
+
+### Common misconfigurations
+
+| Symptom | Cause and fix |
+|---|---|
+| `401` `api key does not match settings.api_key` | The client key differs from the engine's `API_KEY`. Check the Studio's `ENGINE_API_KEY`, the SDK `api_key` and `AMBIENT_API_KEY`. |
+| `401` `missing x-api-key (or Authorization: Bearer) header` | The client didn't send a key. |
+| `No LLM base_url configured for model …` | Neither `AGENT_BASE_URL` nor `LLM_BASE_URL` is set. The server ignores `OPENROUTER_API_KEY`. When running from source, put `.env` in the repo root, not your working directory. |
+| `HTTP 401/404 from <endpoint>` during a run | Wrong `LLM_API_KEY`, or a model ID the endpoint doesn't serve. |
+| A setting has no effect | A typo (unknown keys are ignored); the engine wasn't restarted (settings are cached); Compose `environment:` overriding `.env`; or an installer variable missing from `docker-compose.override.yml`. |
+| Session status `failed` with error `sandbox_boot_failed` | With `SANDBOX_BACKEND=e2b`: `E2B_API_KEY` missing, `E2B_TEMPLATE` not built in your team, or an older engine image without the `e2b` extra. |
+| `sandbox_backend='e2b' but no media sandbox is active for this call` | A media tool ran before the session's sandbox started. Wait for the session to be `idle` before you send a message. |
+| `sandbox produced no result envelope` | A box command failed. If the stderr tail shows thread exhaustion, lower `UPLOAD_CONCURRENCY`. |
+| Uploads get no description with `e2b` | Ingest under `e2b` needs the S3 copy. Set `S3_BUCKET` and the credentials. |
+| Slow first clip fetch with `e2b` | Tiles are missing or don't match. Keep `TILE_FPS`/`TILE_MAX_DIM` equal to the provider quality fps and dimension, and `TILING_ENABLED=true`. |
+| `Error loading model definitions file` | `MODEL_DEFINITIONS_FILE` points to a missing or invalid file. |
+| `OpenRouter model catalog fetch failed` in logs | The engine couldn't reach `openrouter.ai` to look up a model missing from `models.json`. Add the model to the file or allow outbound access. |
+| `YouTube URL imports are disabled` | `YOUTUBE_IMPORT_ENABLED=false`. |
+| Agent runs shell commands on your server | `ENABLE_BASH_TOOL` defaults to `true` and `inprocess` has no isolation. Set it to `false`, or use `SANDBOX_BACKEND=e2b`. |
+| Leases conflict with multiple workers | `WORKER_ID` is set while `SERVER_WORKERS > 1`. Unset it. |
+| Too many Postgres connections | Each engine worker opens up to 10. Plan for replicas × `SERVER_WORKERS` × 10. |

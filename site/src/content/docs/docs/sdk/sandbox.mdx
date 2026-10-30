@@ -1,0 +1,335 @@
+---
+title: Sandbox setup
+description: Choose where Ambient runs media work, set up the E2B sandbox backend step by step, and understand how a session's sandbox boots, times out and shuts down.
+sidebar:
+  order: 2
+---
+
+import { Steps, Tabs, TabItem, Aside, Card, CardGrid, LinkCard, FileTree } from '@astrojs/starlight/components';
+
+Ambient splits each session into two kinds of work. **LLM calls** (the agent model planning and answering, the video model watching clips) always run on the engine host. **Media work** (cutting clips, sampling frames, running the agent's `bash` tool, exporting files with `upload_artifact`) runs on a *media backend* that you pick with one setting, `SANDBOX_BACKEND`.
+
+This page explains the two backends, walks through the E2B setup, and describes how a session's sandbox behaves from boot to shutdown.
+
+## Choose a backend
+
+<CardGrid>
+  <Card title="inprocess (default)" icon="laptop">
+    ffmpeg runs on the engine host, inside the engine process. No extra accounts, no bucket required. Best for a personal install or local development.
+  </Card>
+  <Card title="e2b" icon="rocket">
+    Each session gets its own E2B cloud sandbox (a disposable microVM) for media work. Needs an E2B account, an S3-compatible bucket, and the Ambient sandbox template. Best for shared, team or production installs.
+  </Card>
+</CardGrid>
+
+| | `inprocess` | `e2b` |
+|---|---|---|
+| Where ffmpeg and `bash` run | On the engine host, with the engine's privileges | In a per-session E2B sandbox |
+| What the media code can reach | The engine's whole environment, including your LLM key, database URL and S3 credentials | Only S3 credentials and media settings. The sandbox never receives an LLM key |
+| Object storage | Optional. Videos are read from `VIDEO_FOLDER`, or range-read from S3 when not on disk | **Required.** The sandbox fetches sources from the bucket and returns clips and frames as presigned URLs |
+| Clip tiles at ingest | Not produced; clips are transcoded on demand | Each video is pre-cut into clip tiles in the bucket (`TILING_ENABLED`, on by default) |
+| Session start | Ready almost immediately | Waits for a sandbox to boot (Agent mode) |
+| Engine replicas | Each replica needs S3 or a shared video volume | Fully interchangeable; any worker can reconnect to a session's sandbox |
+| Extra cost | None | E2B usage: one sandbox per Agent-mode session, plus a short-lived one per uploaded video |
+
+<Aside type="caution" title="Shared installs on inprocess">
+The `bash` tool is on by default (`ENABLE_BASH_TOOL=true`). On `inprocess` it runs arbitrary shell commands on the engine host with only soft limits (a timeout, an output cap, a working directory and process-group kill). If other people can reach your engine, use `e2b` or set `ENABLE_BASH_TOOL=false`.
+</Aside>
+
+Ambient only checks for the exact value `e2b`. Any other value of `SANDBOX_BACKEND` uses the host (`inprocess`) path.
+
+## What runs where
+
+Even on `e2b`, the tools themselves are dispatched from the engine process. Only the media operations they call go to the sandbox:
+
+- **Host:** the agent loop, every LLM request, tool dispatch, Postgres and Redis access.
+- **Sandbox:** the media CLI baked into the template (`python /app/main.py …`: frame extraction, clip fetching, tiling, YouTube download), `bash` commands, and `upload_artifact` for files created inside the sandbox.
+
+The engine passes the sandbox only what media work needs: `S3_ENDPOINT`, `S3_BUCKET`, `S3_VIDEO_BASE_KEY`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, plus streaming, tiling, upload and YouTube limits. You can tune those limits from the engine's `.env` without rebuilding the template.
+
+## Set up E2B
+
+<Steps>
+
+1. **Create an E2B account and API key.**
+
+   Sign up at [e2b.dev](https://e2b.dev) and copy an API key from the dashboard. The engine doesn't read the key through its own settings: the E2B SDK reads `E2B_API_KEY` from the process environment, so it must be set in the engine's environment (the steps below do this).
+
+   While you're in the dashboard, set a spend limit. Ambient has no session reaper yet, so the E2B idle timeout is your main cost control (see [Teardown](#teardown)).
+
+2. **Create an S3-compatible bucket.**
+
+   Cloudflare R2 is the tested path (it has no egress fees, which matters for video). Any S3-compatible store that supports SigV4 should work. Give the access key `s3:GetObject`, `s3:PutObject` and `s3:ListBucket` on the bucket, and keep the bucket private: everything is served through the engine or through presigned URLs.
+
+   See [Why the bucket is needed](#why-the-bucket-is-needed) for what Ambient stores there.
+
+3. **Build the sandbox template in your E2B team.**
+
+   The template is defined in the Ambient repository. Building it registers it in the E2B team that owns your API key. Run the build from the template directory, because the build scripts import `template.py` from the working directory:
+
+   ```bash title="Terminal"
+   git clone https://github.com/ambient-intelligence-hq/ambient && cd ambient
+   uv sync --extra e2b
+   export E2B_API_KEY=e2b_...
+   cd ambient/sandboxes/e2b/templates/video-analysis-v1
+   uv run python build_prod.py
+   ```
+
+   There are two build scripts. They build the same image under different names, both sized at 8 vCPU and 8 GB of memory:
+
+   | Script | Make target | Template name |
+   |---|---|---|
+   | `build_prod.py` | `make e2b-build-prod` | `video-analysis-v1` (the engine default) |
+   | `build_dev.py` | `make e2b-build-dev` | `video-analysis-v1-dev` |
+
+   Use the dev name when you're changing the template and don't want to touch the one production uses.
+
+   <FileTree>
+   - ambient/sandboxes/e2b/templates/video-analysis-v1/
+     - Dockerfile ffmpeg, deno, Pillow, decord, pydantic, boto3, yt-dlp
+     - template.py builds from the Dockerfile
+     - main.py the media CLI, copied to /app in the sandbox
+     - build_dev.py
+     - build_prod.py
+     - Makefile
+   </FileTree>
+
+   Rebuild the template whenever an Ambient release changes files in `ambient/sandboxes/e2b/templates/`.
+
+4. **Configure the engine.**
+
+   Set the backend, the E2B key and template, and the bucket. Pick the tab that matches how you run Ambient.
+
+   <Tabs>
+   <TabItem label="Installer">
+
+   The installer's engine service sets `SANDBOX_BACKEND: inprocess` directly in its generated `docker-compose.yml`, and that file is rewritten on every re-run. Put your changes in an override file instead; Docker Compose and `ambientctl` merge it automatically:
+
+   ```yaml title="~/.ambient/docker-compose.override.yml"
+   services:
+     engine:
+       environment:
+         SANDBOX_BACKEND: e2b
+         E2B_API_KEY: ${E2B_API_KEY}
+         E2B_TEMPLATE: video-analysis-v1
+         S3_ENDPOINT: ${S3_ENDPOINT}
+         S3_BUCKET: ${S3_BUCKET}
+         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+   ```
+
+   Then store the values in `~/.ambient/.env`. Each `config set` writes the value and re-applies the stack:
+
+   ```bash title="Terminal"
+   ambientctl config set E2B_API_KEY e2b_...
+   ambientctl config set S3_ENDPOINT https://<account>.r2.cloudflarestorage.com
+   ambientctl config set S3_BUCKET ambient-videos
+   ambientctl config set AWS_ACCESS_KEY_ID ...
+   ambientctl config set AWS_SECRET_ACCESS_KEY ...
+   ```
+
+   </TabItem>
+   <TabItem label="Docker Compose">
+
+   The repository's `docker-compose.yml` loads `.env` into the `api` service, and the engine image already includes the E2B SDK. Add these lines to `.env`, then rebuild and restart with `docker compose up -d --build`:
+
+   ```ini title=".env"
+   SANDBOX_BACKEND=e2b
+   E2B_API_KEY=e2b_...
+   E2B_TEMPLATE=video-analysis-v1
+
+   S3_ENDPOINT=https://<account>.r2.cloudflarestorage.com
+   S3_BUCKET=ambient-videos
+   S3_VIDEO_BASE_KEY=videos
+   AWS_ACCESS_KEY_ID=...
+   AWS_SECRET_ACCESS_KEY=...
+   ```
+
+   </TabItem>
+   <TabItem label="From source">
+
+   The E2B SDK is an optional dependency, so install it first:
+
+   ```bash title="Terminal"
+   uv sync --extra e2b
+   ```
+
+   Put the settings in the `.env` at the repository root. The engine loads that file into its process environment on startup, so the E2B SDK sees `E2B_API_KEY` too:
+
+   ```ini title=".env"
+   SANDBOX_BACKEND=e2b
+   E2B_API_KEY=e2b_...
+   E2B_TEMPLATE=video-analysis-v1
+
+   S3_ENDPOINT=https://<account>.r2.cloudflarestorage.com
+   S3_BUCKET=ambient-videos
+   S3_VIDEO_BASE_KEY=videos
+   AWS_ACCESS_KEY_ID=...
+   AWS_SECRET_ACCESS_KEY=...
+   ```
+
+   Then start the server:
+
+   ```bash title="Terminal"
+   uv run python -m ambient.server
+   ```
+
+   </TabItem>
+   </Tabs>
+
+   `E2B_TEMPLATE` must match the name you built in step 3. If you built with `build_dev.py`, set `E2B_TEMPLATE=video-analysis-v1-dev`.
+
+5. **Optionally, tune the sandbox timeout.**
+
+   `SANDBOX_WALL_SECONDS` (default `1800`) is how long a session's sandbox stays alive without activity. See [Timeouts](#timeouts) for how it's applied. For every setting, see the [configuration reference](../../reference/configuration/).
+
+</Steps>
+
+## Why the bucket is needed
+
+With `e2b`, video bytes never live on the same machine as the sandbox, so the bucket is the hand-off point between the engine, the sandbox and the model:
+
+- **Sources.** When you upload a video with `client.beta.files.upload`, the engine stores it locally and copies it to `<S3_VIDEO_BASE_KEY>/<video_id><ext>` (for example `videos/<video_id>.mp4`). The sandbox reads it from there, streaming large files with HTTP range reads through a presigned URL instead of downloading them whole.
+- **Clips and frames.** The sandbox uploads the clips and frames it cuts (under `<video_id>/clips/` and `<video_id>/frames/`) and hands them back as presigned URLs. The model fetches them directly; the engine never needs the bytes.
+- **Clip tiles.** At ingest, each video is transcoded once into fixed tiles under `<video_id>/tiles/`, so clip requests stitch tiles instead of transcoding on demand.
+- **Artifacts.** Files the agent exports with `upload_artifact` go under `artifacts/<video_id>/` and are shared as presigned links that last `ARTIFACT_URL_TTL_SECONDS` (default 7 days). The `upload_artifact` tool is only offered when `S3_BUCKET` is set.
+
+<Aside type="caution">
+The copy to the bucket at upload time is best-effort. If it fails, the engine logs `R2 upload failed for <video_id>` and, on `e2b`, skips background ingestion for that video. The sandbox then can't find the source. Fix the bucket settings and upload again.
+</Aside>
+
+## Verify it works
+
+<Steps>
+
+1. Check the engine is up:
+
+   ```bash title="Terminal"
+   curl http://127.0.0.1:8080/v1/healthz
+   ```
+
+   It should return `{"status":"ok"}`.
+
+2. Create a session and wait for its sandbox. Every session resource carries a `sandbox` object with the backend, its status and the E2B sandbox id:
+
+   ```python title="verify_sandbox.py"
+   import time
+   from anthropic import Anthropic
+
+   client = Anthropic(base_url="http://127.0.0.1:8080", api_key="dev-token")
+
+   video = client.beta.files.upload(file=open("clip.mp4", "rb"))
+   session = client.beta.sessions.create(
+       agent="ambient_v1",           # built-in Agent-mode agent
+       environment_id="default",     # built-in environment
+       metadata={"video_id": video.id},
+   )
+
+   while (s := client.beta.sessions.retrieve(session.id)).status == "pending":
+       time.sleep(1)
+
+   print(s.status)    # "idle" once the sandbox is up
+   print(s.sandbox)   # {'backend': 'e2b', 'status': 'ready', 'id': '<e2b sandbox id>'}
+   ```
+
+   Use the API key your engine is configured with (`API_KEY`; the installer calls it `ENGINE_API_KEY`).
+
+3. Ask a question in that session (see the [SDK quickstart](../quickstart/)). While the agent cuts clips, the engine logs the sandbox's output on lines prefixed with `[box <first 8 characters of the sandbox id>]`, and the sandbox appears as running in your E2B dashboard.
+
+</Steps>
+
+If `status` comes back `terminated` instead, the sandbox failed to boot. See [Troubleshooting](#troubleshooting).
+
+## Sandbox lifecycle
+
+### Boot
+
+`sessions.create` returns at once with status `pending`. The sandbox boots in a background task:
+
+- **Agent mode on `e2b`:** the engine creates one sandbox from `E2B_TEMPLATE` for the session. When it's up, the engine records the sandbox id on the session and the status becomes `idle`.
+- **Fast mode on `e2b`:** no sandbox at session start. If the vision provider accepts the whole video as a URL, the session never needs one. A sandbox is booted on demand only when Fast mode falls back to extracting frames.
+- **`inprocess`:** there is nothing to boot, so the session moves to `idle` straight away and `sandbox.id` stays `null`.
+
+Ingest is separate from sessions. On `e2b`, each uploaded video (and each YouTube import) gets a short-lived sandbox of its own to generate the description, download the YouTube source and cut clip tiles. That sandbox is killed when the job ends. `INGEST_CONCURRENCY` (default `2`) caps how many ingest sandboxes each engine worker boots at once.
+
+### Readiness
+
+Poll `sessions.retrieve` until `status` is `idle`, then send a message. The statuses map to sandbox state like this:
+
+| SDK `status` | Meaning |
+|---|---|
+| `pending` | Session created, sandbox still booting |
+| `idle` | Sandbox ready (or not needed), waiting for input |
+| `running` | A run is in progress |
+| `terminated` | The sandbox failed to boot (the session also logs a `session.error` event) |
+
+If a run starts before the sandbox finishes booting, the run waits up to 120 seconds for it and then proceeds, so a stuck boot shows up as a tool error rather than a hang.
+
+When you run several engine workers or replicas, any of them can serve a session. A worker that didn't create the session reconnects to its sandbox by id. If the sandbox has no id yet because the boot is still in progress, `events.send` returns `409` with `session sandbox is still starting; retry shortly`.
+
+### Timeouts
+
+| Limit | Default | How it works |
+|---|---|---|
+| Sandbox idle timeout | `SANDBOX_WALL_SECONDS=1800` | Set as the E2B sandbox timeout at boot, and reset before every media or `bash` command. A session's sandbox therefore lives until 30 minutes after its last command. After a session moves to another worker, the reset uses 1800 seconds regardless of the setting |
+| Media command timeout | 1800 s | Each media CLI command may run for `max(1800, YOUTUBE_DOWNLOAD_TIMEOUT_SECONDS)` seconds, long enough to tile a three-hour video |
+| `bash` command timeout | `BASH_TIMEOUT_SECONDS=120` | Per command, unless the model passes its own `timeout` |
+| Concurrent commands | 3 per sandbox | Parallel tool calls in a turn share the sandbox, with at most 3 media or shell commands running at once |
+
+Sandbox size comes from the template build (8 vCPU, 8 GB). `SANDBOX_CPU_SECONDS` and `SANDBOX_MEMORY_MB` are recorded on each session's sandbox limits, but the E2B backend doesn't enforce them.
+
+### Teardown
+
+Ambient doesn't yet expose an API to end a session, and there's no background reaper. A session's sandbox stops in one of two ways:
+
+- **Idle timeout.** E2B shuts it down `SANDBOX_WALL_SECONDS` after its last command.
+- **Engine shutdown.** On a clean stop, each worker kills the sandboxes of the sessions it has loaded.
+
+`SESSION_IDLE_TTL_SECONDS` and `SESSION_HARD_TTL_SECONDS` exist in the configuration, but nothing acts on them yet. Ambient doesn't re-create a sandbox that has timed out, so a session that has been idle longer than `SANDBOX_WALL_SECONDS` can't run media tools any more. Start a new session over the same video instead; the uploaded file, its description and its tiles are reused.
+
+## Troubleshooting
+
+**The session goes straight to `terminated`.**
+The sandbox failed to boot. The reason is in the session's events:
+
+```python title="boot_error.py"
+for ev in client.beta.sessions.events.list(session.id).data:
+    if ev.type == "session.error":
+        print(ev.error.message)
+```
+
+Common causes:
+
+- `E2B_API_KEY` isn't in the engine's environment. With the installer, check that the override file passes it through; from source, check the repository-root `.env`.
+- `E2B_TEMPLATE` names a template that wasn't built in the E2B team that owns your API key, or doesn't match the script you built with (`video-analysis-v1` versus `video-analysis-v1-dev`).
+- The engine was installed without the E2B SDK. From source, run `uv sync --extra e2b`. Older published engine images also lack it: pull a newer tag.
+
+**`409 session sandbox is still starting; retry shortly`.**
+You sent a message before the sandbox finished booting. Wait until `status` is `idle`, then retry.
+
+**`409 a run is already in flight for this session`.**
+A previous run hasn't finished. Wait for `session.status_idle` on the stream before sending the next message.
+
+**Tool errors mention `no result envelope`.**
+The sandbox ran out of threads under load. The `UPLOAD_CONCURRENCY` comment in the engine's configuration names this symptom; lower `UPLOAD_CONCURRENCY` (default `8`). The value is passed into the sandbox at runtime, so no template rebuild is needed.
+
+**Tool errors say `sandbox_backend='e2b' but no media sandbox is active`.**
+A media tool ran without a sandbox, usually because the boot failed. Check for a boot error as above.
+
+**`Sandbox not created or killed`, or tools fail after a long pause.**
+The sandbox hit its idle timeout. Start a new session, or raise `SANDBOX_WALL_SECONDS` if your users routinely pause longer than 30 minutes.
+
+**The video uploads but the sandbox can't find it, or no description is ever generated.**
+The copy to the bucket failed at upload time. Look for `R2 upload failed for <video_id>` in the engine logs, check the `S3_*` and `AWS_*` values and the key's permissions, then upload again. A file record with `description_status` set to `null` on the `e2b` backend is a sign of this.
+
+**I changed the template but sessions still use the old one.**
+Rebuild with the script that matches `E2B_TEMPLATE`. Building with `build_dev.py` doesn't update the `video-analysis-v1` template, and vice versa.
+
+## Next steps
+
+<CardGrid>
+  <LinkCard title="Environments" description="How the Managed Agents environments resource works in Ambient." href="../environments/" />
+  <LinkCard title="Configuration reference" description="Every engine setting, with defaults." href="../../reference/configuration/" />
+  <LinkCard title="SDK quickstart" description="Upload a video, create a session and stream an answer." href="../quickstart/" />
+  <LinkCard title="Operations" description="Run and maintain an Ambient engine." href="../operations/" />
+</CardGrid>

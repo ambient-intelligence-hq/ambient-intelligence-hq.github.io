@@ -1,0 +1,150 @@
+---
+title: Environments
+description: What the Managed Agents environments resource means in Ambient, which SDK operations the server supports, and how to manage environments well.
+sidebar:
+  order: 3
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+Ambient implements the Anthropic Managed Agents API, so the `anthropic` SDK's `client.beta.environments` resource talks to it directly. In Ambient, though, an environment is a lightweight **label**, not a container definition. This page covers what that means, which operations work, and how to use environments without surprises.
+
+## What an environment is in Ambient
+
+On Anthropic's hosted platform, an environment describes the container a session runs in. Ambient keeps the resource for SDK compatibility but gives it no runtime role:
+
+- **Where media work runs is a server-wide setting**, `SANDBOX_BACKEND`, not something an environment configures. Every session on an engine uses the same backend and the same E2B template, whatever environment it names. See [Sandbox setup](../sandbox/).
+- **An environment record holds five fields:** `id`, `name`, `metadata`, `created_at` and `updated_at`. Ambient stores it in the `environments` table in Postgres and returns it with `type: "environment"`.
+- **A built-in environment with the id `default`** (named `default`) is created when the engine starts, if it doesn't already exist. Sessions use it when they don't name another one.
+
+The examples below use this client. Use your engine's URL and its API key (`API_KEY`; the installer calls it `ENGINE_API_KEY`):
+
+```python title="client.py"
+from anthropic import Anthropic
+
+client = Anthropic(base_url="http://127.0.0.1:8080", api_key="dev-token")
+```
+
+## Supported operations
+
+| Operation | SDK call | Ambient |
+|---|---|---|
+| Create | `client.beta.environments.create(...)` | Supported |
+| Retrieve | `client.beta.environments.retrieve(id)` | Supported |
+| List | `client.beta.environments.list()` | Not supported: `405 Method Not Allowed` |
+| Update | `client.beta.environments.update(id, ...)` | Not supported: `405 Method Not Allowed` |
+| Delete | `client.beta.environments.delete(id)` | Not supported: `405 Method Not Allowed` |
+| Archive | `client.beta.environments.archive(id)` | Not supported: `404 Not Found` |
+
+### Create an environment
+
+The SDK requires `name`. Ambient stores `name` and `metadata` and generates an id of the form `env_<16 hex characters>`:
+
+```python title="create_environment.py"
+env = client.beta.environments.create(
+    name="video-qa-prod",
+    metadata={"team": "trust-and-safety", "purpose": "bodycam review"},
+)
+print(env.id)        # env_6fe408d051ee4d8e
+print(env.name)      # video-qa-prod
+print(env.metadata)  # {'team': 'trust-and-safety', 'purpose': 'bodycam review'}
+```
+
+### Retrieve an environment
+
+```python title="retrieve_environment.py"
+env = client.beta.environments.retrieve("env_6fe408d051ee4d8e")
+print(env.name, env.created_at)
+
+default_env = client.beta.environments.retrieve("default")
+```
+
+An unknown id raises `anthropic.NotFoundError` (HTTP 404, error code `not_found`):
+
+```python title="retrieve_missing.py"
+import anthropic
+
+try:
+    client.beta.environments.retrieve("env_does_not_exist")
+except anthropic.NotFoundError:
+    print("no such environment")
+```
+
+### List, update, archive and delete
+
+The server has no routes for these. If you share code with Anthropic's hosted Managed Agents, guard the calls so they fail softly against Ambient:
+
+```python title="portable_cleanup.py"
+import anthropic
+
+try:
+    client.beta.environments.archive(env.id)
+except anthropic.APIStatusError as err:
+    if err.status_code in (404, 405):
+        pass  # Ambient doesn't support archiving environments
+    else:
+        raise
+```
+
+`anthropic.NotFoundError` is a subclass of `anthropic.APIStatusError`, so this one handler covers both the `404` from archive and the `405` from list, update and delete.
+
+## Fields Ambient honors and ignores
+
+| Field (create request) | Ambient |
+|---|---|
+| `name` | Stored and returned. Required by the SDK |
+| `metadata` | Stored and returned |
+| `config` | Ignored. The sandbox is configured on the server (`SANDBOX_BACKEND`, `E2B_TEMPLATE`) |
+| `description` | Ignored |
+| `scope` | Ignored |
+
+Because the response carries only `type`, `id`, `name`, `metadata`, `created_at` and `updated_at`, the SDK fills the rest of its `BetaEnvironment` model with `None`. `env.config`, `env.description`, `env.archived_at` and `env.scope` are always `None` against Ambient, even if you sent values for them.
+
+## How sessions bind to environments
+
+You pass an environment id when you create a session. The SDK requires the `environment_id` argument:
+
+```python title="create_session.py"
+video = client.beta.files.upload(file=open("clip.mp4", "rb"))
+
+session = client.beta.sessions.create(
+    agent="ambient_v1",
+    environment_id=env.id,            # or "default"
+    metadata={"video_id": video.id},
+)
+print(session.environment_id)          # echoes the id you passed
+```
+
+What Ambient does with it:
+
+- **It stores the id on the session and echoes it back** as `session.environment_id` on create, retrieve and list.
+- **An empty value falls back to `default`.** If the request carries no `environment_id` (or an empty string), the session gets `default`.
+- **It doesn't validate the id.** Ambient doesn't check that the environment exists, so a session created with an unknown id still starts. This also means a typo won't be caught for you.
+- **It doesn't change how the session runs.** The model comes from the agent, the video from `metadata.video_id` (or a file resource), and the sandbox from the server's settings.
+
+<Aside type="note">
+Ambient's server README says session creation returns `400` for an unknown environment. The code doesn't do that check: only the agent and the video id are validated.
+</Aside>
+
+## Best practices
+
+**Reuse environments; don't create one per session.** An environment has no per-session state, and Ambient has no delete endpoint, so every `create` call leaves a row in Postgres for good. Create a handful up front, or just use `default`.
+
+**Use environments as labels.** Since sessions echo `environment_id`, environments are a cheap way to tag sessions by app, team or deployment stage (for example `video-qa-prod` and `video-qa-staging`). Put anything structured in `metadata`.
+
+**Record the ids yourself.** There's no list endpoint, so you can't look environments up by name later. Create them once in a setup script and keep the ids in your app's configuration.
+
+**Check ids before you rely on them.** Because session creation accepts any id, call `environments.retrieve` once at startup to catch a mistyped or missing id early.
+
+**Don't put sandbox settings in `config`.** They're silently ignored. To change where media runs, or the template it runs on, change the engine's settings; see [Sandbox setup](../sandbox/) and the [configuration reference](../../reference/configuration/).
+
+**Clean up in the database if you must.** The only way to remove an environment is to delete its row from the engine's `environments` table. Sessions keep the id as plain text, so existing sessions aren't affected. If you delete `default`, the engine re-creates it on the next start.
+
+## Next steps
+
+<CardGrid>
+  <LinkCard title="Sandbox setup" description="Choose a media backend and set up E2B." href="../sandbox/" />
+  <LinkCard title="SDK quickstart" description="Upload a video, create a session and stream an answer." href="../quickstart/" />
+  <LinkCard title="Operations" description="The other SDK operations Ambient supports." href="../operations/" />
+  <LinkCard title="Configuration reference" description="Every engine setting, with defaults." href="../../reference/configuration/" />
+</CardGrid>
