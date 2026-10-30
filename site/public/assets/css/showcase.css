@@ -31,7 +31,19 @@
 .io-frame.vid-src { width: 600px; height: 440px; }
 .io-frame.vid-src video { width: 100%; height: 100%; object-fit: cover; }
 
-@media (max-width: 760px) { .io-arrow { transform: rotate(90deg); } }
+/* Stack input over output once they no longer fit side by side, and let the
+   fixed-size frames scale down to the screen (keeping their desktop shape). */
+@media (max-width: 1150px) {
+  .io { flex-direction: column; }
+  .io-panel { width: 100%; margin: 0; }   /* <figure> has a 40px side margin by default */
+  .io-arrow { transform: rotate(90deg); }
+  .io-frame.vid-src { width: min(600px, 100%); height: auto; aspect-ratio: 600 / 440; }
+  .io-frame.doc { width: min(430px, 100%); }
+}
+@media (max-width: 600px) {
+  .io-frame video { height: 400px; }   /* 9:16 reel: a little shorter on phones */
+  .io-frame.vid-src video { height: 100%; }
+}
 
 .sc-browser {
   border-radius: var(--radius);
