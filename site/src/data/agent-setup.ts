@@ -4,7 +4,7 @@
 // points to is public/agents/setup.md.
 export const AGENT_SETUP_GUIDE_URL = "https://ambient-intelligence-hq.github.io/agents/setup.md";
 
-export const AGENT_SETUP_PROMPT = `Set up Ambient, a video-understanding agent engine, on this machine.
+export const AGENT_SETUP_PROMPT = `Set up Ambient, an open-source video engine for AI agents, on this machine.
 Read the setup guide and follow it:
 curl -fsSL ${AGENT_SETUP_GUIDE_URL}
 Show me your plan before installing anything`;

@@ -38,7 +38,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: "Ambient Docs",
-      description: "Developer documentation for Ambient, the video-understanding agent engine.",
+      description: "Developer documentation for Ambient, the open-source video engine for AI agents.",
       logo: { light: "./src/assets/ambient-mark.svg", dark: "./src/assets/ambient-mark-dark.svg", alt: "Ambient" },
       favicon: "/assets/img/ambient-mark.svg",
       social: [{ icon: "github", label: "GitHub", href: "https://github.com/ambient-intelligence-hq/ambient" }],
@@ -49,7 +49,7 @@ export default defineConfig({
         starlightLlmsTxt({
           projectName: "Ambient",
           description:
-            "Ambient is a video-understanding agent engine: give it a video and a question, and it answers with timestamp citations. It runs locally with Docker and includes a web UI (Studio) and an API compatible with the Anthropic SDK.",
+            "Ambient is the open-source video engine for AI agents: give it a video and a task, and its agents watch the footage and turn it into outcomes such as cited answers, structured JSON, clips, and reports. It runs locally with Docker and includes a web UI (Studio) and an API compatible with the Anthropic SDK.",
           details:
             "To install Ambient on the user's machine, follow the agent setup guide first: https://ambient-intelligence-hq.github.io/agents/setup.md",
           promote: ["docs/quickstart*", "docs/sdk/quickstart*"],
