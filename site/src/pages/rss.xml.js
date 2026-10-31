@@ -6,7 +6,7 @@ export async function GET(context) {
 
   return rss({
     title: "Ambient Blog",
-    description: "Notes from the team building Ambient — the video-understanding agent engine.",
+    description: "Notes from the team building Ambient, the open-source video engine for AI agents.",
     site: context.site,
     items: posts.map((post) => ({
       title: post.data.title,

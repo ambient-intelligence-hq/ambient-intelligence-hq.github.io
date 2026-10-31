@@ -1,7 +1,7 @@
 # Ambient website
 
 The public marketing site for [Ambient](https://github.com/ambient-intelligence-hq/ambient),
-the open video-understanding agent engine. Deployed to GitHub Pages.
+the open-source video engine for AI agents. Deployed to GitHub Pages.
 
 ```
 site/     Astro site — landing + blog + docs (served at /)

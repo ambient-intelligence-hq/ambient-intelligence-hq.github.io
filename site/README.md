@@ -1,7 +1,7 @@
 # Ambient site
 
 The marketing site, blog, and developer docs for **Ambient** — the
-video-understanding agent engine. *Any video in. Any action out.*
+open-source video engine for AI agents. *Any video in. Any outcome out.*
 
 Built with [Astro](https://astro.build). The landing page is an Astro page;
 **blog posts are Markdown** in a content collection, and the **developer docs

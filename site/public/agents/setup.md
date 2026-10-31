@@ -1,8 +1,8 @@
 ---
 name: ambient-setup
-description: Install Ambient (a video-understanding agent engine and its Studio web UI) on this machine with Docker, and verify it works.
+description: Install Ambient (the open-source video engine for AI agents) and its Studio web UI on this machine with Docker, and verify it works.
 version: 1
-updated: 2026-10-30
+updated: 2026-10-31
 ---
 
 # Set up Ambient
