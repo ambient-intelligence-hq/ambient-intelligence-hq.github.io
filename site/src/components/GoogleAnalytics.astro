@@ -1,0 +1,23 @@
+---
+// Google Analytics (GA4). Rendered in the <head> of the marketing/blog layout
+// and, via the Starlight Head override, the docs. Production builds only, so
+// `astro dev` sends no hits.
+const GA_ID = "G-G1Z36DQNQX";
+---
+
+{
+  import.meta.env.PROD && (
+    <>
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
+      <script is:inline define:vars={{ GA_ID }}>
+        window.dataLayer = window.dataLayer || [];
+        // On window, so later custom events can call gtag("event", ...).
+        window.gtag = function () {
+          dataLayer.push(arguments);
+        };
+        gtag("js", new Date());
+        gtag("config", GA_ID);
+      </script>
+    </>
+  )
+}

@@ -60,6 +60,8 @@ export default defineConfig({
         ThemeProvider: "./src/components/starlight/ThemeProvider.astro",
         // Adds the "Set up with your agent" button and modal to the header.
         SocialIcons: "./src/components/starlight/SocialIcons.astro",
+        // Adds Google Analytics (production builds only).
+        Head: "./src/components/starlight/Head.astro",
       },
       head: [
         { tag: "link", attrs: { rel: "preconnect", href: "https://fonts.googleapis.com" } },
