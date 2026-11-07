@@ -18,6 +18,8 @@ const blog = defineCollection({
       description: z.string(),
       date: z.coerce.date(),
       tag: z.string().default("Post"),
+      // Shown as a byline under the title.
+      author: z.string().optional(),
       // Optional cover, relative to the post (./cover.jpg). Optimized at build
       // time and used as the post's social preview image.
       cover: image().optional(),
