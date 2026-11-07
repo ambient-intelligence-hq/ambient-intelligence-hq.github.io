@@ -29,6 +29,7 @@ const ogImage = post.data.cover
         <a class="back-link" href={`${base}blog/`}>‹ All posts</a>
         <div class="meta">{meta}</div>
         <h1 style="font-size:clamp(2.2rem,5vw,3.2rem);margin-bottom:8px">{post.data.title}</h1>
+        {post.data.author && <div class="meta" style="margin-top:4px">By {post.data.author}</div>}
       </div>
       {post.data.cover && (
         <Image
