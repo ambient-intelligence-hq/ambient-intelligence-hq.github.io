@@ -1,0 +1,58 @@
+---
+/**
+ * The same image at the sizes a model receives, side by side at one display size.
+ * Small images are drawn with hard pixels, so what looks blocky is what the model got.
+ */
+interface Panel {
+  /** The whole frame, at the size the route resizes it to. */
+  frame: string;
+  /** The same region of it, cut from that resized frame. */
+  crop: string;
+  label: string;
+  sub?: string;
+  alt: string;
+}
+interface Props {
+  title: string;
+  panels: Panel[];
+  caption?: string;
+}
+const { title, panels, caption } = Astro.props as Props;
+---
+
+<figure class="fc">
+  <figcaption class="fc-title">{title}</figcaption>
+  <div class="fc-grid">
+    {panels.map((p) => (
+      <div class="fc-panel">
+        <p class="fc-label">{p.label}{p.sub && <span>{p.sub}</span>}</p>
+        <img src={p.frame} alt={p.alt} loading="lazy" />
+        <img class="fc-crop" src={p.crop} alt={`Close-up of the far aisle, ${p.label}`} loading="lazy" />
+      </div>
+    ))}
+  </div>
+  {caption && <p class="fc-caption">{caption}</p>}
+</figure>
+
+<style>
+  .fc {
+    margin: 2em 0;
+    padding: 20px 22px 16px;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+  .fc-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+  .fc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .fc-label { margin: 0 0 6px; font-size: 0.86rem; line-height: 1.25; color: var(--text); }
+  .fc-label span { display: block; font-size: 0.74rem; color: var(--text-faint); }
+  .fc img { display: block; width: 100%; height: auto; margin: 0 0 8px; border-radius: 4px; image-rendering: pixelated; }
+  .fc-caption { margin: 6px 0 0; font-size: 0.78rem; line-height: 1.45; color: var(--text-muted); }
+  @media (max-width: 560px) { .fc-grid { grid-template-columns: 1fr; } }
+</style>

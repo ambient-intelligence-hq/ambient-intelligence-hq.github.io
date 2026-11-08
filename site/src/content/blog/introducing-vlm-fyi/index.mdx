@@ -8,44 +8,45 @@ draft: false
 ---
 
 import ProviderBars from "../../../components/blog/ProviderBars.astro";
+import FrameCompare from "../../../components/blog/FrameCompare.astro";
 
-Send the same video to Kimi K3.1 Pro on Fireworks, Moonshot and Together, and you can get three different answers. Sampling randomness isn't the cause. Each provider processes the video its own way before the model sees it, so each one shows the model a different version of your video. On a 30-second clip, Fireworks showed the model 60 frames, Moonshot showed it 15, and Together showed it none at all, while still returning HTTP 200.
+Send the same video to Kimi K3.1 Pro on Fireworks, Moonshot and Together, and you can get three different answers. Sampling randomness isn't the cause. Each provider processes the video its own way before the model sees it, so each one shows the model a different version of your video. On a 30-second 1080p clip, Fireworks fed the model 240 frames, Moonshot fed it 60, and Together fed it none at all, while still returning HTTP 200.
 
-We found this out the hard way. Ambient is a video agent that runs on whatever OpenAI-compatible endpoint its user points it at, and the quality of its answers depended on which provider happened to serve the request. Requests routed through an aggregator sometimes landed on a provider that sampled the video down to a few frames, without an error and without anything in our logs to explain why the answers got worse. Pinning a provider fixed it until that provider changed its limits.
+We found this out the hard way. Ambient is a video engine for AI agents that runs on whatever OpenAI-compatible endpoint its user points it at, and the quality of its answers depended on which provider happened to serve the request. Requests routed through an aggregator sometimes landed on a provider that sampled the video down to a few frames, without an error and without anything in our logs to explain why the answers got worse. Pinning a provider fixed it until that provider changed its limits.
 
-Today we're publishing [vlm.fyi](https://vlm.fyi), the measurements we now rely on: 85 endpoints, covering 10 vision models on 33 providers, called directly or through OpenRouter with the upstream pinned. The rest of this post goes through what we found, how we measure it, and how Ambient uses it.
+Today we're publishing [vlm.fyi](https://vlm.fyi), the measurements we now rely on: 81 endpoints, covering 10 vision models on 33 providers, called directly or through OpenRouter with the upstream pinned. The rest of this post goes through what we found, how we measure it, and how Ambient uses it.
 
-## Kimi K3.1 Pro: 15 frames, two per second, or nothing
+## Kimi K3.1 Pro: how many frames each provider shows the model
 
-Kimi K3.1 Pro is served directly by Moonshot, Fireworks and Together, and by eight upstreams on OpenRouter. We sent each route a 30-second clip with a frame number burned into every frame and asked the model to list the numbers it could see.
+Kimi K3.1 Pro is served directly by Moonshot, Fireworks and Together, and by eight upstreams on OpenRouter. Kimi merges every four sampled frames into one chunk before encoding it, and providers bill per chunk, so the number of frames a route passes to the model can be read off its bill.
 
 <ProviderBars
-  title="Kimi K3.1 Pro: frames the model saw from a 30-second clip"
-  unit="Distinct frame numbers the model read back from a counter clip, by route"
+  title="Kimi K3.1 Pro: frames the model received from a 30-second 1080p clip"
+  unit="From billed tokens and Kimi's own preprocessing (four frames per chunk)"
   rows={[
-    { label: "Fireworks", route: "direct", value: 60, detail: "2 frames per second at full resolution, about 2,700 tokens per 1080p frame." },
-    { label: "Fireworks", route: "via OpenRouter", value: 60, detail: "Same serving as Fireworks direct. Clips longer than about 40 s time out, because OpenRouter aborts requests at 300 s." },
-    { label: "Moonshot AI", route: "direct", value: 15, detail: "About 15 frames per video at any length (15 on a 5-minute clip too). Video must be sent inline as base64." },
-    { label: "Moonshot AI (mxfp4)", route: "via OpenRouter", value: 15 },
-    { label: "Moonshot AI (highspeed)", route: "via OpenRouter", value: 15 },
+    { label: "Fireworks", route: "direct", value: 240, detail: "8 frames per second in 60 chunks of 2,691 tokens: exactly Kimi's reference preprocessing." },
+    { label: "Fireworks", route: "via OpenRouter", value: 240, detail: "Billed the same as Fireworks direct: 324,240 tokens per minute." },
+    { label: "Moonshot AI", route: "direct", value: 60, detail: "15 chunks: each video stops at about 40,000 visual tokens, from 8-second clips to 6-minute ones. Video must be sent inline as base64." },
+    { label: "Moonshot AI (mxfp4)", route: "via OpenRouter", value: 60, detail: "Billed the same as Moonshot direct." },
+    { label: "Moonshot AI (highspeed)", route: "via OpenRouter", value: 60, detail: "Billed the same as Moonshot direct." },
     { label: "Together AI", route: "direct", display: "Accepted with HTTP 200, 0 video tokens billed" },
     { label: "5 other upstreams", route: "via OpenRouter", display: "No route: removed by OpenRouter's video filter", detail: "Together AI, Modal, Nebius, Alibaba Cloud and DeepInfra." },
   ]}
-  caption="Measured November 4 and 5, 2026."
+  caption="Measured November 4 to 8, 2026."
   source="https://vlm.fyi/models/kimi-k3.1-pro/"
 />
 
 Each route causes a different problem for a video pipeline.
 
-On Moonshot, the model gets about 15 frames per video whatever its length. We read 15 on the 30-second clip and 15 on a 5-minute one, which is one frame every 20 seconds. Anything that happens between two samples, a car pulling out or a hand reaching for a shelf, isn't in what the model saw, and the model can only answer from what it saw.
+On Moonshot, every video stops at about 40,000 visual tokens. At 1080p that is 15 chunks, or 60 frames, whether the video lasts 8 seconds or 6 minutes: our bills for every clip in that range came to exactly 40,480 tokens. On a 5-minute video, 60 frames spread evenly would be one every five seconds, so a key moment can fall between them, and the model can only answer from what it saw. Lower-resolution video gets more frames under the same budget.
 
-On Fireworks, the model gets two frames per second at full resolution, about 2,700 tokens per 1080p frame, or 324,240 tokens per minute of video. Roughly three minutes of video fill the model's 1M-token context, and one minute took Fireworks about seven minutes to process. Through OpenRouter, which aborts requests after 300 seconds, only clips shorter than about 40 seconds come back at all.
+On Fireworks, the bill matches Kimi's reference preprocessing exactly: eight frames per second, merged four at a time into chunks of about 2,700 tokens at 1080p, or 324,240 tokens per minute of video. A 5-minute video comes to about 1.7 million tokens. When we sent the whole clip on November 5 it timed out at 300 seconds, and the first minute alone took about seven minutes to process. On November 8 the same minute came back through OpenRouter in 58 seconds, so processing time isn't stable either.
 
 On Together's direct API, the request succeeds and bills the same prompt tokens with the video as without it. Asked to list the frame numbers, the model replied "I don't have access to the video frames." A pipeline that checks only the status code would record that as a successful call. Through OpenRouter, Together, Modal, Nebius, Alibaba and DeepInfra are removed by OpenRouter's own video filter, and a request pinned to one of them fails with "no endpoints found".
 
 Image limits on this one model range from 30 per request on DeepInfra to 999 on Together, both stated in the providers' error messages.
 
-## DeepSeek V4.1 Flash: the agent that breaks on its third look
+## DeepSeek V4.1 Flash
 
 DeepSeek V4.1 Flash takes images and not video, so a video pipeline sends it frames. How many frames fit depends on the provider.
 
@@ -63,55 +64,83 @@ DeepSeek V4.1 Flash takes images and not video, so a video pipeline sends it fra
   source="https://vlm.fyi/models/deepseek-v4.1-flash-1017/"
 />
 
-Fireworks allows 120 images and counts them across the whole messages array ("per conversation", in its error text). Every completion resends the conversation, so an agent's frames accumulate. One that looks at a 30-second window at two frames per second adds 60 images per look. On Fireworks its third look fails, while on Modal or Jarvislabs the same agent could take 16 looks.
+Fireworks allows 120 images across the full conversation. At two frames per second, that is enough for an agent to inspect only one minute of footage before the next batch pushes the request over the limit. Modal and Jarvislabs allow roughly eight minutes at the same sampling rate.
 
-Request size breaks things in a less obvious place. Jarvislabs accepted a 12 MB inline body and rejected 14 MB, but bodies above 5 to 8 MB often fail before that with "Request body timed out", because the server gives the upload about ten seconds. Whether a request fits then depends on the client's upload speed, so the same request could pass from a data center and fail over a slow connection. The same images sent as URLs passed up to our 128 MB probe cap. Together limits the decoded media in one request to about 1.43 GB, so the number of frames it takes depends on their resolution, not their file size.
+## Qwen3.8 27B: same frame count, different resolution
+
+Two routes can pass the same number of frames and still show the model very different images. On Qwen3.8 27B, ten routes pass 120 frames a minute of a 5-minute 1080p video. They differ in how far they shrink those frames first, which the bill shows.
+
+<ProviderBars
+  title="Qwen3.8 27B: video tokens per minute of a 5-minute 1080p video"
+  unit="Billed tokens per minute. Under each route: its frame size after resizing."
+  rows={[
+    { label: "Alibaba Cloud", route: "via OpenRouter · 1056×576", value: 35640, display: "35,640", detail: "120 frames a minute. Frames capped at about 640 tokens per pair, with no total budget." },
+    { label: "Novita", route: "via OpenRouter · 1056×576", value: 35640, display: "35,640", detail: "120 frames a minute. Billed the same as Alibaba Cloud." },
+    { label: "Jarvislabs", route: "direct · 256×128", value: 2499, display: "2,499", detail: "120 frames a minute. Qwen's reference preprocessing." },
+    { label: "7 other upstreams", route: "via OpenRouter · 256×128", value: 2499, display: "2,499", detail: "120 frames a minute. AkashML, Chutes, Cloudflare, Parasail, Reka and Venice bill 2,499; ModelRun bills 2,498." },
+    { label: "CoreWeave (fp8)", route: "via OpenRouter · 1152×640", value: 2274, display: "2,274", detail: "A fixed 32 frames per video, however long the video is: 6 frames a minute here." },
+  ]}
+  caption="Tokens measured October 31 to November 4, 2026; frame curves November 7, 2026. The rest of the 22 routes are on the model page."
+  source="https://vlm.fyi/models/qwen3.8-27b/"
+/>
+
+Here is what that difference looks like, on a frame from one of our own tracking demos. The worker is at the far end of the aisle, inside the green box.
+
+<FrameCompare
+  title="The same frame at each route's size, shown at one display size"
+  panels={[
+    { frame: "/assets/blog/vlm-fyi/frame-1056x576.jpg", crop: "/assets/blog/vlm-fyi/crop-1056x576.png", label: "1056×576", sub: "Alibaba Cloud, Novita", alt: "A factory floor with a large press in the foreground and a worker in a green tracking box at the far end of the aisle. Labels and the worker are clear." },
+    { frame: "/assets/blog/vlm-fyi/frame-256x128.png", crop: "/assets/blog/vlm-fyi/crop-256x128.png", label: "256×128", sub: "Jarvislabs and 7 upstreams", alt: "The same factory frame at 256 by 128 pixels. The labels are unreadable and the worker is a few pixels." },
+  ]}
+  caption="Bottom row: the same region of the far aisle, cut from each resized frame. The green box and label are part of the demo footage. The source is a 720p frame that we resized with bicubic interpolation to each route's frame size; it isn't the providers' own output."
+/>
+
+The 256×128 routes follow the model's own preprocessing. Qwen's reference code gives each video a budget of about 25 megapixels across all its frames, so frames shrink as the video gets longer: 832×480 at 30 seconds, 608×320 at one minute, 256×128 at five. Alibaba Cloud and Novita have no total budget and stay at 1056×576 at any length. Mancer's 832×448 on the model page is the reference rule too, on the 32-second clip it accepted, because it refuses the 5-minute video.
+
+So the routes stay close on a short clip and drift apart as videos get longer. At 30 seconds the frames are 832×480 and 1056×576, about 1.5 times apart in pixels. At five minutes they are 19 times apart, and Alibaba bills 14 times the tokens. An evaluation on short clips won't show this. CoreWeave and DarkBloom take the other trade: CoreWeave keeps frames at 1152×640 but sends 32 per video, and DarkBloom sends 8.
 
 ## One request, many upstreams
 
-On OpenRouter, one model id is served by many upstream providers, and unless you pin one, OpenRouter picks per request. For video, that choice decides how much of the video the model sees. These are the frames Qwen3.6 35B A3B saw from a 5-minute reference clip:
+On OpenRouter, one model id is served by many upstream providers, and unless you pin one, OpenRouter picks per request. For video, that choice decides how much of the video the model sees. For Qwen3.6 35B A3B, most upstreams sample the same two frames per second. What differs is how far each one shrinks those frames, which shows up in the tokens billed for a 5-minute 1080p video:
 
 <ProviderBars
-  title="Qwen3.6 35B A3B on OpenRouter: frames the model saw from a 5-minute video"
-  unit="Estimated from billed video tokens and measured tokens per frame"
+  title="Qwen3.6 35B A3B on OpenRouter: video tokens per minute of a 5-minute 1080p video"
+  unit="Billed tokens per minute. Under each upstream: the frame size after it resizes the video."
   rows={[
-    { label: "Atlas Cloud (fp8)", route: "pinned", value: 608, detail: "118 frames per minute, about two per second." },
-    { label: "DeepInfra (fp8)", route: "pinned", value: 138 },
-    { label: "AkashML (fp8)", route: "pinned", value: 64 },
-    { label: "Auto-routed", route: "no upstream pinned", value: 59, detail: "OpenRouter's default routing for this model." },
-    { label: "SiliconFlow (fp8)", route: "pinned", value: 5, detail: "5 frames for the whole clip, under one per minute." },
-    { label: "DarkBloom (fp4)", route: "pinned", display: "Does not accept video" },
-    { label: "Venice (fp8)", route: "pinned", display: "Does not accept video" },
+    { label: "Atlas Cloud (fp8)", route: "pinned · 1056×576", value: 35757, display: "35,757", detail: "120 frames a minute. Frames capped at about 594 tokens per pair, with no total budget." },
+    { label: "AkashML (fp8)", route: "pinned · 256×128", value: 2499, display: "2,499", detail: "120 frames a minute. Qwen's reference preprocessing." },
+    { label: "DekaLLM", route: "pinned · size not determined", value: 2330, display: "2,330" },
+    { label: "CoreWeave (fp8)", route: "pinned · 1152×640", value: 2274, display: "2,274", detail: "A fixed 32 frames per video, however long the video is: 6 frames a minute here." },
+    { label: "DeepInfra (fp8)", route: "pinned · 32×32", value: 639, display: "639", detail: "120 frames a minute, under a pixel budget of about 1 megapixel per video." },
+    { label: "SiliconFlow (fp8)", route: "pinned", display: "Varies: the same 64-second clip billed 38,022 tokens, then 1,442" },
   ]}
-  caption="Measured between October 31 and November 4, 2026. Four more upstreams were measured without a frame count; they are on the model page."
+  caption="Tokens measured October 31, 2026; frame curves November 7 and 8, 2026."
   source="https://vlm.fyi/models/qwen3.6-35b-a3b/"
 />
 
-Atlas Cloud passes about 608 frames, two per second. SiliconFlow passes 5 for the whole clip, about 120 times fewer, for the same model id and the same request. With no upstream pinned, OpenRouter's routing gave 59. If your evaluation ran on one upstream and production lands on another, the evaluation doesn't describe production.
+Atlas Cloud and AkashML both pass 120 frames a minute, and they split the same way as Qwen3.8: 1056×576 on Atlas and 256×128 on AkashML. DeepInfra also passes 120 frames a minute, at 32×32 pixels, and CoreWeave keeps its frames large but sends only 32 per video. SiliconFlow billed the same 64-second clip 38,022 tokens on one request and 1,442 on the next. If your evaluation ran on one upstream and production lands on another, the evaluation doesn't describe production.
 
-Some routes are consistent and match the documentation. Gemini 3.7 Flash came out at 60 frames per minute on all seven Google routes we measured on OpenRouter (AI Studio and Vertex, standard, flex and priority), which is Google's documented one frame per second.
+Some routes are consistent and match the documentation. Gemini 3.7 Flash bills exactly 66 tokens per second of video on all seven Google routes we measured on OpenRouter (AI Studio and Vertex, standard, flex and priority), which matches Google's documented rate of one frame per second at 66 tokens.
 
 <ProviderBars
-  title="Gemini 3.7 Flash on OpenRouter: frames the model saw from a 5-minute video"
-  unit="Estimated from billed video tokens at Gemini's default media resolution"
+  title="Gemini 3.7 Flash on OpenRouter: frames the model received from a 5-minute video"
+  unit="From billed tokens (66 per second) and Google's documented one frame per second"
   rows={[
-    { label: "Google AI Studio", route: "pinned", value: 307 },
-    { label: "Google AI Studio (flex)", route: "pinned", value: 307 },
-    { label: "Google AI Studio (priority)", route: "pinned", value: 307 },
+    { label: "Google AI Studio", route: "pinned", value: 308 },
+    { label: "Google AI Studio (flex)", route: "pinned", value: 308 },
+    { label: "Google AI Studio (priority)", route: "pinned", value: 308 },
     { label: "Google Vertex (global)", route: "pinned", value: 308 },
     { label: "Google Vertex (global, flex)", route: "pinned", value: 308 },
     { label: "Google Vertex (global, priority)", route: "pinned", value: 308 },
     { label: "Google Vertex (us)", route: "pinned", value: 308 },
   ]}
-  caption="Measured October 31 and November 3, 2026. Image limits differ across these routes: 768 to 960 per request."
+  caption="Measured November 7, 2026. Image limits differ across these routes: 768 to 960 per request."
   source="https://vlm.fyi/models/gemini-3.7-flash/"
 />
 
-Qwen3.8 27B on Alibaba Cloud is another: 60 frames per minute (308 from the reference clip) and 250 images per request, where most of its other upstreams pass 32 frames from the same clip. Phala accepts the most images for that model, 650.
-
 ## Limits change without notice
 
-On October 31, Fireworks accepted video for Kimi K3 up to 96 MB per file and billed 162,120 prompt tokens for our 30-second test clip, so the video was reaching the model. When we reran the probe on November 3, every video request came back with "we currently limit the number of videos per conversation to 0", and a request sent by hand outside the probe got the same answer. On November 4 the error changed to "EPD video encoding is not supported". In the same week, Fireworks served video for Kimi K3.1 Pro at two frames per second, so a provider can support video on one version of a model and not on the previous one.
+On October 31, Fireworks accepted video for Kimi K3 up to 96 MB per file and billed 162,120 prompt tokens for our 30-second test clip, so the video was reaching the model. When we reran the probe on November 3, every video request came back with "we currently limit the number of videos per conversation to 0", and a request sent by hand outside the probe got the same answer. On November 4 the error changed to "EPD video encoding is not supported". In the same week, Fireworks served video for Kimi K3.1 Pro at its full reference density, so a provider can support video on one version of a model and not on the previous one.
 
 A pipeline that checked Fireworks for video support on October 31 would have been failing on every video request by November 3. A one-time compatibility check isn't enough, which is why vlm.fyi reruns its probes and dates every entry.
 
@@ -119,8 +148,8 @@ A pipeline that checked Fireworks for video support on October 31 would have bee
 
 The examples above are a small part of what's measured. vlm.fyi covers 10 models on 33 providers, with the same set of limits for each. A few more from the current data:
 
-- GLM 5.3 Flash on Z.ai, through OpenRouter, bills 39,134 video tokens per minute. Together bills 952, about 41 times fewer.
-- Muse Spark (open) gets about 58 frames per minute of video on Nebius and 12 on Baseten, which also takes only 8 images per request.
+- GLM 5.3 Flash gets 120 frames a minute on Fireworks, Z.ai and Jarvislabs, but each fits a 5-minute video into a different token budget, so the frames end up at 1036×588, 952×532 and 364×196. Together takes 32 frames per video, however long.
+- Muse Spark (open) follows its reference preprocessing on Nebius: two frames per second, up to 600 frames per video. Together does the same on the clips it accepts, but refuses 1080p video longer than about a minute.
 - Gemma 4 31B on Jarvislabs accepts video files up to 256 MB but only 4 images per request.
 - Qwen3.8 27B has 22 routes, from 650 images per request on Phala to 2 on Cerebras.
 
@@ -130,9 +159,9 @@ The [calculator](https://vlm.fyi/calculator/) takes a model and a video length a
 
 Each probe is a minimal chat-completions request ("Reply with OK.", 16 output tokens) carrying synthetic media built to stress one limit at a time. The image count uses tiny 64×64 images, so bytes and pixels stay negligible. The body limit uses images padded with JPEG comment segments, which decoders skip. Video file size uses a 5-second clip padded with an MP4 `free` box. For each limit the probe doubles the size until a request fails, then bisects between the last pass and the first failure, and keeps the provider's error text as evidence.
 
-For video, an HTTP 200 doesn't say how much of the video the model received, so we read the provider's own billing. We send a 5-minute reference clip; prompt tokens with the video, minus prompt tokens for the same prompt without it, divided by the clip length, gives video tokens per minute. The 30-second counter clip gives tokens per frame, and from there frames per minute.
+For video, an HTTP 200 doesn't say how much of the video the model received, so we read the provider's own billing. We send a 5-minute reference clip; prompt tokens with the video, minus prompt tokens for the same prompt without it, divided by the clip length, gives video tokens per minute. For frames, we send clips of known length, frame rate and resolution and record what each is billed. Each model's own preprocessing code says how many frames a clip becomes and what each costs, so a route gets a frame count only when one setting reproduces the bill for every clip to within one token. No number on the site comes from the model's reply.
 
-A "no" took more care than we expected. Moonshot's API refuses video URLs but accepts the same video base64-encoded. Some providers decode H.264 and not VP9, and some cap duration at four or five minutes. Our first pass recorded several of these as "no video". The probe now retries inline, re-encoded and trimmed before it concludes anything, and the site only says a provider doesn't take video when the provider or OpenRouter states it, or the model has no video input. On OpenRouter we pin each upstream in turn with fallbacks off, so every entry describes one provider.
+A "no" took more care than we expected. Moonshot's API refuses video URLs but accepts the same video base64-encoded. Some providers decode H.264 and not VP9, and some cap duration, from 30 seconds on Decart to five minutes on Baseten. Our first pass recorded several of these as "no video". The probe now retries inline, re-encoded, at 360p and trimmed before it concludes anything, and the site only says a provider doesn't take video when the provider or OpenRouter states it, or the model has no video input. On OpenRouter we pin each upstream in turn with fallbacks off, so every entry describes one provider.
 
 Every entry carries the date it was measured, and the [changes page](https://vlm.fyi/changes/) lists each limit that moved between runs, with an RSS feed.
 
@@ -148,13 +177,12 @@ The second is how much media fits in each request. Media builds up over a long a
 
 ## Using it in your own pipeline
 
-The data is free to use. It's at [vlm.fyi/v1/capabilities.json](https://vlm.fyi/v1/capabilities.json) and as [CSV](https://vlm.fyi/v1/capabilities.csv), with the change history at [vlm.fyi/v1/changes.json](https://vlm.fyi/v1/changes.json). The probe is open source in the [vlm-fyi repository](https://github.com/ambient-intelligence-hq/vlm-fyi), and it's worth running against your own account, because plan, region and bring-your-own-key setups can change the limits.
+The data is open and free to use. It's at [vlm.fyi/v1/capabilities.json](https://vlm.fyi/v1/capabilities.json) and as [CSV](https://vlm.fyi/v1/capabilities.csv), with the change history at [vlm.fyi/v1/changes.json](https://vlm.fyi/v1/changes.json). The probe is open source in the [vlm-fyi repository](https://github.com/ambient-intelligence-hq/vlm-fyi), and it's worth running against your own account, because plan, region and bring-your-own-key setups can change the limits.
 
 A few things we learned that apply whether or not you use the data:
 
-- On OpenRouter, pin the upstream for video. Unpinned requests can land on any upstream, and for Qwen3.6 35B A3B those ranged from 5 to 608 frames on the same clip.
+- On OpenRouter, pin the upstream for video. Unpinned requests can land on any upstream, and for Qwen3.6 35B A3B the same 5-minute video was billed anywhere from 639 to 35,757 tokens a minute depending on the upstream.
 - Check what the model received. An HTTP 200 only means the provider accepted the request. Comparing prompt tokens with and without the media shows whether it reached the model, and how much of it.
 - Leave headroom below any measured limit and recheck it on a schedule. Fireworks turned off Kimi K3 video between two of our runs three days apart.
-- Count images across the whole conversation on providers that do, Fireworks among them, before an agent loop runs into the limit.
 
 If a limit on vlm.fyi is wrong or out of date, open an issue with the request you sent and the error you got. Providers who want an endpoint measured can write to hello@vlm.fyi. Ambient is [open source](https://github.com/ambient-intelligence-hq/ambient), and if your team runs video analysis on hosted models, we're happy to talk about what it handles for you.
