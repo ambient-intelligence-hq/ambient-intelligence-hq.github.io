@@ -1,0 +1,203 @@
+---
+title: "Ambient wins first place in two tracks of the Wearable AI Challenge at ECCV 2026"
+description: Our entries to the EgoLongQA and EgoProactive tracks of the Wearable AI Challenge at ECCV 2026 placed first in two divisions and second in a third. Both are small open models trained on what the Ambient agent saw. Here is how, with the models, datasets and papers.
+date: 2026-10-24
+tag: Research
+author: Logesh Kumar Umapathi
+draft: false
+---
+
+import ProviderBars from "../../../components/blog/ProviderBars.astro";
+import LinkBadges from "../../../components/blog/LinkBadges.astro";
+
+<LinkBadges
+  links={[
+    { kind: "github", label: "egoproactive-verbalizer", href: "https://github.com/ambient-intelligence-hq/egoproactive-verbalizer" },
+    { kind: "github", label: "egolongqa-2b", href: "https://github.com/ambient-intelligence-hq/egolongqa-2b" },
+    { kind: "huggingface", label: "Models & Datasets Collection", href: "https://huggingface.co/collections/ambient-intelligence-labs/wearables-ai-workshop-eccv-2026" },
+    { kind: "arxiv", label: "2609.07099", href: "https://arxiv.org/abs/2609.07099" },
+    { kind: "arxiv", label: "2609.07154", href: "https://arxiv.org/abs/2609.07154" },
+  ]}
+/>
+
+Our entries to the [Wearable AI Challenge](https://wearable-ai-workshop.github.io/) at ECCV 2026 placed first in two divisions and second in a third:
+
+- EgoLongQA, ≤2B division: first, with 0.8279 accuracy on the held-out test set.
+- EgoProactive, large division: first, with 0.7179 macro-F1, from a 4.54B model that finished ahead of entries with 27B and 28.9B parameters.
+- EgoProactive, ≤2B division: second, with 0.6866 macro-F1, 0.0045 behind the winner.
+
+Ambient, our open-source video engine for AI agents, played a key role in our winning entries. We used it to produce the training data for both tracks. For EgoProactive, it labelled recorded task videos with when an assistant should speak. For EgoLongQA, it generated agent trajectories at scale, which we distilled into a small open model. The two technical reports, [arXiv:2609.07154](https://arxiv.org/abs/2609.07154) and [arXiv:2609.07099](https://arxiv.org/abs/2609.07099), have the full details. This post covers what worked, what didn't, and where to find the models and data.
+
+## EgoProactive: deciding when to speak
+
+EgoProactive tests a wearable assistant that watches a user perform a procedural task. After each eight-second chunk of video it either interrupts with a short utterance or stays silent, and submissions are scored by macro-F1 over the two decisions. The organisers released 700 validation videos covering 135 tasks, with 1,947 scored decision points, 54.3% of which call for an interruption. The test set stayed hidden.
+
+### One token instead of a sentence
+
+Our first system generated the target string directly: an interrupt marker and an utterance, or a silent marker. It learned to play safe. It fired on 146 of 1,058 true interruptions, at precision 1.00 and recall 0.14. Deciding whether to speak was tangled up with the much harder problem of what to say, and the signal for a binary choice was spread across every token of the utterance.
+
+So we had the model emit one token, yes to speak or no to stay silent, and read the decision from the probability of those two tokens renormalised against each other, thresholded at a value we tune after training. The utterance is dropped from training and templated at inference, since the metric never scores it. A decision costs one forward pass, which also fits the harness's per-turn time budget. The prompt carries the user's query and the four most recent turns, including the model's own previous decisions. Without that history the model can't tell whether it has already helped, and it interrupts on every chunk.
+
+<ProviderBars
+  title="EgoProactive: formulation comparison"
+  unit="Macro-F1 on the in-domain held-out split"
+  max={1}
+  rows={[
+    { label: "Base model, no fine-tuning", value: 0.3135, display: "0.3135 · always silent" },
+    { label: "Generate the full response", value: 0.4517, display: "0.4517 · fires on 146 of 1,058" },
+    { label: "Yes/no token, no history", value: 0.3521, display: "0.3521 · always interrupts" },
+    { label: "Yes/no token with history", route: "ours", value: 0.7008, display: "0.7008", highlight: true },
+  ]}
+  caption="From Table 1 of the EgoProactive report. G-mean, which we used for model selection, scores both degenerate policies at zero."
+  source="https://arxiv.org/abs/2609.07099"
+/>
+
+### Generating labels with the Ambient agent
+
+The labelled data was limited to the released validation set, so we generated more. We tried two routes.
+
+In the agentic route, An Ambient agent annotated each clip. A DeepSeek-V4-Flash orchestrator reasoned over the timeline while Qwen3.6-27B answered visual questions. The agent built a coarse map of the procedure from sparse frames, then confirmed every detail that became a label with a closer look at that window, using up to twelve windows per clip. It returned timestamped events with the utterance, the visible context that justified it and a timing rationale, plus explicit intervals where it chose to stay silent, so the absence of a cue became a label too. Events were shifted 0.5 seconds earlier and binned into eight-second chunks.
+
+The annotation policy took three iterations, The unconstrained agent skipped the setup phase, placed cues after the action started so they fell into the next interval, and repeated cues during repetitive motions: in one clip it produced 20 cues for roughly five steps. The final policy covered setup, fired at onset, merged repeated motions and allowed at most one cue per interval, without prescribing how often to interrupt. It produced interruptions in 53% of chunks, against 54.3% in the real set, without being told that number.
+
+In the narration route, an LLM read dense human narration of each clip and wrote the speak-or-silent script with no vision pass. It cost about $0.005 per clip against about $0.05 for the agent, and we scaled it to 953 clips and 59,359 chunks, against the agent's 234 clips and 13,730 rows.
+
+The narration labels transferred worse. A 2B model trained on them alone reached 0.49 on the held-out validation set, below the 0.59 from training on HoloAssist, an unrelated real corpus. The narration describes things the student can't see in its sparse frames, so the student learns to guess. Every agent label sits on part of the timeline the agent looked at, so the evidence for it is in the frames the student receives. Four times as many clips didn't make up for that.
+
+### Final submission checkpoint selection
+
+We evaluated the models on a separate cross-domain benchmark (HoloAssist) to select the final submission checkpoint. This benchmark changed the decision: the agent corpus lowered the in-domain score by 0.042 and raised the cross-domain score by 0.021, mostly through better recall on interruptions. Selected on in-domain numbers alone, we would have dropped the data that carried the result.
+
+We found in our experiments that the model size mattered less than supervision. With the same recipe, Qwen3.6-27B scored 0.6989 G-mean, Qwen3.5-4B 0.7007 and Qwen3.5-2B 0.6914. The official leaderboard showed the same thing across teams:
+
+<ProviderBars
+  title="EgoProactive, large division: official test leaderboard"
+  unit="Macro-F1 on the hidden test set, with each entry's parameter count"
+  max={1}
+  rows={[
+    { label: "Ambient (ours)", route: "4.54B", value: 0.7179, display: "0.7179", highlight: true },
+    { label: "fufu", route: "4.54B", value: 0.7127, display: "0.7127" },
+    { label: "zoeyagent", route: "27B", value: 0.7055, display: "0.7055" },
+    { label: "teamyj", route: "8.78B", value: 0.628, display: "0.6280" },
+    { label: "luludawang", route: "28.9B", value: 0.5452, display: "0.5452" },
+    { label: "tonytie317", route: "27.8B", value: 0.4568, display: "0.4568" },
+    { label: "jt-proagent", route: "27B", value: 0.4492, display: "0.4492" },
+  ]}
+  caption="From Table 5 of the EgoProactive report."
+  source="https://huggingface.co/spaces/facebook/wearable-ai-leaderboard"
+/>
+
+### Fitting under 2B parameters
+
+For our ≤2B entry, Qwen3.5-2B is 2.2132B parameters once the vision tower is counted, which is over the limit. The embedding and output layers dominate, because the vocabulary has 248,320 rows for multilingual coverage the task doesn't need. We kept token ids 0 to 143,000 unchanged, appended the higher ids the architecture depends on, including the vision, video and special tokens, and copied every kept row exactly. The result is 143,084 rows and 1.9977B parameters. G-mean stayed at 0.7291, and all 544 chunk predictions were identical.
+
+## EgoLongQA: copying the part of the agent a 2B model can learn
+
+EgoLongQA asks four-way multiple-choice questions about egocentric videos that run about ten minutes. Many are two-hop: they refer to one event and ask about something that happened relative to it. In the ≤2B division the limit covers the entire multimodal checkpoint, vision tower included.
+
+Our agentic pipeline for this task has two parts. A junior perception module reads 100 frames sampled uniformly across the video, with the question and options, and answers in one pass. It runs three times. If all three passes agree, that answer is submitted. If they don't, a larger senior model with Ambient engine tools looks at parts of the video at high fidelity and decides. This pipeline was our large-division entry.
+
+When we measured the two paths separately, the juniors carried most of the result. Between 60 and 66% of validation questions were settled by unanimous junior passes, at 91 to 95% accuracy. The senior only saw the rest, the hard residual, and scored 63 to 67% on it. The junior also has a property the senior lacks: its input and output are exactly what a small model sees at inference, one set of frames in and one answer out. The senior's value is its multi-turn tool loop, which a single forward pass can't imitate. So we distilled the junior and dropped the senior.
+
+The training set is junior traces from the agent's recorded runs, kept only where the answer matched the ground truth and all three passes agreed. That left 2,936 traces over 605 videos, all from open-weight teachers: Gemma 4 31B, Qwen3.5 122B-A10B, Qwen3.6 27B and Qwen3.6 35B-A3B. Using the best closed model we tried as the junior would have added about 1.4 points; we left it out. The student is Qwen3.5-2B with a LoRA adapter, trained for one epoch.
+
+<ProviderBars
+  title="EgoLongQA: accuracy on 70 held-out videos"
+  unit="Options permuted to a uniform answer distribution; 100 frames, greedy decoding"
+  max={100}
+  rows={[
+    { label: "Qwen3.5-2B base", value: 27.1, display: "27.1%" },
+    { label: "+ synthetic questions only", route: "943 generated questions", value: 54.3, display: "54.3%" },
+    { label: "+ distillation", route: "2,936 junior traces", value: 81.4, display: "81.4%", highlight: true, detail: "One greedy pass, about 32 s per sample, against about 393 s for the agentic pipeline." },
+    { label: "+ distillation + synthetic", route: "3,879 rows", value: 81.4, display: "81.4%" },
+    { label: "Qwen3.6 27B, distilled", route: "same 2,936 traces", value: 85.7, display: "85.7%" },
+  ]}
+  caption="From Table 4 of the EgoLongQA report."
+  source="https://arxiv.org/abs/2609.07154"
+/>
+
+Distillation took the 2B model from 27.1% to 81.4% on our held-out set, and replaced a three-vote pipeline with an escalating senior agent by one greedy generation: about 32 seconds per sample instead of about 393.
+
+Two details mattered more than we expected. The first is the answer distribution. The validation set's gold answers are heavily skewed, and always answering C scores 63.4%. Supervised distillation copies that prior into the student, so we built the held-out set from the same videos and questions with the options permuted to a uniform gold distribution, and measured everything against it. We also generated 943 audited questions over 408 Ego4D videos with the Ambient agent, rejecting questions that could be answered without the video and checking that the evidence was visible in the frames. Raw generator output was 42% "A", so we balanced the letters before training. On 500 human-written questions from outside the challenge, the model trained on real traces answered C 40% of the time against a gold rate of 27%. Adding the synthetic set brought that to 26% and raised accuracy from 53.8% to 56.6%.
+
+The second is resolution. We trained at about 64 vision tokens per frame and ran inference at about 423. That was worth 5.8 points over training and inferring at the low setting, and made training roughly six times cheaper.
+
+
+<ProviderBars
+  title="EgoLongQA, ≤2B division: official test leaderboard"
+  unit="Accuracy on the organisers' held-out test set; all entries open-weight"
+  max={1}
+  rows={[
+    { label: "Ambient (ours)", route: "1.99B", value: 0.8279, display: "0.8279", highlight: true },
+    { label: "smartkaist", route: "1.99B", value: 0.8152, display: "0.8152" },
+    { label: "sololevelling", route: "1.24B", value: 0.7804, display: "0.7804" },
+    { label: "outofmemory", route: "1.30B", value: 0.773, display: "0.7730" },
+    { label: "hippo", route: "1.30B", value: 0.7434, display: "0.7434" },
+    { label: "fufu", route: "0.85B", value: 0.3728, display: "0.3728" },
+    { label: "deuxvoir", route: "1.87B", value: 0.2967, display: "0.2967" },
+  ]}
+  caption="From Table 5 of the EgoLongQA report, as published on the challenge leaderboard."
+  source="https://huggingface.co/spaces/facebook/wearable-ai-leaderboard"
+/>
+
+The test score came within 1.4 points of our validation figure.
+
+Two things didn't work. Reinforcement learning with GRPO on top of the distilled model, rewarding the correct option among shuffled ones, gave no reproducible held-out gain. We think the reason is a shortage of prompts that are both in distribution and unseen during supervised training: there were roughly 25 such videos. And more frames hurt the small model. At 2B, 100 frames scored 64.3% and 400 frames 61.5%, while in our large-division pipeline the same change gave Qwen3.6-35B-A3B an 11.2-point gain.
+
+
+## What the two entries have in common
+
+The agent was the most expensive part of both pipelines, and none of the entries that placed is the agent. In EgoLongQA it provided correct, consistent perception traces for a 2B model to copy. In EgoProactive it provided labels grounded in footage it had actually inspected, with 10,081 trajectories kept so every label can be traced to the tool calls behind it.
+
+Both entries also had to fit under 2B parameters, and both did it the same way, by trimming vocabulary the task doesn't use with no change in outputs. And in both, evaluating on data shaped like the training set would have pointed us the wrong way: toward a model that learned EgoLongQA's answer prior, and away from the EgoProactive corpus that improved transfer.
+
+The agent used in both pipelines is [Ambient](https://github.com/ambient-intelligence-hq/ambient), and it's open source.
+
+## Models, datasets and code
+
+Everything is in the [Hugging Face collection](https://huggingface.co/collections/ambient-intelligence-labs/wearables-ai-workshop-eccv-2026), under Apache 2.0 for the models.
+
+Models (LoRA adapters):
+
+- [egolongqa-2b-distill-adapter](https://huggingface.co/ambient-intelligence-labs/egolongqa-2b-distill-adapter): the EgoLongQA ≤2B entry, on Qwen3.5-2B. The card explains the vocabulary prune to 1.9985B.
+- [egoproactive-4b-lora](https://huggingface.co/ambient-intelligence-labs/egoproactive-4b-lora): the EgoProactive large-division entry, on Qwen3.5-4B.
+- [egoproactive-2b-lora](https://huggingface.co/ambient-intelligence-labs/egoproactive-2b-lora): the EgoProactive ≤2B entry, on Qwen3.5-2B.
+
+Datasets:
+
+- [egolongqa-junior-distill](https://huggingface.co/datasets/ambient-intelligence-labs/egolongqa-junior-distill): the oracle-filtered junior traces used for distillation, plus option-shuffled prompts for reinforcement learning.
+- [egolongqa-synth-annotations](https://huggingface.co/datasets/ambient-intelligence-labs/egolongqa-synth-annotations): the 943 synthetic questions over 408 Ego4D videos, teacher traces and annotation outputs.
+- [egoproactive-synth-annotations](https://huggingface.co/datasets/ambient-intelligence-labs/egoproactive-synth-annotations): the agent's dense proactive annotations, with timestamps, utterances and silent intervals.
+
+Code:
+
+- [egolongqa-2b](https://github.com/ambient-intelligence-hq/egolongqa-2b): distillation, vocabulary pruning and the serving setup for EgoLongQA.
+- [egoproactive-verbalizer](https://github.com/ambient-intelligence-hq/egoproactive-verbalizer): verbalizer training, the annotation pipeline, vocabulary pruning and the submission code for EgoProactive.
+
+## Citing
+
+If you use the models, data or findings, please cite the reports:
+
+```bibtex
+@misc{umapathi2026egolongqa,
+  title         = {Ambient @ EgoLongQA 2026: Distilling Long-Video perception into a Sub-2B Model},
+  author        = {Umapathi, Logesh Kumar},
+  year          = {2026},
+  eprint        = {2609.07154},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://arxiv.org/abs/2609.07154}
+}
+
+@misc{umapathi2026egoproactive,
+  title         = {Ambient @ EgoProactive 2026 : Proactive Egocentric Assistance with Visually Grounded Supervision},
+  author        = {Umapathi, Logesh Kumar},
+  year          = {2026},
+  eprint        = {2609.07099},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://arxiv.org/abs/2609.07099}
+}
+```
+
+Thanks to the challenge organisers for the benchmark and the evaluation infrastructure.
