@@ -1,8 +1,10 @@
 ---
 /**
- * Horizontal bars for one measured limit across the providers of a model.
- * One hue (magnitude); rows without a number (rejected, ignored, timed out)
- * draw no bar and state the outcome in muted text instead.
+ * Horizontal bars for one value across a set of rows (providers of a model,
+ * leaderboard entries, ablation steps). One hue (magnitude); rows without a
+ * number (rejected, ignored, timed out) draw no bar and state the outcome in
+ * muted text instead. When some rows set `highlight`, the others are drawn in
+ * a neutral tone so the highlighted ones stand out.
  */
 interface Row {
   label: string;
@@ -14,6 +16,8 @@ interface Row {
   display?: string;
   /** Hover / focus detail. */
   detail?: string;
+  /** Draw this row in the accent colour and the rest in neutral. */
+  highlight?: boolean;
 }
 interface Props {
   title: string;
@@ -21,9 +25,12 @@ interface Props {
   rows: Row[];
   caption?: string;
   source?: string;
+  /** Value of a full-width bar (e.g. 1 for a score). Defaults to the largest value. */
+  max?: number;
 }
-const { title, unit, rows, caption, source } = Astro.props as Props;
-const max = Math.max(...rows.map((r) => r.value ?? 0));
+const { title, unit, rows, caption, source, max: scale } = Astro.props as Props;
+const max = scale ?? Math.max(...rows.map((r) => r.value ?? 0));
+const anyHighlight = rows.some((r) => r.highlight);
 const fmt = (n: number) => n.toLocaleString("en-US");
 ---
 
@@ -40,12 +47,17 @@ const fmt = (n: number) => n.toLocaleString("en-US");
         const text = r.display ?? (has ? fmt(r.value!) : "");
         return (
           <li class="pb-row" tabindex={r.detail ? 0 : undefined} data-detail={r.detail}>
-            <span class="pb-label">
+            <span class={r.highlight ? "pb-label pb-hl" : "pb-label"}>
               {r.label}
               {r.route && <span class="pb-route">{r.route}</span>}
             </span>
             <span class="pb-track">
-              {has && <span class="pb-bar" style={`width:calc((100% - 64px) * ${(pct / 100).toFixed(4)})`} />}
+              {has && (
+                <span
+                  class={anyHighlight && !r.highlight ? "pb-bar pb-muted" : "pb-bar"}
+                  style={`width:calc((100% - 64px) * ${(Math.min(pct, 100) / 100).toFixed(4)})`}
+                />
+              )}
               <span class={has ? "pb-val" : "pb-val pb-none"}>{text}</span>
             </span>
             {r.detail && <span class="pb-tip" role="tooltip">{r.detail}</span>}
@@ -114,6 +126,9 @@ const fmt = (n: number) => n.toLocaleString("en-US");
     line-height: 1.25;
     color: var(--text);
   }
+  .pb-hl { font-weight: 600; }
+  .pb-hl .pb-route { font-weight: 400; }
+  .pb-bar.pb-muted { background: var(--text-faint); }
   .pb-route {
     display: block;
     font-size: 0.74rem;
