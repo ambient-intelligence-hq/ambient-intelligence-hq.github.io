@@ -1,0 +1,90 @@
+---
+title: Deploy on Railway
+description: Run Ambient on Railway with one click, sign in to Studio, and understand the costs and limits of a hosted install.
+sidebar:
+  order: 2
+---
+
+import { Steps, Aside, LinkCard, CardGrid } from '@astrojs/starlight/components';
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/TEMPLATE_CODE?utm_medium=integration&utm_source=button&utm_campaign=ambient)
+
+The Railway template runs Ambient as four services in one project, so you get a hosted Studio without managing a server. It uses the same published images as the Docker install.
+
+| Service | What it does | Storage | Public? |
+|---|---|---|---|
+| **Studio** | Web UI | None | Yes, on a Railway domain |
+| **Engine** | Agent and API (`ambient-engine` image) | Volume at `/data` for videos | No, private network only |
+| **Postgres** | Sessions, chats, and users | Volume | No |
+| **Redis** | Run coordination and the ingest queue | Volume | No |
+
+## Before you start
+
+You need:
+
+- A [Railway](https://railway.com) account.
+- An API key for an **OpenAI-compatible** chat-completions endpoint. Ambient defaults to [OpenRouter](https://openrouter.ai/keys).
+- A model that accepts video.
+
+## Deploy
+
+<Steps>
+
+1. **Click Deploy on Railway** at the top of this page.
+
+2. **Enter your model settings.** Railway asks for these variables:
+
+   | Variable | Value |
+   |---|---|
+   | `LLM_API_KEY` | Your API key |
+   | `LLM_BASE_URL` | Your endpoint. Defaults to OpenRouter. |
+   | `LLM_MODEL`, `AGENT_MODEL` | Your model. The defaults match the Docker install. |
+
+3. **Wait for all four services to show Online.** The first deploy pulls the images, which takes a few minutes.
+
+4. **Find your sign-in details.** Open the `studio` service, go to **Variables**, and reveal `STUDIO_ADMIN_EMAIL` and `STUDIO_ADMIN_PASSWORD`.
+
+5. **Sign in.** Open the domain shown on the `studio` service and sign in. Then add a video and ask a question.
+
+</Steps>
+
+## What's protected
+
+- **Studio requires sign-in.** The template sets `STUDIO_ACCESS=closed`, which turns off guest sessions and public sign-ups.
+- **The engine API has no public URL.** Only Studio can reach it, over Railway's private network.
+- **Secrets are generated for you.** Railway creates `API_KEY`, `AUTH_SECRET`, and the admin password when you deploy.
+- **The agent's shell tool is off.** Media tools run inside the engine container, which holds your keys, so `ENABLE_BASH_TOOL` is set to `false`.
+
+<Aside type="caution">
+Everyone who signs in shares the same video library and spends the same API key, and login attempts aren't rate limited. Share access only with people you trust.
+</Aside>
+
+To change the admin password, update `STUDIO_ADMIN_PASSWORD` and redeploy Studio. It needs at least 12 characters.
+
+## Limits
+
+- **One engine replica.** Railway doesn't allow replicas on a service with a volume. To scale, give the engine more CPU and memory, and raise `SERVER_WORKERS`.
+- **Upload size.** The engine reads each upload fully into memory, so it needs free RAM larger than your biggest video.
+- **Disk space.** Uploaded videos aren't cleaned up automatically. Railway's default volume is 5 GB on Hobby and 50 GB on Pro.
+- **Redeploys.** A service with a volume has a short outage on each deploy, and runs in progress stop.
+
+## Cost
+
+You pay Railway for what the services use, on top of its plan. See [Railway pricing](https://docs.railway.com/pricing/plans). Your LLM provider bills for model usage separately, and this is usually the larger cost.
+
+Set a [usage limit](https://docs.railway.com/pricing/cost-control) in Railway to cap your spend. If usage reaches the limit, Railway shuts down the services.
+
+## Updates
+
+The services follow the `latest` image tag. Railway shows an update button in a service's settings when a new image is available, and can apply updates on a schedule. Update the engine first, then Studio.
+
+## Use your own domain
+
+Open the `studio` service, go to **Settings**, then **Networking**, and add a custom domain. Railway shows the DNS record to create.
+
+## Next steps
+
+<CardGrid>
+  <LinkCard title="Studio walkthrough" description="Get the most out of the web UI." href="../studio/walkthrough/" />
+  <LinkCard title="Configuration reference" description="Models, keys, sandbox backends, and storage." href="../reference/configuration/" />
+</CardGrid>
