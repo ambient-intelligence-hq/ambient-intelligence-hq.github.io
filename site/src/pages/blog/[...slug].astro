@@ -20,6 +20,9 @@ const meta = [formatDate(post.data.date), minutes, post.data.tag].filter(Boolean
 const ogImage = post.data.cover
   ? new URL((await getImage({ src: post.data.cover, width: 1200, format: "jpg" })).src, Astro.site).href
   : undefined;
+const poster = post.data.cover && post.data.coverVideo
+  ? (await getImage({ src: post.data.cover, width: 1440, format: "jpg" })).src
+  : undefined;
 ---
 
 <Base title={`${post.data.title} — Ambient Blog`} description={post.data.description} active="blog" image={ogImage}>
@@ -31,7 +34,18 @@ const ogImage = post.data.cover
         <h1 style="font-size:clamp(2.2rem,5vw,3.2rem);margin-bottom:8px">{post.data.title}</h1>
         {post.data.author && <div class="meta" style="margin-top:4px">By {post.data.author}</div>}
       </div>
-      {post.data.cover && (
+      {poster && (
+        <video
+          controls
+          playsinline
+          preload="metadata"
+          poster={poster}
+          src={`${base}${post.data.coverVideo}`}
+          aria-label={post.data.coverAlt ?? ""}
+          style="display:block;width:100%;height:auto;aspect-ratio:16/9;border-radius:var(--radius);margin:24px 0 8px"
+        />
+      )}
+      {post.data.cover && !poster && (
         <Image
           src={post.data.cover}
           alt={post.data.coverAlt ?? ""}
