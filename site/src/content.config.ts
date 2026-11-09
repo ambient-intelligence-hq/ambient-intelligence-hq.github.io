@@ -24,6 +24,10 @@ const blog = defineCollection({
       // time and used as the post's social preview image.
       cover: image().optional(),
       coverAlt: z.string().optional(),
+      // Optional video hero, a path under public/ (assets/video/my-post.mp4). It
+      // replaces the cover on the page; the cover becomes its poster and stays
+      // the social preview image.
+      coverVideo: z.string().optional(),
       // Computed automatically; set this only to override the estimate.
       readingTime: z.string().optional(),
       draft: z.boolean().default(false),
