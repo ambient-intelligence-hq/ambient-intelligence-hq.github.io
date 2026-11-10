@@ -75,13 +75,13 @@ Two routes can pass the same number of frames and still show the model very diff
 
 <ProviderBars
   title="Qwen3.8 27B: video tokens per minute of a 5-minute 1080p video"
-  unit="Billed tokens per minute. Under each route: its frame size after resizing."
+  unit="Billed tokens per minute. Under each route: how many frames it passed from the video, and at what size."
   rows={[
-    { label: "Alibaba Cloud", route: "via OpenRouter · 1056×576", value: 35640, display: "35,640", detail: "120 frames a minute. Frames capped at about 640 tokens per pair, with no total budget." },
-    { label: "Novita", route: "via OpenRouter · 1056×576", value: 35640, display: "35,640", detail: "120 frames a minute. Billed the same as Alibaba Cloud." },
-    { label: "Jarvislabs", route: "direct · 256×128", value: 2499, display: "2,499", detail: "120 frames a minute. Qwen's reference preprocessing." },
-    { label: "7 other upstreams", route: "via OpenRouter · 256×128", value: 2499, display: "2,499", detail: "120 frames a minute. AkashML, Chutes, Cloudflare, Parasail, Reka and Venice bill 2,499; ModelRun bills 2,498." },
-    { label: "CoreWeave (fp8)", route: "via OpenRouter · 1152×640", value: 2274, display: "2,274", detail: "A fixed 32 frames per video, however long the video is: 6 frames a minute here." },
+    { label: "Alibaba Cloud", route: "via OpenRouter · 616\u00a0frames\u00a0·\u00a01056×576", value: 35640, display: "35,640", detail: "Two frames per second. Each pair of frames costs 594 tokens, under a cap of about 640, with no total budget." },
+    { label: "Novita", route: "via OpenRouter · 616\u00a0frames\u00a0·\u00a01056×576", value: 35640, display: "35,640", detail: "Two frames per second. Billed the same as Alibaba Cloud." },
+    { label: "Jarvislabs", route: "direct · 616 frames · 256×128", value: 2499, display: "2,499", detail: "Two frames per second. Qwen's reference preprocessing." },
+    { label: "7 other upstreams", route: "via OpenRouter · 616\u00a0frames\u00a0·\u00a0256×128", value: 2499, display: "2,499", detail: "Two frames per second. AkashML, Chutes, Cloudflare, Parasail, Reka and Venice bill 2,499; ModelRun bills 2,498." },
+    { label: "CoreWeave (fp8)", route: "via OpenRouter · 32\u00a0frames\u00a0·\u00a01152×640", value: 2274, display: "2,274", detail: "A fixed 32 frames per video, however long it is: one about every 10 seconds here." },
   ]}
   caption="Tokens measured October 31 to November 4, 2026; frame curves November 7, 2026. The rest of the 22 routes are on the model page."
   source="https://vlm.fyi/models/qwen3.8-27b/"
@@ -108,13 +108,13 @@ On OpenRouter, one model id is served by many upstream providers, and unless you
 
 <ProviderBars
   title="Qwen3.6 35B A3B on OpenRouter: video tokens per minute of a 5-minute 1080p video"
-  unit="Billed tokens per minute. Under each upstream: the frame size after it resizes the video."
+  unit="Billed tokens per minute. Under each upstream: how many frames it passed from the video, and at what size."
   rows={[
-    { label: "Atlas Cloud (fp8)", route: "pinned · 1056×576", value: 35757, display: "35,757", detail: "120 frames a minute. Frames capped at about 594 tokens per pair, with no total budget." },
-    { label: "AkashML (fp8)", route: "pinned · 256×128", value: 2499, display: "2,499", detail: "120 frames a minute. Qwen's reference preprocessing." },
-    { label: "DekaLLM", route: "pinned · size not determined", value: 2330, display: "2,330" },
-    { label: "CoreWeave (fp8)", route: "pinned · 1152×640", value: 2274, display: "2,274", detail: "A fixed 32 frames per video, however long the video is: 6 frames a minute here." },
-    { label: "DeepInfra (fp8)", route: "pinned · 32×32", value: 639, display: "639", detail: "120 frames a minute, under a pixel budget of about 1 megapixel per video." },
+    { label: "Atlas Cloud (fp8)", route: "pinned · 616 frames · 1056×576", value: 35757, display: "35,757", detail: "Two frames per second. Each pair of frames costs 594 tokens, under a cap of about 640, with no total budget." },
+    { label: "AkashML (fp8)", route: "pinned · 616 frames · 256×128", value: 2499, display: "2,499", detail: "Two frames per second. Qwen's reference preprocessing." },
+    { label: "DekaLLM", route: "pinned · frames not determined", value: 2330, display: "2,330" },
+    { label: "CoreWeave (fp8)", route: "pinned · 32 frames · 1152×640", value: 2274, display: "2,274", detail: "A fixed 32 frames per video, however long it is: one about every 10 seconds here." },
+    { label: "DeepInfra (fp8)", route: "pinned · 616 frames · 32×32", value: 639, display: "639", detail: "Two frames per second, under a pixel budget of about 1 megapixel per video." },
     { label: "SiliconFlow (fp8)", route: "pinned", display: "Varies: the same 64-second clip billed 38,022 tokens, then 1,442" },
   ]}
   caption="Tokens measured October 31, 2026; frame curves November 7 and 8, 2026."
