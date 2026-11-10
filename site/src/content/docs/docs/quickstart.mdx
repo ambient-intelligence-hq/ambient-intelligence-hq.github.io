@@ -8,11 +8,12 @@ sidebar:
 import { Steps, Tabs, TabItem, Aside, LinkCard, CardGrid } from '@astrojs/starlight/components';
 import AgentSetup from '../../../components/AgentSetup.astro';
 
-There are three ways to get a first answer:
+There are four ways to get a first answer:
 
 - **Ask your coding agent.** Paste one prompt into Claude Code, Codex, Cursor, or another agent that can run commands, and it does the Docker install for you.
 - **Install with Docker** (recommended if you'd rather run it yourself). One command starts the engine, the Studio web UI, Postgres, and Redis on your machine. Videos are processed locally with ffmpeg inside the engine container, so you don't need S3 or a cloud sandbox.
 - **Run from source.** Clone the repo and use the `ambient` CLI against a local video file. It needs no Docker, database, or server.
+- **Deploy on Railway.** One click gives you a hosted Studio behind a sign-in, with no server to manage. See [Deploy on Railway](../railway/).
 
 Either way you need an API key for an **OpenAI-compatible** chat-completions endpoint. Ambient defaults to [OpenRouter](https://openrouter.ai/keys).
 

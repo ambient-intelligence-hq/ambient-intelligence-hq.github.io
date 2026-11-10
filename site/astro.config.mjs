@@ -82,6 +82,7 @@ export default defineConfig({
           items: [
             { label: "Overview", slug: "docs" },
             { label: "Quickstart", slug: "docs/quickstart" },
+            { label: "Deploy on Railway", slug: "docs/railway" },
           ],
         },
         {
